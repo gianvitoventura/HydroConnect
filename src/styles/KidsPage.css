@@ -1,0 +1,201 @@
+.kids-page {
+    max-width: 100%;
+    padding: 2rem 200px;
+    background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+    height: calc(100vh - 116px);
+    overflow-y: auto;
+    scrollbar-color: #6366f1 #ddd;
+  }
+  
+  .kids-header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  }
+  
+  .kids-header-section h1 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .kids-subtitle {
+    color: #e0e7ff;
+    font-size: 1.1rem;
+  }
+  
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .metric-card:hover {
+    transform: translateY(-5px);
+    border-color: #6366f1;
+  }
+  
+  .metric-card h3 {
+    color: #4f46e5;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0.5rem 0;
+  }
+  
+  .metric-trend {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  .metric-trend.positive {
+    color: #10b981;
+  }
+  
+  .learning-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .module-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  
+  .module-card:hover {
+    transform: translateY(-5px);
+    border-color: #6366f1;
+  }
+  
+  .module-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+  
+  .module-icon {
+    color: #6366f1;
+  }
+  
+  .module-title {
+    color: #4f46e5;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .module-description {
+    color: #6b7280;
+    margin: 1rem 0;
+    line-height: 1.5;
+  }
+  
+  .module-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  .module-level {
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+  
+  .module-points {
+    color: #6366f1;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+  
+  .activities-section {
+    margin-bottom: 2rem;
+  }
+  
+  .activities-section h2 {
+    color: #4f46e5;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .badge-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .badge-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  }
+  
+  .badge-icon {
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .kids-page {
+      padding: 1rem;
+    }
+  
+    .kids-header-section {
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+  
+    .kids-header-section h1 {
+      font-size: 2rem;
+    }
+  
+    .metrics-grid,
+    .learning-modules-grid,
+    .badges-grid {
+      grid-template-columns: 1fr;
+    }
+  }

@@ -1,0 +1,451 @@
+.historical-page-container {
+  max-width: 100%;
+  padding: 2rem;
+  padding-left: 200px;
+  padding-right: 200px;
+  background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+  height: calc(100vh - 116px);
+  overflow-y: auto;
+  scrollbar-color: #6366f1 #ddd;
+}
+
+.back-button.floating {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background-color: rgba(59, 130, 246, 0.9);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-button.floating:hover {
+  background-color: rgba(37, 99, 235, 0.9);
+  color: #7fffd4;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.historical-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.historical-header h1 {
+  font-size: 2.5rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.historical-header .subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.era-filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.era-filter-button {
+  padding: 6px 12px;
+  background-color: var(--primary-color, #6366f1);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.era-filter-button:hover {
+  background-color: var(--secondary-color, #4f46e5);
+  color: #7fffd4;
+}
+
+.era-filter-button.active {
+  background-color: var(--secondary-color, #4f46e5);
+}
+
+.timeline-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #3b82f6;
+  transform: translateX(-50%);
+}
+
+.timeline-event {
+  position: relative;
+  margin-bottom: 60px;
+  width: 50%;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+  will-change: opacity, transform;
+}
+
+.timeline-event.left {
+  left: 0;
+  padding-right: 40px;
+}
+
+.timeline-event.right {
+  left: 50%;
+  padding-left: 40px;
+}
+
+.timeline-dot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 3px #3b82f6;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.timeline-event.left .timeline-dot {
+  right: -10px;
+}
+
+.timeline-event.right .timeline-dot {
+  left: -10px;
+}
+
+.timeline-year {
+  position: absolute;
+  width: 550px;
+  padding: 12px;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timeline-event.left .timeline-year {
+  right: -600px;
+  text-align: left;
+}
+
+.timeline-event.right .timeline-year {
+  left: -600px;
+  text-align: right;
+}
+
+.timeline-year h3 {
+  margin: 0 0 8px 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.timeline-year h2 {
+  font-size: 1.5rem;
+  color: #3b82f6;
+}
+
+.timeline-year p {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.timeline-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 500px;
+}
+
+.timeline-image-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-container img,
+.carousel-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.carousel-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-button.prev {
+  left: 10px;
+}
+
+.carousel-button.next {
+  right: 10px;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+.media-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.extra-info {
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+.extra-info h2 {
+  color: #4f46e5;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  border-color: #6366f1;
+}
+
+.info-card h3 {
+  color: #4f46e5;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.info-card p {
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .historical-page-container {
+    padding: 1rem;
+  }
+
+  .timeline-event {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .timeline-line {
+    left: 20px;
+  }
+
+  .timeline-event {
+    width: calc(100% - 40px);
+    margin-left: 40px;
+  }
+
+  .timeline-event.left,
+  .timeline-event.right {
+    left: 0;
+    padding-left: 30px;
+    padding-right: 0;
+  }
+
+  .timeline-dot {
+    left: -30px !important;
+  }
+
+  .timeline-year {
+    position: relative;
+    width: 100%;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: left !important;
+    margin-bottom: 1rem;
+    transform: none;
+  }
+
+  .era-filters {
+    flex-wrap: wrap;
+  }
+}
+
+/* Aggiungi questi stili alla fine del file CSS */
+
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fullscreen-container {
+  position: relative;
+  width: 90%;
+  height: 90%;
+  max-width: 1600px;
+}
+
+.fullscreen-container img,
+.fullscreen-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.close-fullscreen {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 10000;
+  transition: transform 0.3s ease;
+}
+
+.close-fullscreen:hover {
+  transform: scale(1.1);
+}
+
+/* Modifica i cursori per indicare che è possibile cliccare */
+.carousel-container img,
+.carousel-container video {
+  cursor: pointer;
+}
+
+/* Stili per i controlli del carosello in modalità fullscreen */
+.fullscreen-overlay .carousel-button {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.fullscreen-overlay .carousel-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.fullscreen-overlay .carousel-indicators {
+  bottom: 30px;
+}
+
+.fullscreen-overlay .media-caption {
+  bottom: 60px;
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 20px;
+}

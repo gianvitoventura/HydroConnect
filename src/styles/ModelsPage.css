@@ -1,0 +1,295 @@
+/* Container principale */
+.models-page-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 116px);
+  background-color:  #f6f8ff;
+  overflow: hidden;
+  scrollbar-color: #6366f1 #ddd;
+}
+
+/* Vista griglia dei modelli */
+.models-overview-container {
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 2rem;
+  margin-left: 200px;
+  margin-right: 200px;
+  background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.header-section h1 {
+  font-size: 2.5rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.models-overview-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #393939;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.models-overview-description {
+  color: #e0e7ff;
+  font-size: 1.1rem;
+}
+
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+/* Card di preview del modello */
+.model-preview-card {
+  background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+.model-preview-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgb(16, 185, 129);
+}
+
+.model-preview-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.model-preview-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.model-type {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+
+/* Container del modello 3D di preview */
+.model-thumbnail {
+  height: 200px;
+  background-color: #f3f4f6;
+  position: relative;
+}
+
+.model-info {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-right: 20px;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Vista dettagliata del modello */
+.models-content {
+  display: flex;
+  height: 100%;
+}
+
+.model-viewer-container {
+  flex: 1;
+  position: relative;
+  background-color: #f3f4f6;
+}
+
+/* Pannello delle proprietà */
+.properties-panel {
+  width: 350px;
+  background-color: white;
+  border-left: 1px solid #e5e7eb;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-section {
+  padding: 1.5rem;
+}
+
+.overview-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  color: #1f2937;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-item label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-item span {
+  color: #1f2937;
+}
+
+/* Bottone back */
+.back-button.floating {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(59, 130, 246, 0.9);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-button.floating:hover {
+  background-color: rgba(37, 99, 235, 0.9);
+  color: #7fffd4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading e stati di errore */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: #dc2626;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .models-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .properties-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .models-content {
+    flex-direction: column;
+  }
+
+  .properties-panel {
+    width: 100%;
+    height: 300px;
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .model-viewer-container {
+    height: calc(100% - 300px);
+  }
+
+  .models-overview-title {
+    font-size: 1.5rem;
+  }
+
+  .models-overview-description {
+    font-size: 1rem;
+  }
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.model-preview-card {
+  animation: fadeIn 0.3s ease-out;
+}
