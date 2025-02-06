@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { historicalData } from '../data/HistoricalData';
 import { hydroplants } from '../data/HydroData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

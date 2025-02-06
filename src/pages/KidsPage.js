@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Droplet, Zap, Leaf, Award, Book, Star } from 'lucide-react';
 import '../styles/KidsPage.css';
 

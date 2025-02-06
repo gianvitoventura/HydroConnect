@@ -69,8 +69,8 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
           });
 
           highlighter.events.select.onHighlight.add((selection) => {
-            if (selection && Object.keys(selection).length > 0) {
-              const fragmentId = Object.keys(selection)[1];
+            if (selection && Object.keys(selection)) {
+              const fragmentId = Object.keys(selection)[0];
               console.log('frag:', fragmentId);
               const firstSet = selection[fragmentId];
               const elementId = Array.from(firstSet)[0];

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { TourData } from '../data/TourData';
 import { hydroplants } from '../data/HydroData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -86,7 +86,7 @@ const MediaCarousel = React.memo(({ media }) => {
 });
 
 const TourPage = ({ plantId, setCurrentPage }) => {
-  const [activeEra, setActiveEra] = useState('all');
+  const activeEra = useState('all');
   const plantData = TourData[plantId];
   const plant = hydroplants.find(p => p.id === plantId);
 
