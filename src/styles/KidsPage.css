@@ -199,3 +199,227 @@
       grid-template-columns: 1fr;
     }
   }
+
+  /* File: KidsPage.css (Aggiungi queste regole alla fine del tuo file) */
+
+.storybook-viewer {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-top: 2rem;
+  max-width: 900px; /* Limita la larghezza per una migliore leggibilità */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.storybook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.storybook-header h2 {
+  color: #4f46e5;
+  font-size: 1.8rem;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.storybook-page-indicator {
+  font-size: 0.9rem;
+  color: #6b7280;
+  min-width: 100px; /* Per mantenere lo spazio */
+  text-align: right;
+}
+
+.storybook-nav-button {
+  background-color: #6366f1;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.storybook-nav-button:hover {
+  background-color: #4f46e5;
+}
+
+.storybook-nav-button.back {
+  background-color: #fff700; /* Esempio per un pulsante 'indietro' */
+  padding-right: 1rem;
+}
+
+.storybook-nav-button.back:hover {
+  background-color: #fff700;
+  padding-right: 1rem;
+}
+
+
+.storybook-content {
+  min-height: 300px; /* Assicura una certa altezza per il contenuto */
+  line-height: 1.8;
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.storybook-content p {
+  margin-bottom: 1em;
+}
+
+.storybook-footer {
+  display: flex;
+  justify-content: space-between; /* Allinea i pulsanti a sinistra e destra */
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.storybook-viewer.loading,
+.storybook-viewer.error,
+.storybook-viewer.no-content {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #fff700;
+}
+
+/* ====== AGGIUNGI QUESTO CSS ALLA FINE DI KidsPage.css ====== */
+
+/* Progress bar per i moduli */
+.module-progress {
+  margin: 1rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Stati dei moduli */
+.module-card.completed {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+}
+
+.module-completed-icon {
+  color: #10b981;
+  margin-left: auto;
+}
+
+/* Stati dei badge */
+.badge-item.earned {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  transform: scale(1.02);
+}
+
+.badge-item.locked {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  opacity: 0.7;
+}
+
+.badge-status-icon {
+  margin-left: auto;
+}
+
+/* Animazioni per i badge */
+.badge-item.earned:hover {
+  animation: badgeGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes badgeGlow {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(16, 185, 129, 0.6);
+  }
+}
+
+/* Vista griglia kids con animazioni */
+.kids-grid-view {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive migliorato per mobile */
+@media (max-width: 640px) {
+  .kids-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .kids-header-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
+
+  .kids-header-section h1 {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+
+  .kids-subtitle {
+    font-size: 1rem;
+  }
+
+  .metric-card {
+    padding: 1rem;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .module-card {
+    padding: 1rem;
+  }
+
+  .module-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Focus states migliorati per navigazione da tastiera */
+.module-card:focus,
+.badge-item:focus,
+.storybook-nav-button:focus {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}

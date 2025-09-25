@@ -1,0 +1,245 @@
+/* Aggiungiamo i font più giocosi */
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
+
+/* Sovrascriviamo il font di base per la sezione Kids */
+.kids-page,
+.module-content-container,
+.quiz-container,
+.badge-certificate-container {
+  font-family: 'Comic Neue', 'Baloo 2', cursive, sans-serif;
+}
+
+/* Aumentiamo le dimensioni del testo e rendiamo i titoli più giocosi */
+.kids-header-section h1 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.8rem;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.kids-subtitle {
+  font-size: 1.3rem;
+}
+
+/* Stile per le card della dashboard */
+.metric-card h3 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.3rem;
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  color: #000000;
+  font-weight: bold;
+}
+
+.module-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.4rem !important;
+  color: #1e40af !important;
+  font-weight: 700 !important;
+}
+
+.module-description {
+  font-size: 1.2rem !important;
+  color: #000000 !important;
+  line-height: 1.5;
+}
+
+.module-level, .module-points {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.activities-section h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2rem;
+  color: #1e40af;
+  margin: 1.5rem 0;
+}
+
+.badge-item {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Stile per il contenuto del modulo */
+.module-step-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2rem !important;
+  color: #1e40af !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.step-text {
+  font-size: 1.3rem !important;
+  color: #000000 !important;
+  line-height: 1.6;
+}
+
+.step-text strong {
+  color: #1e40af !important;
+  font-weight: 700;
+}
+
+.nav-button, .step-button {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Stile per i quiz */
+.quiz-question {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.8rem !important;
+  color: #1e40af !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-option {
+  font-size: 1.3rem !important;
+  color: #000000 !important;
+}
+
+.quiz-explanation h3 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.5rem;
+  color: #1e40af;
+}
+
+.quiz-explanation p {
+  font-size: 1.2rem;
+  color: #000000;
+}
+
+.quiz-next-button, .complete-quiz-button {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+}
+
+.quiz-result h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.2rem;
+  color: #1e40af;
+}
+
+.score-number {
+  font-size: 3.5rem !important;
+}
+
+.score-label {
+  font-size: 1.3rem !important;
+}
+
+.result-message {
+  font-size: 1.3rem !important;
+  color: #000000 !important;
+}
+
+/* Stile per il certificato */
+.name-form-container h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.2rem;
+  color: #1e40af;
+}
+
+.name-form-container p {
+  font-size: 1.3rem;
+  color: #000000;
+}
+
+.name-input {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.3rem !important;
+}
+
+.name-submit {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+}
+
+.certificate-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2.5rem !important;
+  color: #1e40af !important;
+}
+
+.certificate-subtitle {
+  font-size: 1.3rem !important;
+  color: #000000 !important;
+}
+
+.certificate-text {
+  font-size: 1.3rem !important;
+  color: #000000 !important;
+}
+
+.certificate-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 2rem !important;
+  color: #000000 !important;
+  border-color: #1e40af !important;
+}
+
+.certificate-description {
+  font-size: 1.3rem !important;
+  color: #15803d !important;
+}
+
+.certificate-date, .certificate-footer {
+  font-size: 1.1rem !important;
+  color: #000000 !important;
+}
+
+.action-button {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+}
+
+/* Animazioni più vivaci per il personaggio */
+.character {
+  transform-origin: bottom center;
+  transition: all 0.3s ease;
+}
+
+.character:hover {
+  transform: scale(1.1) translateY(-10px);
+}
+
+/* Rendiamo i bottoni più grandi e giocosi */
+.nav-button, .step-button, .quiz-next-button, .complete-quiz-button, .action-button {
+  padding: 0.8rem 1.8rem !important;
+  border-radius: 999px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.nav-button:hover, .step-button:hover, .quiz-next-button:hover, .complete-quiz-button:hover, .action-button:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Stili responsive */
+@media (max-width: 768px) {
+  .kids-header-section h1 {
+    font-size: 2.2rem;
+  }
+  
+  .activities-section h2 {
+    font-size: 1.8rem;
+  }
+  
+  .module-step-title, .quiz-question {
+    font-size: 1.6rem !important;
+  }
+  
+  .step-text, .quiz-option {
+    font-size: 1.2rem !important;
+  }
+}

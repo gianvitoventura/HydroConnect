@@ -33,15 +33,6 @@ const CommunityPage = () => {
     }
   ];
 
-  // Dati progressi mensili
-  const monthlyProgress = [
-    { month: 'Gen', value: 65 },
-    { month: 'Feb', value: 70 },
-    { month: 'Mar', value: 85 },
-    { month: 'Apr', value: 75 },
-    { month: 'Mag', value: 90 }
-  ];
-
   const handleInputChange = (stage, value) => {
     setFormData(prev => ({
       ...prev,
@@ -60,7 +51,7 @@ const CommunityPage = () => {
       <div className="community-header-section">
         <h1>Community-Hub</h1>
         <p className="subtitle">
-          Collabora con la community per migliorare la resilienza e la sostenibilità delle centrali idroelettriche
+          Collabora con la community per migliorare la resilienza e la sostenibilità del territorio
         </p>
       </div>
 
@@ -91,26 +82,6 @@ const CommunityPage = () => {
             <h3>Coinvolgimento</h3>
             <p className="metric-value">85%</p>
             <p className="metric-trend positive">↑ questo mese</p>
-          </div>
-        </div>
-
-        {/* Progress Visualization */}
-        <div className="progress-section">
-          <h2>Progesso mensile</h2>
-          <div className="progress-bars">
-            {monthlyProgress.map((item, index) => (
-              <div key={index} className="progress-item">
-                <div className="progress-label">{item.month}</div>
-                <div className="progress-bar-container">
-                  <div 
-                    className="progress-bar" 
-                    style={{width: `${item.value}%`}}
-                  >
-                    {item.value}%
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

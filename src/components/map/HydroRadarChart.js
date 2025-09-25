@@ -143,7 +143,6 @@ const HydroRadarChart = ({ plants = [], COLORS }) => {
             if (active && payload && payload.length > 0) {
               const originalData = data.find(d => d.parameter === payload[0].payload.parameter);
               const parameterName = originalData.parameter;
-              const unit = originalData.unit;
 
               const values = payload.map(entry => {
                 const plant = plants.find(p => p.name === entry.dataKey);

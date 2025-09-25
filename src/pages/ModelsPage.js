@@ -115,7 +115,7 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
   return (
     <div className="models-page-container">
       <div className="models-overview-container">
-        <div className="header-section">
+        <div className="bim-header-section">
           <h1>BIM Models</h1>
             <p className="models-overview-description">
             Naviga i modelli BIM e accedi alle centrali idroelettriche
@@ -144,6 +144,7 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
               <option value="A bacino">A bacino</option>
               <option value="Ad acqua fluente">Ad acqua fluente</option>
               <option value="Ad accumulo">Ad accumulo</option>
+              <option value="A derivazione">A derivazione</option>
             </select>
 
             <select

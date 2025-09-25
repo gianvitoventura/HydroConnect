@@ -43,6 +43,7 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
         const grids = components.get(OBC.Grids);
         grids.create(world);
 
+
         if (modelFiles) {
           const fragments = new OBC.FragmentsManager(components);
           const file = await fetch(modelFiles.geometry);
@@ -52,6 +53,7 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
           modelRef.current = model;
           world.scene.three.add(model);
 
+          //Recupera proprietà dal JSON
           const propertiesResponse = await fetch(modelFiles.properties);
           const propertiesData = await propertiesResponse.json();
           model.setLocalProperties(propertiesData);
@@ -69,8 +71,8 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
           });
 
           highlighter.events.select.onHighlight.add((selection) => {
-            if (selection && Object.keys(selection).length > 0) {
-              const fragmentId = Object.keys(selection)[1];
+            if (selection && Object.keys(selection)) {
+              const fragmentId = Object.keys(selection)[0];
               console.log('frag:', fragmentId);
               const firstSet = selection[fragmentId];
               const elementId = Array.from(firstSet)[0];

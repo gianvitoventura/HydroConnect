@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { historicalData } from '../data/HistoricalData';
 import { hydroplants } from '../data/HydroData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -162,7 +162,7 @@ const HistoricalDetailPage = ({ plantId, setCurrentPage }) => {
             <div className="timeline-year">
               <h3>{event.year}</h3>
               <h2>{event.title}</h2>
-              <p>{event.description}</p>
+              <h4>{event.description}</h4>
             </div>
             <div className="timeline-content">
               <div className="timeline-card">

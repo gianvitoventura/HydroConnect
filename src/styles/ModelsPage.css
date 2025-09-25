@@ -11,22 +11,22 @@
 /* Vista griglia dei modelli */
 .models-overview-container {
   padding: 2rem;
+  padding-left: 200px;
+  padding-right: 200px;
   height: 100%;
   overflow-y: auto;
 }
 
-.header-section {
+.bim-header-section {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   padding: 2rem;
-  margin-left: 200px;
-  margin-right: 200px;
   background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
   border-radius: 1rem;
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-.header-section h1 {
+.bim-header-section h1 {
   font-size: 2.5rem;
   color: #ffffff;
   margin-bottom: 1rem;

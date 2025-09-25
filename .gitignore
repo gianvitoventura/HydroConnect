@@ -27,6 +27,4 @@ yarn-error.log*
 
 # file IFC
 *.ifc
-public/static/media/*
-public/geoData
-public/images
+public/

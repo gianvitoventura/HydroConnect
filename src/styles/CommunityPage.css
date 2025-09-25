@@ -278,10 +278,6 @@
     padding: 1rem;
   }
 
-  .header-section {
-    padding: 1.5rem;
-  }
-
   .chart-container {
     transform: scale(0.8);
     transform-origin: left;
