@@ -95,7 +95,7 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
 
           highlighter.events.select.onClear.add(() => {
             setSelectedElement(null);
-            setPopupPosition(null);
+            // setPopupPosition(null);
           });
         }
 

@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Droplet, Zap, Leaf, Award, Book, Star, Check, X } from 'lucide-react';
+import { Droplet, Zap, Leaf, Award, Book, Star, Check, X, Puzzle } from 'lucide-react';
 import '../styles/KidsPage.css';
 import '../styles/KidsFont.css';
 
-// Importazioni dei nuovi componenti
+// Importazioni dei componenti
 const StorybookViewer = React.lazy(() => import('../components/kids/StorybookViewer'));
 const QuizGame = React.lazy(() => import('../components/kids/QuizGame'));
 const BadgeCertificate = React.lazy(() => import('../components/kids/BadgeCertificate'));
 const AchievementPopup = React.lazy(() => import('../components/kids/AchievementPopup'));
 const ProgressTracker = React.lazy(() => import('../components/kids/ProgressTracker'));
+const CentraleIdroelettricaKids = React.lazy(() => import('../components/kids/Hydrokids'));
 
 const KidsPage = () => {
   // Stati per la navigazione e il progresso
-  const [currentView, setCurrentView] = useState('grid'); // 'grid', 'module', 'quiz', 'badge'
+  const [currentView, setCurrentView] = useState('grid'); // 'grid', 'module', 'quiz', 'badge', 'interactive'
   const [currentModule, setCurrentModule] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -28,6 +29,7 @@ const KidsPage = () => {
       completedQuizzes: 0,
       totalPoints: 0,
       badges: [],
+      interactiveCompleted: false, // Nuovo: traccia se ha completato l'interattivo
       moduleProgress: {
         'water-cycle': { completed: false, step: 0, points: 0 },
         'hydro-power': { completed: false, step: 0, points: 0 },
@@ -90,6 +92,18 @@ const KidsPage = () => {
     }
   ];
 
+  // Definizione delle attività interattive
+  const interactiveActivities = [
+    {
+      id: 'hydro-plant',
+      title: 'Centrale Idroelettrica Interattiva',
+      icon: <Puzzle className="activity-icon" />,
+      description: 'Esplora come funziona una vera centrale idroelettrica!',
+      emoji: '🌊',
+      points: 100
+    }
+  ];
+
   // Definizione dei badge
   const badges = {
     explorer: {
@@ -114,7 +128,6 @@ const KidsPage = () => {
     setCurrentAchievement(achievement);
     setShowAchievement(true);
     
-    // Aggiorna i punti totali se l'achievement ha punti bonus
     if (achievement.points) {
       setProgress(prevProgress => ({
         ...prevProgress,
@@ -128,22 +141,39 @@ const KidsPage = () => {
     setCurrentAchievement(null);
   };
 
+  // Gestione del completamento dell'attività interattiva
+  const handleInteractiveComplete = (pointsEarned) => {
+    setProgress(prevProgress => ({
+      ...prevProgress,
+      totalPoints: prevProgress.totalPoints + pointsEarned,
+      interactiveCompleted: true
+    }));
+
+    // Mostra un achievement
+    handleAchievementUnlocked({
+      title: '🎉 Esploratore Completato!',
+      description: 'Hai esplorato tutti i componenti della centrale!',
+      points: pointsEarned
+    });
+
+    // Torna alla griglia dopo un momento
+    setTimeout(() => {
+      backToGrid();
+    }, 2000);
+  };
+
   // Gestione del completamento di un modulo
   const handleModuleComplete = (moduleId, quizScore) => {
     const module = learningModules.find(m => m.id === moduleId);
     const pointsEarned = Math.floor(module.points * (quizScore / 100));
 
-    // Aggiorna il progresso solo se non era già completato o se il punteggio è migliore
     const isFirstCompletion = !progress.moduleProgress[moduleId]?.completed;
     const previousPoints = progress.moduleProgress[moduleId]?.points || 0;
 
-    // Aggiorna il progresso
     const updatedProgress = {
       ...progress,
-      // Incrementa completedLessons e completedQuizzes solo se è la prima volta
       completedLessons: isFirstCompletion ? progress.completedLessons + 1 : progress.completedLessons,
       completedQuizzes: isFirstCompletion ? progress.completedQuizzes + 1 : progress.completedQuizzes,
-      // Aggiorna totalPoints: rimuovi i punti precedenti e aggiungi i nuovi
       totalPoints: progress.totalPoints - previousPoints + pointsEarned,
       moduleProgress: {
         ...progress.moduleProgress,
@@ -155,7 +185,6 @@ const KidsPage = () => {
       }
     };
 
-    // Aggiungi il badge se non è già presente
     if (!progress.badges.includes(module.badge)) {
       updatedProgress.badges = [...progress.badges, module.badge];
     }
@@ -167,14 +196,17 @@ const KidsPage = () => {
   // Gestione della navigazione a un modulo
   const handleModuleNavigate = (moduleId) => {
     setCurrentModule(moduleId);
-    // Sempre iniziare dal passo 0 quando si apre un modulo, anche se completato
     setCurrentStep(0);
     setCurrentView('module');
   };
 
+  // Gestione della navigazione all'attività interattiva
+  const handleInteractiveNavigate = () => {
+    setCurrentView('interactive');
+  };
+
   // Gestione del progresso nei passi del modulo
   const handleStorybookStep = (newStep) => {
-    // Se newStep è undefined, significa che lo storybook è completo e dobbiamo passare al quiz
     if (newStep === undefined) {
       setCurrentView('quiz');
       return;
@@ -182,7 +214,6 @@ const KidsPage = () => {
 
     setCurrentStep(newStep);
 
-    // Aggiorna il progresso solo se è il passo più avanzato mai raggiunto per questo modulo
     if (newStep > (progress.moduleProgress[currentModule]?.step || 0)) {
       setProgress({
         ...progress,
@@ -207,6 +238,15 @@ const KidsPage = () => {
   // Renderizza la vista appropriata
   const renderView = () => {
     switch (currentView) {
+      case 'interactive':
+        return (
+          <React.Suspense fallback={<div>Caricamento dell'attività interattiva...</div>}>
+            <CentraleIdroelettricaKids
+              onBack={backToGrid}
+              onComplete={handleInteractiveComplete}
+            />
+          </React.Suspense>
+        );
       case 'module':
         const module = learningModules.find(m => m.id === currentModule);
         if (!module) return <div className="error-message">Modulo non trovato.</div>;
@@ -276,9 +316,39 @@ const KidsPage = () => {
               </div>
             </div>
 
+            {/* Interactive Activities Section - NUOVA SEZIONE */}
+            <div className="activities-section">
+              <h2>🎮 Attività Interattive</h2>
+              <div className="interactive-activities-grid">
+                {interactiveActivities.map(activity => (
+                  <div
+                    key={activity.id}
+                    className={`interactive-card ${progress.interactiveCompleted ? 'completed' : ''}`}
+                    onClick={handleInteractiveNavigate}
+                  >
+                    <div className="interactive-header">
+                      <div className="interactive-emoji">{activity.emoji}</div>
+                      {activity.icon}
+                      <h3 className="interactive-title">{activity.title}</h3>
+                      {progress.interactiveCompleted && <Check className="interactive-completed-icon" />}
+                    </div>
+                    <p className="interactive-description">{activity.description}</p>
+                    <div className="interactive-footer">
+                      <span className="interactive-points">
+                        {progress.interactiveCompleted ? '✓ Completato' : `🏆 ${activity.points} punti`}
+                      </span>
+                      <button className="interactive-button">
+                        {progress.interactiveCompleted ? 'Gioca Ancora' : 'Inizia!'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Learning Modules Grid */}
             <div className="activities-section">
-              <h2>Moduli di Apprendimento</h2>
+              <h2>📚 Moduli di Apprendimento</h2>
               <div className="learning-modules-grid">
                 {learningModules.map(module => {
                   const moduleProgress = progress.moduleProgress[module.id];
@@ -300,7 +370,6 @@ const KidsPage = () => {
                       </div>
                       <p className="module-description">{module.description}</p>
                       
-                      {/* Progress bar visiva */}
                       <div className="module-progress">
                         <div className="progress-bar">
                           <div
@@ -325,7 +394,7 @@ const KidsPage = () => {
 
             {/* Badges Section */}
             <div className="activities-section">
-              <h2>I Tuoi Badge</h2>
+              <h2>🏆 I Tuoi Badge</h2>
               <div className="badges-grid">
                 {Object.entries(badges).map(([badgeId, badge]) => {
                   const earned = progress.badges.includes(badgeId);
@@ -355,7 +424,7 @@ const KidsPage = () => {
       <div className="kids-header-section">
         <h1>Sei pronto a costruire un mondo più pulito?</h1>
         <p className="kids-subtitle">
-          Unisciti a SIED nella sua avventura per scoprire i segreti dell'energia idroelettrica e della sostenibilità
+          Scopri i segreti dell'energia rinnovabile e come funziona una centrale idroelettrica!
         </p>
       </div>
 

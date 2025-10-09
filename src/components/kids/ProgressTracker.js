@@ -181,6 +181,7 @@ const ProgressTracker = ({ progress, onAchievementUnlocked }) => {
 
   return (
     <div className="progress-tracker">
+      <h3 className="goals-title">🎯 Progesso attività</h3>
       {/* Sezione Livello Utente */}
       <div className="level-section">
         <div className="level-badge">

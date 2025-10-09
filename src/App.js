@@ -83,7 +83,7 @@ function Header({ setCurrentPage, currentPage }) {
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('map')}
-              onMouseEnter={(e) => handleMouseEnter('Explore hydropower park and the surrounding', e)}
+              onMouseEnter={(e) => handleMouseEnter('Esplora il parco centrali e il territorio circostante', e)}
               onMouseLeave={handleMouseLeave}
             >
               Map
@@ -92,25 +92,25 @@ function Header({ setCurrentPage, currentPage }) {
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('models')}
-              onMouseEnter={(e) => handleMouseEnter('Navigate 3D infrastructure models', e)}
+              onMouseEnter={(e) => handleMouseEnter('Naviga i modelli 3D e le foto 360 delle centrali', e)}
               onMouseLeave={handleMouseLeave}
             >
-              Models
+              Tour
             </button>
           </div>
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('Community-Hub')}
-              onMouseEnter={(e) => handleMouseEnter('Take part in resilient and sustainable projects', e)}
+              onMouseEnter={(e) => handleMouseEnter('Partecipa a progetti per la sostenibilità del territorio', e)}
               onMouseLeave={handleMouseLeave}
             >
-              Community-Hub
+              Community Hub
             </button>
           </div>
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('Kids')}
-              onMouseEnter={(e) => handleMouseEnter('Become a little scientist', e)}
+              onMouseEnter={(e) => handleMouseEnter('Diventa un piccolo ingegnere', e)}
               onMouseLeave={handleMouseLeave}
             >
               Kids
@@ -129,12 +129,27 @@ function Header({ setCurrentPage, currentPage }) {
 }
 
 function HomePage() {
+  const [videoError, setVideoError] = useState(false);
+
   return (
     <div className="home-content">
-      <div>
+      {!videoError && (
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          className="background-video"
+          onError={() => setVideoError(true)}
+        >
+          <source src={require('./styles/logo/Calcinere.mp4')} type="video/mp4" />
+          {/* Fallback per browser che non supportano video */}
+        </video>
+      )}
+      <div className="home-content-overlay">
         <h1>Benvenuto</h1>
         <p>
-          Conosci il territorio, esplora il parco idroelettrico e partecipa alle attività per uno sviluppo sostenibile e resiliente
+          Conosci il territorio, esplora il parco idroelettrico e partecipa alle decisioni per un futuro sostenibile.
         </p>
       </div>
     </div>

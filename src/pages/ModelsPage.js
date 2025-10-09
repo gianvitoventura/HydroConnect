@@ -1,50 +1,32 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
 import { hydroplants } from '../data/HydroData';
 import '../styles/ModelsPage.css';
 
-// Componente per il cubo 3D di preview ottimizzato
-const PreviewCube = React.memo(() => {
+// Preview con immagine reale - mantiene la stessa struttura
+const Model3DPreview = React.memo(({ plant }) => {
+  const [imageError, setImageError] = useState(false);
+  const imagePath = `/images/centrali/${plant.name}.jpg`;
+  
+  if (imageError) {
+    return (
+      <div className="preview-placeholder">
+        <span>{plant.type}</span>
+      </div>
+    );
+  }
+  
   return (
-    <mesh>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#3b82f6" roughness={0.5} metalness={0.5} />
-    </mesh>
-  );
-});
-
-PreviewCube.displayName = 'PreviewCube';
-
-// Componente per il visualizzatore 3D di preview
-const Model3DPreview = React.memo(({ plantType }) => {
-  // Configurazione basata sul tipo di centrale
-  const config = useMemo(() => {
-    const configs = {
-      default: { position: [5, 5, 5]}
-    };
-    return configs[plantType] || configs.default;
-  }, [plantType]);
-
-  return (
-    <Canvas camera={{ position: config.position, fov: 45 }}>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <PreviewCube />
-      <OrbitControls 
-        enableZoom={false} 
-        enablePan={false}
-        autoRotate
-        autoRotateSpeed={4}
-      />
-      <Environment preset="city" />
-    </Canvas>
+    <img 
+      src={imagePath}
+      alt={plant.name}
+      onError={() => setImageError(true)}
+      className="preview-image"
+    />
   );
 });
 
 Model3DPreview.displayName = 'Model3DPreview';
 
-// Componente per la card di preview del modello
 const ModelPreviewCard = React.memo(({ plant, onSelect }) => {
   const handleClick = useCallback(() => {
     onSelect(plant.id);
@@ -54,10 +36,7 @@ const ModelPreviewCard = React.memo(({ plant, onSelect }) => {
     <div className="model-preview-card" onClick={handleClick}>
       <div className="model-preview-header">
         <h3>{plant.name}</h3>
-        <span className="model-type">{plant.type}</span>
-      </div>
-      <div className="model-thumbnail">
-        <Model3DPreview plantType={plant.type} />
+        <Model3DPreview plant={plant} />
       </div>
       <div className="model-info">
         <div className="info-grid">
@@ -77,13 +56,11 @@ const ModelPreviewCard = React.memo(({ plant, onSelect }) => {
 
 ModelPreviewCard.displayName = 'ModelPreviewCard';
 
-// Componente principale della pagina
 const ModelsPage = ({ plantId, setCurrentPage }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('name');
 
-  // Filtraggio e ordinamento dei modelli
   const filteredModels = useMemo(() => {
     return hydroplants
       .filter(plant => {
@@ -111,18 +88,16 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
     setCurrentPage({ page: 'bim', plantId: id });
   }, [setCurrentPage]);
 
-  // Rendering della griglia dei modelli
   return (
     <div className="models-page-container">
       <div className="models-overview-container">
         <div className="bim-header-section">
-          <h1>BIM Models</h1>
-            <p className="models-overview-description">
-            Naviga i modelli BIM e accedi alle centrali idroelettriche
+          <h1>Modelli e tour virtuali</h1>
+          <p className="models-overview-description">
+            Naviga i modelli e accedi alle centrali idroelettriche
           </p>
         </div>
 
-        {/* Controlli di ricerca e filtro */}
         <div className="controls-container">
           <div className="search-box">
             <input
@@ -160,7 +135,6 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
           </div>
         </div>
 
-        {/* Griglia dei modelli */}
         {filteredModels.length > 0 ? (
           <div className="models-grid">
             {filteredModels.map(plant => (

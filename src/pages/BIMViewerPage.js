@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ModelViewer from '../components/viewer/ModelViewer5';
 import { getModelFilesByPlantId, hydroplants } from '../data/HydroData';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, PieChart, Pie, Sector } from 'recharts';
-import * as OBC from "@thatopen/components";
-import * as OBCF from "@thatopen/components-front";
 import '../styles/Viewer.css';
 import '../styles/Charts.css';
 

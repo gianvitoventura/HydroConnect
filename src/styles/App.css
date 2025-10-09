@@ -135,14 +135,36 @@ main {
 /* Homepage styles */
 .home-content {
   flex: 1;
-  background-image: url('./logo/DJI_0159.JPG');
-  background-size: cover;
-  background-position: center top;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 116px);
+  overflow: hidden;
+  /* Immagine di fallback */
+  background-image: url('./logo/DJI_0159.JPG');
+  background-size: cover;
+  background-position: center top;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-content-overlay {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px;
+  /* background: rgba(0, 0, 0, 0.4); sfondo semi-trasparente per leggibilità */
+  border-radius: 10px;
 }
 
 .overlay-image {

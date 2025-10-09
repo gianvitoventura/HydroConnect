@@ -118,9 +118,9 @@ const HistoricalDetailPage = ({ plantId, setCurrentPage }) => {
       </button>
 
       <div className="historical-header">
-        <h1>{plant.name} - Storia e sviluppo</h1>
+        <h1>La storia di {plant.name}</h1>
         <p className="subtitle">
-          Scoprire le origini per capire come affrontare le sfide del futuro della centrale idroelettrica
+          Scopri le origini per capire come affrontare le sfide del futuro della centrale idroelettrica
         </p>
       </div>
 

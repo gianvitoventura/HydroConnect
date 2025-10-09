@@ -16,6 +16,7 @@ export const hydroplants = [
     condotta: "3200 m",
     modelUrl: "forani",
     description: "La Centrale è ubicata in località Forani, Comune di Aisone (CN), ed è posta in destra orografica rispetto al torrente Stura di Demonte.",
+    image: "/images/centrali/forani.jpg",
     tourUrl: "/virtualtour/forani/index.html",
     models: {
       geometry: '/models/forani.frag',
@@ -37,6 +38,7 @@ export const hydroplants = [
     machine: "1 turbina Kaplan ad asse verticale ed 1 tipo Francis ad asse verticale",
     modelUrl: "venasca",
     description: "La Centrale è ubicata in Reg. San Bartolomeo – comune di Venasca (CN) e sfrutta una derivazione d'acqua dal torrente Varaita per mezzo di una traversa fissa in calcestruzzo cementizio, dotata di paratoia dissabbiatrice e scala di rimonta dell'ittiofauna.",
+    image: "/images/centrali/venasca.jpg",
     tourUrl: "/virtualtour/venasca/index.html",
     models: {
       geometry: '/models/venasca.frag',
@@ -58,7 +60,9 @@ export const hydroplants = [
     machine: "4 Pelton monogetto ad asse orizzontale",
     modelUrl: "calcinere",
     description: "La Centrale è situata in frazione Calcinere nel comune di Paesana (CN). Il canale derivatore, lungo cairca 10 km in parte a cielo aperto e in parte in galleria, capta le acque di diversi torrenti tra cui il Po ai piedi del Monviso.",
+    image: "/images/centrali/calcinere.jpg",
     tourUrl: "./public/virtualtour/calcinere/inde.html",
+    modelUrl: "/models/calcinere.ifc",
     models: {
       geometry: '/models/calcinere.frag',
       properties: '/models/calcinere.json'
@@ -79,6 +83,7 @@ export const hydroplants = [
     condotta: "1540 m",
     modelUrl: "prali",
     description: "La Centrale è ubicata lungo la SP 169 al Km 13+770 nei territori di Salza di Pinerolo (l'opera di presa) e del comunte di Prali (la Centrale).",
+    image: "/images/centrali/tre ponti.jpg",
     tourUrl: "/virtualtour/treponti/index.html",
     models: {
       geometry: '/models/prali.frag',
@@ -99,7 +104,8 @@ export const hydroplants = [
     canale: "2150 m",
     condotta: "585 m",
     modelUrl: "meano",
-    description: "La Centrale è ubicata nel comune di Pomaretto (TO) mentre l'opera di presa si trova in comune di Perosa Argentina (TO) e deriva l’acqua dal torrente Chisone convogliando le acque sulla destra orografica del torrente.",
+    description: "La Centrale è ubicata nel comune di Pomaretto (TO) mentre l'opera di presa si trova in comune di Perosa Argentina (TO) e deriva l'acqua dal torrente Chisone convogliando le acque sulla destra orografica del torrente.",
+    image: "/images/centrali/meano.jpg",
     tourUrl: "/virtualtour/meano/index.html",
     models: {
       geometry: '/models/meano.frag',
@@ -121,6 +127,7 @@ export const hydroplants = [
     condotta: "260 m",
     modelUrl: "germagnano",
     description: "La centrale idroelettrica è ubicata in località Colombaro nel Comune di Lanzo Torinese (TO). L'opera di presa, in sponda sinistra, deriva le acque dal torrente Stura di Lanzo tramite un argine con paratoie mobili.",
+    image: "/images/centrali/germagnano.jpg",
     tourUrl: "/public/virtualtour/germagnano/index.html",
     models: {
       geometry: '/models/germagnano.frag',
@@ -141,6 +148,7 @@ export const hydroplants = [
     condotta: "190 m",
     modelUrl: "ceres",
     description: "La centrale di Ceres è un importante impianto idroelettrico che sfrutta le acque del torrente Stura di Valli di Lanzo.",
+    image: "/images/centrali/ceres.jpg",
     models: {
       geometry: '/models/ceres.frag',
       properties: '/models/ceres.json'
@@ -159,7 +167,8 @@ export const hydroplants = [
     canale: "1500 m",
     condotta: "0 m",
     modelUrl: "grandvert",
-    description: "La Centrale è ubicata in via Grand Vert,150 – comune di Donnas (AO) e deriva l’acqua dal fiume Dora Baltea tramite opera di presa.",
+    description: "La Centrale è ubicata in via Grand Vert,150 – comune di Donnas (AO) e deriva l'acqua dal fiume Dora Baltea tramite opera di presa.",
+    image: "/images/centrali/grand vert.jpg",
     models: {
       geometry: '/models/grandvert.frag',
       properties: '/models/grandvert.json'
@@ -180,6 +189,7 @@ export const hydroplants = [
     condotta: "0 m",
     modelUrl: "donnas",
     description: "La centrale idroelettrica è ubicata in sponda sinistra della Dora Baltea e intercetta le acque di scarico della centrale di Bard più a monte di proprietà di terzi.",
+    image: "/images/centrali/donnas.jpg",
     models: {
       geometry: '/models/donnas.frag',
       properties: '/models/donnas.json'
@@ -198,7 +208,8 @@ export const hydroplants = [
     canale: "2000 m",
     condotta: "0 m",
     modelUrl: "oliero",
-    description: "La Centrale è ubicata in via Giusti,17 – comune di Campolongo sul Brenta (VI). L’opera di presa della centrale si trova presso le “Grotte di Oliero”, dove viene derivata l’acqua che sgorga dalle grotte stesse.",
+    description: "La Centrale è ubicata in via Giusti,17 – comune di Campolongo sul Brenta (VI). L'opera di presa della centrale si trova presso le 'Grotte di Oliero', dove viene derivata l'acqua che sgorga dalle grotte stesse.",
+    image: "/images/centrali/oliero.jpg",
     models: {
       geometry: '/models/oliero.frag',
       properties: '/models/oliero.json'
@@ -218,6 +229,7 @@ export const hydroplants = [
     condotta: "0 m",
     modelUrl: "gobba",
     description: "La centrale è ubicata in via Alzaia 2 nella zona centrale della città di Treviso ed è costruita direttamente sul fiume Sile senza ricorrere all'uso di condotte forzate",
+    image: "/images/centrali/ponte della gobba.jpg",
     models: {
       geometry: '/models/gobba.frag',
       properties: '/models/gobba.json'
@@ -237,6 +249,7 @@ export const hydroplants = [
     condotta: "0 m",
     modelUrl: "silea",
     description: "La Centrale è ubicata in via dei Tappi, 50 – comune di Silea (TV) ed è costruita direttamente sul fiume Sile senza ricorrere a condotte forzate.",
+    image: "/images/centrali/silea.jpg",
     models: {
       geometry: '/models/silea.frag',
       properties: '/models/silea.json'
@@ -256,6 +269,7 @@ export const hydroplants = [
     condotta: "550 m",
     modelUrl: "magnanins",
     description: "La centrale, ubicata in località Magnanins – Comune di Rigolato (UD), sfrutta l'acqua del torrente Degano derivata dall'argine a soglia fissa in località Ponte Coperto",
+    image: "/images/centrali/magnanins.jpg",
     models: {
       geometry: '/models/magnanins.frag',
       properties: '/models/magnanins.json'
@@ -275,6 +289,7 @@ export const hydroplants = [
     condotta: "900 m",
     modelUrl: "sanantonio",
     description: "L'impianto è situato in località San Antonio – comune di Tarvisio (UD) e devia le acque alla confluenza del Rio Lago e del Rio Bianco.",
+    image: "/images/centrali/san antonio.jpg",
     models: {
       geometry: '/models/sanantonio.frag',
       properties: '/models/sanantonio.json'
@@ -346,5 +361,10 @@ export const updateHydroData = async (newModel) => {
 
 export const getModelFilesByPlantId = (plantId) => {
   const plant = hydroplants.find(p => p.id === plantId);
-  return plant?.models || null;
+  if (!plant) return null;
+
+    return {
+    geometry: `/models/${plant.name.toLowerCase()}.frag`,
+    properties: `/models/${plant.name.toLowerCase()}.json`
+  };
 };

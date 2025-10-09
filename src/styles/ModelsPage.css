@@ -99,9 +99,8 @@
 
 /* Container del modello 3D di preview */
 .model-thumbnail {
-  height: 200px;
-  background-color: #f3f4f6;
-  position: relative;
+  height: auto;
+  position: center;
 }
 
 .model-info {

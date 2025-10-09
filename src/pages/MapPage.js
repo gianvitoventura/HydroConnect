@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, Circle } from 'react-leaflet';
 import { hydroplants } from '../data/HydroData';
 import GpsTracker from '../components/map/GpsTraker';
 import HydroRadarChart from '../components/map/HydroRadarChart';
@@ -36,9 +36,21 @@ const mapStyles = {
   }
 };
 
-// Configurazione layer con metadati migliorati - VERSIONE AGGIORNATA
+// Colori e configurazione centrali europee
+const EU_PLANT_COLORS = {
+  'HDAM': '#00d5ffff',  // Bacino - Turquoise/Acqua
+  'HROR': '#0099ffff',  // Acqua fluente - Verde
+  'HPHS': '#3300ffff'   // Accumulo - Viola
+};
+
+const EU_PLANT_TYPES = {
+  'HDAM': 'A bacino',
+  'HROR': 'Ad acqua fluente',
+  'HPHS': 'Ad accumulo'
+};
+
+// Configurazione layer con metadati migliorati
 const LAYER_CONFIG = {
-  // Layer esistenti (mantenuti)
   'Valle Po': {
     type: 'coverage',
     displayName: 'Valle Po',
@@ -96,9 +108,7 @@ const LAYER_CONFIG = {
     },
     zIndex: 5
   },
-  
-  // NUOVI LAYER AGGIUNTI
-    'MaB UNESCO': {
+  'MaB UNESCO': {
     type: 'unesco_buffer',
     displayName: 'MaB UNESCO',
     style: {
@@ -159,9 +169,9 @@ const turbineSVG = `
 const turbineIcon = L.divIcon({
   html: turbineSVG,
   className: 'turbine-marker',
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-  popupAnchor: [0, -12]
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
 });
 
 // Componente per il controllo della mappa
@@ -177,10 +187,67 @@ const MapController = ({ onMapReady }) => {
   return null;
 };
 
+// Componente Circle con radius dinamico in base allo zoom
+const DynamicCircle = ({ center, type, children, ...props }) => {
+  const map = useMap();
+  const [radius, setRadius] = useState(200);
+
+  useEffect(() => {
+    const updateRadius = () => {
+      const zoom = map.getZoom();
+      
+      // Formula: più zoom è basso, più il radius è grande
+      // Zoom 5 → 10000m, Zoom 7 → 2000m, Zoom 10 → 300m, Zoom 15 → 50m
+      let newRadius;
+      if (zoom <= 5) {
+        newRadius = 10000;
+      } else if (zoom <= 6) {
+        newRadius = 5000;
+      } else if (zoom <= 7) {
+        newRadius = 2000;
+      } else if (zoom <= 8) {
+        newRadius = 1000;
+      } else if (zoom <= 9) {
+        newRadius = 500;
+      } else if (zoom <= 10) {
+      }
+      
+      setRadius(newRadius);
+    };
+
+    // Aggiorna radius al mount
+    updateRadius();
+    
+    // Aggiorna radius quando cambia lo zoom
+    map.on('zoomend', updateRadius);
+    
+    return () => {
+      map.off('zoomend', updateRadius);
+    };
+  }, [map]);
+
+  return (
+    <Circle
+      center={center}
+      radius={radius}
+      pathOptions={{
+        fillColor: EU_PLANT_COLORS[type],
+        fillOpacity: 0.7,
+        color: EU_PLANT_COLORS[type],
+        weight: 1,
+        opacity: 0.9
+      }}
+      {...props}
+    >
+      {children}
+    </Circle>
+  );
+};
+
 const centerMap = [44.4, 7.5];
 
 function MapPage({ setCurrentPage }) {
-  // Stati
+  // Stati esistenti
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMapStyle, setCurrentMapStyle] = useState('terrain');
@@ -192,6 +259,94 @@ function MapPage({ setCurrentPage }) {
   const [isTracking, setIsTracking] = useState(false);
   const [loadingLayers, setLoadingLayers] = useState(false);
   const [layerErrors, setLayerErrors] = useState({});
+
+  // NUOVI Stati per centrali europee
+  const [europeanPlants, setEuropeanPlants] = useState([]);
+  const [euPlantsVisible, setEuPlantsVisible] = useState(true);
+  const [euLoadingError, setEuLoadingError] = useState(null);
+  const [euCountryFilter, setEuCountryFilter] = useState('all');
+  const [euTypeFilters, setEuTypeFilters] = useState({
+    'HDAM': true,
+    'HROR': true,
+    'HPHS': true
+  });
+  const [euMinPower, setEuMinPower] = useState(0);
+  const [availableCountries, setAvailableCountries] = useState([]);
+
+  // Funzione per pulire i nomi dalle virgolette escapate
+  const cleanString = (str) => {
+    if (!str) return '';
+    return str.toString().replace(/^"|"$/g, '').trim();
+  };
+
+  // Caricamento centrali europee
+  useEffect(() => {
+    const loadEuropeanPlants = async () => {
+      try {
+        const response = await fetch('/geoData/centraliEU.geojson');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data || !data.features) {
+          throw new Error('Formato GeoJSON non valido');
+        }
+
+        // Processa e pulisci i dati
+        const plants = data.features.map(feature => ({
+          id: cleanString(feature.properties['"id"']),
+          name: cleanString(feature.properties['"name"']),
+          capacity: feature.properties['"installed_capacity_MW"'],
+          pumping: feature.properties['"pumping_MW"'],
+          type: cleanString(feature.properties['"type"']),
+          country: cleanString(feature.properties['"country_code"']),
+          lat: feature.properties['"lat"'],
+          lon: feature.properties['"lon"'],
+          damHeight: feature.properties['"dam_height_m"'],
+          volume: feature.properties['"volume_Mm3"'],
+          storage: feature.properties['"storage_capacity_MWh"'],
+          generation: feature.properties['"avg_annual_generation_GWh"'],
+          coordinates: feature.geometry.coordinates
+        }));
+
+        setEuropeanPlants(plants);
+
+        // Estrai paesi unici
+        const countries = [...new Set(plants.map(p => p.country))].sort();
+        setAvailableCountries(countries);
+
+        console.log(`✅ Caricate ${plants.length} centrali europee da ${countries.length} paesi`);
+
+      } catch (error) {
+        console.error('❌ Errore caricamento centrali europee:', error);
+        setEuLoadingError(error.message);
+      }
+    };
+
+    loadEuropeanPlants();
+  }, []);
+
+  // Filtraggio centrali europee
+  const filteredEuropeanPlants = europeanPlants.filter(plant => {
+    // Filtro paese
+    if (euCountryFilter !== 'all' && plant.country !== euCountryFilter) {
+      return false;
+    }
+
+    // Filtro tipo
+    if (!euTypeFilters[plant.type]) {
+      return false;
+    }
+
+    // Filtro potenza minima
+    if (plant.capacity < euMinPower) {
+      return false;
+    }
+
+    return true;
+  });
 
   const toggleTracking = () => {
     if (!isTracking) {
@@ -209,7 +364,6 @@ function MapPage({ setCurrentPage }) {
   const createLayerStyle = useCallback((layerConfig, feature) => {
     const baseStyle = layerConfig.style;
     
-    // Se è un punto, usiamo i marker circolari
     if (feature?.geometry?.type === 'Point') {
       return {
         radius: baseStyle.radius || 6,
@@ -221,11 +375,10 @@ function MapPage({ setCurrentPage }) {
       };
     }
     
-    // Per LineString e Polygon
     return baseStyle;
   }, []);
 
-  // Caricamento dei layer GeoJSON migliorato
+  // Caricamento dei layer GeoJSON
   const loadPlantLayers = useCallback(async (plantId) => {
     const plant = hydroplants.find(p => p.id === plantId);
     if (!plant) {
@@ -242,13 +395,10 @@ function MapPage({ setCurrentPage }) {
       const plantFolder = plant.name.toLowerCase().replace(/\s+/g, '-');
       const basePath = '/geoData';
       
-      // Ordine di caricamento (dal basso verso l'alto per z-index)
       const layersToLoad = Object.entries(LAYER_CONFIG).sort((a, b) => a[1].zIndex - b[1].zIndex);
 
       for (const [fileName, config] of layersToLoad) {
         try {
-          console.log(`Tentativo di caricamento: ${basePath}/${plantFolder}/${fileName}.geojson`);
-          
           const response = await fetch(`${basePath}/${plantFolder}/${fileName}.geojson`);
           
           if (!response.ok) {
@@ -257,7 +407,6 @@ function MapPage({ setCurrentPage }) {
           
           const data = await response.json();
           
-          // Validazione GeoJSON più robusta
           if (!data || typeof data !== 'object') {
             throw new Error('Risposta non valida dal server');
           }
@@ -285,7 +434,6 @@ function MapPage({ setCurrentPage }) {
             featureCount: data.features.length
           };
 
-          // Imposta la visibilità iniziale
           setLayerVisibility(prev => ({
             ...prev,
             [layerKey]: true
@@ -295,13 +443,6 @@ function MapPage({ setCurrentPage }) {
 
         } catch (error) {
           console.error(`❌ Errore nel caricamento di ${fileName}:`, error);
-          
-          // Log dettagliato per errori HTML (404)
-          if (error.message.includes('DOCTYPE') || error.message.includes('Unexpected token')) {
-            console.warn(`🔍 File non trovato: ${basePath}/${plantFolder}/${fileName}.geojson`);
-            console.warn(`   Verifica che il file esista e sia accessibile`);
-          }
-          
           errors[fileName] = error.message;
         }
       }
@@ -330,16 +471,54 @@ function MapPage({ setCurrentPage }) {
   }, [createLayerStyle]);
 
   // Funzione per gestire le feature del layer
-  const onEachFeature = useCallback((feature, layer) => {
+  const onEachFeature = useCallback((feature, layer, layerConfig) => {
     if (feature.properties && Object.keys(feature.properties).length > 0) {
+      const props = feature.properties;
+      
+      let imagePath = null;
+      
+      if (props.image || props.foto || props.img || props.picture) {
+        imagePath = props.image || props.foto || props.img || props.picture;
+      } else if ((props.name || props.nome) && layerConfig?.type === 'poi') {
+        const fileName = (props.name || props.nome)
+          .toLowerCase()
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '');
+        imagePath = `/images/poi/${fileName}.jpg`;
+      }
+      
       const popupContent = `
-        <div class="popup-content">
-          <h3>${feature.properties.name || feature.properties.nome || 'Dettagli Feature'}</h3>
+        <div class="popup-content ${layerConfig?.type === 'poi' ? 'poi-popup' : ''}">
+          ${imagePath ? `
+            <div class="popup-image-container">
+              <img 
+                src="${imagePath}" 
+                alt="${props.name || props.nome || 'Punto di interesse'}"
+                class="popup-image"
+                onerror="this.parentElement.style.display='none'"
+              />
+            </div>
+          ` : ''}
+          
+          <h3>${props.name || props.nome || 'Dettagli Feature'}</h3>
+          
+          ${props.description || props.descrizione ? `
+            <div class="popup-description">
+              ${props.description || props.descrizione}
+            </div>
+          ` : ''}
+          
           <div class="popup-table-container">
             <table class="plant-details">
               <tbody>
-                ${Object.entries(feature.properties)
-                  .filter(([key, value]) => value !== null && value !== undefined && value !== '')
+                ${Object.entries(props)
+                  .filter(([key, value]) => 
+                    value !== null && 
+                    value !== undefined && 
+                    value !== '' &&
+                    !['name', 'nome', 'description', 'descrizione', 'image', 'foto', 'img', 'picture'].includes(key)
+                  )
                   .map(([key, value]) => `
                     <tr>
                       <td><strong>${key}:</strong></td>
@@ -355,7 +534,7 @@ function MapPage({ setCurrentPage }) {
       
       layer.bindPopup(popupContent, {
         maxWidth: 400,
-        className: 'custom-popup'
+        className: `custom-popup ${layerConfig?.type === 'poi' ? 'poi-custom-popup' : ''}`
       });
     }
   }, []);
@@ -429,20 +608,20 @@ function MapPage({ setCurrentPage }) {
     'A derivazione': '#007684ff'
   };
 
-  // Categorizzazione dei layer per una migliore organizzazione
+  // Categorizzazione dei layer
   const layerCategories = {
     'Infrastruttura': ['Opere lineari', 'Opere puntuali', 'Catasto'],
-    'Contesto': ['Core zone UNESCO', 'MaB UNESCO', 'Valle Po', 'Bacino idrografico', 'Punti interesse']
+    'Territorio': ['Core zone UNESCO', 'MaB UNESCO', 'Valle Po', 'Bacino idrografico', 'Punti interesse']
   };
 
-  // Rendering della legenda migliorata con categorizzazione
+  // Rendering della legenda
   const renderLegend = () => {
     const currentLayers = (activePlant && geoJSONLayers[activePlant]) ? geoJSONLayers[activePlant] : {};
 
     return (
       <div className="layer-section">
         <div className="layer-header">
-          <h3>Layer Control</h3>
+          <h3>Controllo Layer</h3>
           {loadingLayers && (
             <div className="loading-spinner">
               <div className="spinner-icon">⟳</div>
@@ -459,23 +638,7 @@ function MapPage({ setCurrentPage }) {
           </div>
         )}
 
-        {Object.keys(layerErrors).length > 0 && (
-          <div className="error-summary">
-            <details>
-              <summary>⚠️ Errori di caricamento ({Object.keys(layerErrors).length})</summary>
-              <div className="error-list">
-                {Object.entries(layerErrors).map(([layer, error]) => (
-                  <div key={layer} className="error-item">
-                    <strong>{layer}:</strong> {error}
-                  </div>
-                ))}
-              </div>
-            </details>
-          </div>
-        )}
-
         <div className="layer-list">
-          {/* Marker della centrale - sempre in cima */}
           {filteredPlants.length > 0 && (
             <div className="layer-category">
               <div 
@@ -492,11 +655,9 @@ function MapPage({ setCurrentPage }) {
             </div>
           )}
 
-          {/* Layer GeoJSON organizzati per categoria */}
           {currentLayers ? (
             <div className="layer-categories">
               {Object.entries(layerCategories).map(([categoryName, categoryLayers]) => {
-                // Filtra i layer di questa categoria che sono effettivamente caricati
                 const availableLayers = Object.entries(currentLayers)
                   .filter(([layerKey, layer]) => 
                     categoryLayers.some(catLayer => layer.fileName === catLayer)
@@ -549,7 +710,7 @@ function MapPage({ setCurrentPage }) {
             </div>
           ) : activePlant ? (
             <div className="no-layers-message">
-              <div className="message-icon">📭</div>
+              <div className="message-icon">🔭</div>
               <span>Nessun layer disponibile per questa centrale</span>
               <small>Verifica che i file GeoJSON siano presenti</small>
             </div>
@@ -561,6 +722,125 @@ function MapPage({ setCurrentPage }) {
             </div>
           )}
         </div>
+      </div>
+    );
+  };
+
+  // Rendering controlli centrali europee
+  const renderEuropeanControls = () => {
+    return (
+      <div className="european-plants-section">
+        <div className="section-header">
+          <h3>Centrali Europee</h3>
+          <label className="toggle-switch">
+            <input
+              type="checkbox"
+              checked={euPlantsVisible}
+              onChange={(e) => setEuPlantsVisible(e.target.checked)}
+            />
+            <span className="toggle-slider"></span>
+          </label>
+        </div>
+
+        {euLoadingError && (
+          <div className="error-message">
+            ⚠️ Errore caricamento: {euLoadingError}
+          </div>
+        )}
+
+        {euPlantsVisible && europeanPlants.length > 0 && (
+          <div className="european-controls">
+            {/* Filtro paese */}
+            <div className="filter-group">
+              <label>Filtra per paese:</label>
+              <select 
+                value={euCountryFilter} 
+                onChange={(e) => setEuCountryFilter(e.target.value)}
+                className="country-select"
+              >
+                <option value="all">Tutti i paesi ({availableCountries.length})</option>
+                {availableCountries.map(country => {
+                  const count = europeanPlants.filter(p => p.country === country).length;
+                  return (
+                    <option key={country} value={country}>
+                      {country} ({count})
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            {/* Filtro tipo */}
+            <div className="filter-group">
+              <label>Filtra per tipo:</label>
+              <div className="type-checkboxes">
+                {Object.entries(EU_PLANT_TYPES).map(([typeCode, typeName]) => (
+                  <label key={typeCode} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={euTypeFilters[typeCode]}
+                      onChange={(e) => setEuTypeFilters(prev => ({
+                        ...prev,
+                        [typeCode]: e.target.checked
+                      }))}
+                    />
+                    <span 
+                      className="type-indicator"
+                      style={{ backgroundColor: EU_PLANT_COLORS[typeCode] }}
+                    ></span>
+                    {typeName}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Filtro potenza */}
+            <div className="filter-group">
+              <label>
+                Potenza minima: {euMinPower} MW
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="500"
+                step="10"
+                value={euMinPower}
+                onChange={(e) => setEuMinPower(Number(e.target.value))}
+                className="power-slider"
+              />
+              <div className="slider-labels">
+                <span>0 MW</span>
+                <span>250 MW</span>
+                <span>500 MW</span>
+              </div>
+            </div>
+
+            {/* Contatore */}
+            <div className="plants-counter">
+              <strong>📊 Centrali visibili:</strong>
+              <span className="counter-value">
+                {filteredEuropeanPlants.length.toLocaleString()} / {europeanPlants.length.toLocaleString()}
+              </span>
+            </div>
+
+            {/* Legenda colori */}
+            <div className="eu-legend">
+              <h4>Legenda:</h4>
+              {Object.entries(EU_PLANT_TYPES).map(([typeCode, typeName]) => (
+                <div key={typeCode} className="legend-item">
+                  <div 
+                    className="legend-circle"
+                    style={{ 
+                      backgroundColor: EU_PLANT_COLORS[typeCode],
+                      opacity: 0.7 
+                    }}
+                  ></div>
+                  <span>{typeName}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -581,7 +861,7 @@ function MapPage({ setCurrentPage }) {
           
           <GpsTracker isTracking={isTracking} />
 
-          {/* Markers delle centrali */}
+          {/* Markers delle centrali principali */}
           {plantVisible && filteredPlants.map(plant => (
             <Marker 
               key={plant.id} 
@@ -596,16 +876,21 @@ function MapPage({ setCurrentPage }) {
               <Popup>
                 <div className="popup-content">
                   <h3>Centrale di {plant.name}</h3>
-                  <table className="plant-details">
-                    <tbody>
-                      <tr><td><strong>Tipo:</strong></td><td>{plant.type}</td></tr>
-                      <tr><td><strong>Potenza:</strong></td><td>{plant.power}</td></tr>
-                      <tr><td><strong>Portata:</strong></td><td>{plant.waterflow}</td></tr>
-                      <tr><td><strong>Salto:</strong></td><td>{plant.jump}</td></tr>
-                      <tr><td><strong>Macchinari:</strong></td><td>{plant.machine}</td></tr>
-                    </tbody>
-                  </table>
-                  <div className="plant-description">{plant.description}
+                  
+                  <div className="popup-body">
+                    {plant.image && (
+                      <div className="popup-image-container">
+                        <img 
+                          src={plant.image} 
+                          alt={`Centrale di ${plant.name}`}
+                          className="popup-image"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                    
                     <div className="popup-actions">
                       <button className="popup-button" onClick={() => handleHistoricalClick(plant.id)}>
                         Scopri di più
@@ -618,26 +903,103 @@ function MapPage({ setCurrentPage }) {
                       </button>
                     </div>
                   </div>
+                  
+                  <table className="plant-details">
+                    <tbody>
+                      <tr><td><strong>Tipo:</strong></td><td>{plant.type}</td></tr>
+                      <tr><td><strong>Potenza:</strong></td><td>{plant.power}</td></tr>
+                      <tr><td><strong>Portata:</strong></td><td>{plant.waterflow}</td></tr>
+                      <tr><td><strong>Salto:</strong></td><td>{plant.jump}</td></tr>
+                      <tr><td><strong>Macchinari:</strong></td><td>{plant.machine}</td></tr>
+                    </tbody>
+                  </table>
+                  
+                  <div className="plant-description">{plant.description}</div>
                 </div>
               </Popup>
             </Marker>
           ))}
 
-          {/* Layer GeoJSON renderizzati in ordine di z-index */}
+          {/* Centrali europee - CON RADIUS DINAMICO */}
+          {euPlantsVisible && filteredEuropeanPlants.map(plant => (
+            <DynamicCircle
+              key={`eu-${plant.id}`}
+              center={[plant.lat, plant.lon]}
+              type={plant.type}
+            >
+              <Popup>
+                <div className="popup-content eu-popup">
+                  <h3>{plant.name}</h3>
+                  
+                  <div className="eu-plant-badge">
+                    <span className="country-badge">{plant.country}</span>
+                    <span 
+                      className="type-badge"
+                      style={{ backgroundColor: EU_PLANT_COLORS[plant.type] }}
+                    >
+                      {EU_PLANT_TYPES[plant.type]}
+                    </span>
+                  </div>
+                  
+                  <table className="plant-details">
+                    <tbody>
+                      {plant.capacity && (
+                        <tr>
+                          <td><strong>Potenza installata:</strong></td>
+                          <td>{plant.capacity.toFixed(1)} MW</td>
+                        </tr>
+                      )}
+                      {plant.pumping && (
+                        <tr>
+                          <td><strong>Pompaggio:</strong></td>
+                          <td>{plant.pumping.toFixed(1)} MW</td>
+                        </tr>
+                      )}
+                      {plant.damHeight && (
+                        <tr>
+                          <td><strong>Altezza diga:</strong></td>
+                          <td>{plant.damHeight.toFixed(0)} m</td>
+                        </tr>
+                      )}
+                      {plant.volume && (
+                        <tr>
+                          <td><strong>Volume:</strong></td>
+                          <td>{plant.volume.toFixed(1)} Mm³</td>
+                        </tr>
+                      )}
+                      {plant.storage && (
+                        <tr>
+                          <td><strong>Capacità accumulo:</strong></td>
+                          <td>{(plant.storage / 1000).toFixed(1)} GWh</td>
+                        </tr>
+                      )}
+                      {plant.generation && (
+                        <tr>
+                          <td><strong>Produzione annua:</strong></td>
+                          <td>{plant.generation.toFixed(0)} GWh</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Popup>
+            </DynamicCircle>
+          ))}
+
+          {/* Layer GeoJSON */}
           {activePlant && geoJSONLayers[activePlant] && 
             Object.entries(geoJSONLayers[activePlant] || {})
               .sort((a, b) => a[1].config.zIndex - b[1].config.zIndex)
               .map(([layerKey, layer]) => {
                 const isVisible = layerVisibility[layerKey];
                 if (!isVisible) return null;
-                console.log(`🔍 Rendering layer: ${layerKey} (${layer.featureCount} features)`);
                 return (
                   <GeoJSON
                     key={layerKey}
                     data={layer.data}
                     pointToLayer={(feature, latlng) => pointToLayer(feature, latlng, layer.config)}
                     style={(feature) => createLayerStyle(layer.config, feature)}
-                    onEachFeature={onEachFeature}
+                    onEachFeature={(feature, leafletLayer) => onEachFeature(feature, leafletLayer, layer.config)}
                   />
                 );
               })}
@@ -645,27 +1007,27 @@ function MapPage({ setCurrentPage }) {
       </div>
 
       <div className="map-control-panel">
-        <h2>Hydropower Park</h2>
+        <h2>Parco Idroelettrico</h2>
 
         <div className="gps-control">
-          <h3>GPS Tracking</h3>
+          <h3>Qui sei tu!</h3>
           <button className={`gps-button ${isTracking ? 'active' : ''}`} onClick={toggleTracking}>
-            {isTracking ? '❌ Disattiva GPS' : '🔍 Attiva GPS'}
+            {isTracking ? '❌ Disattiva GPS' : '📍 Attiva GPS'}
           </button>
         </div>
 
         <div className="search-box">
-          <h3>Search Plants</h3>
+          <h3>Cerca una centrale</h3>
           <input
             type="text"
-            placeholder="Search plants..."
+            placeholder="Cerca centrali..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         <div className="filter-section">
-          <h3>Filter by Type</h3>
+          <h3>Filtra per tipo</h3>
           <div className="filter-buttons">
             <button 
               className={activeFilter === 'all' ? 'active' : ''} 
@@ -713,18 +1075,26 @@ function MapPage({ setCurrentPage }) {
 
         {/* Sezione risultati */}
         <div className="results-section">
-          <h3>{filteredPlants.length} plants found:</h3>
-          <ul className="plants-list">
-            {filteredPlants.map(plant => (
-              <li key={plant.id} style={{ color: CHART_COLORS[plant.type] }}>
-                {plant.name} - {plant.type}
-              </li>
-            ))}
-          </ul>
+          <details className="results-dropdown">
+            <summary className="results-summary">
+              <h3>{filteredPlants.length} centrali trovate</h3>
+              <span className="dropdown-arrow">▼</span>
+            </summary>
+            <ul className="plants-list">
+              {filteredPlants.map(plant => (
+                <li key={plant.id} style={{ color: CHART_COLORS[plant.type] }}>
+                  {plant.name} - {plant.type}
+                </li>
+              ))}
+            </ul>
+          </details>
         </div>
 
+        {/* NUOVA SEZIONE: Controlli centrali europee */}
+        {renderEuropeanControls()}
+
         <div className="map-style-section">
-          <h3>Map Style</h3>
+          <h3>Stile mappa</h3>
           <div className="map-style-selector">
             {Object.entries(mapStyles).map(([key, style]) => (
               <button

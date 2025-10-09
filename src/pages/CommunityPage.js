@@ -85,6 +85,14 @@ const CommunityPage = () => {
           </div>
         </div>
 
+         <div className="image-container">
+          <img 
+            src="/images/design/proposte.png" 
+            alt="Prendi parte agli orientamenti progettuali delle centali"
+            className="section-image"
+          />
+        </div>
+
         <div className="activities-section">
           <h2>Attività in Corso</h2>
           <div className="activities-grid">
