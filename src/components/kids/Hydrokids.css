@@ -1,0 +1,657 @@
+/* CentraleIdroelettricaKids.css */
+
+/* Container principale */
+.hydro-plant-kids-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #bae6fd, #93c5fd, #86efac);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .hydro-plant-kids-container {
+    padding: 2rem;
+  }
+}
+
+.hydro-plant-content {
+  max-width: 1536px;
+  margin: 0 auto;
+}
+
+/* Header Card */
+.hydro-header-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hydro-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.hydro-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.hydro-back-button:hover {
+  background: #d1d5db;
+  transform: translateX(-3px);
+}
+
+.hydro-main-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(to right, #2563eb, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 768px) {
+  .hydro-main-title {
+    font-size: 3rem;
+  }
+}
+
+.hydro-subtitle {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+/* Progress Tracker */
+.hydro-progress-tracker {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hydro-progress-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.hydro-progress-circle.completed {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  color: white;
+  transform: scale(1.1);
+}
+
+.hydro-progress-circle.incomplete {
+  background: #e5e7eb;
+  color: #9ca3af;
+}
+
+/* Controls Card */
+.hydro-controls-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hydro-controls-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #9333ea;
+}
+
+.hydro-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .hydro-controls-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.hydro-flow-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.hydro-flow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.hydro-flow-label {
+  font-weight: bold;
+  font-size: 1.125rem;
+  color: #374151;
+}
+
+.hydro-toggle-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  transform: scale(1);
+  border: none;
+  cursor: pointer;
+}
+
+.hydro-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.hydro-toggle-button.running {
+  background: linear-gradient(to right, #f87171, #ef4444);
+}
+
+.hydro-toggle-button.stopped {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+}
+
+.hydro-slider {
+  width: 100%;
+  height: 1rem;
+  border-radius: 9999px;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.hydro-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.hydro-slider::-moz-range-thumb {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.hydro-slider-value {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.hydro-metric-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.hydro-metric-card.water {
+  background: linear-gradient(to bottom right, #dbeafe, #bfdbfe);
+}
+
+.hydro-metric-card.energy {
+  background: linear-gradient(to bottom right, #fef3c7, #fed7aa);
+}
+
+.hydro-metric-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 0.5rem;
+}
+
+.hydro-metric-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.hydro-metric-value {
+  font-size: 2.25rem;
+  font-weight: bold;
+}
+
+.hydro-metric-card.water .hydro-metric-value {
+  color: #1e3a8a;
+}
+
+.hydro-metric-card.energy .hydro-metric-value {
+  color: #92400e;
+}
+
+/* Visualization Card */
+.hydro-visualization-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+@media (min-width: 768px) {
+  .hydro-visualization-card {
+    padding: 2rem;
+  }
+}
+
+.hydro-svg-container {
+  width: 100%;
+  height: auto;
+}
+
+/* Instructions Card */
+.hydro-instructions-card {
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.hydro-instructions-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #581c87;
+  margin-bottom: 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hydro-instructions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  font-size: 1.125rem;
+}
+
+@media (min-width: 768px) {
+  .hydro-instructions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.hydro-instruction-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.hydro-instruction-title {
+  color: #581c87;
+  font-weight: bold;
+}
+
+.hydro-instruction-text {
+  color: #374151;
+  margin-top: 0.25rem;
+}
+
+/* Popup Overlay */
+.hydro-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.hydro-popup-content {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  max-width: 42rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: bounceIn 0.5s ease-out;
+  pointer-events: auto;
+}
+
+/* Popup Header */
+.hydro-popup-header {
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hydro-popup-emoji-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 9rem;
+  opacity: 0.2;
+  line-height: 1;
+}
+
+.hydro-popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  z-index: 20;
+}
+
+.hydro-popup-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.hydro-popup-close:active {
+  transform: scale(0.95);
+}
+
+.hydro-popup-header-content {
+  position: relative;
+  z-index: 10;
+}
+
+.hydro-popup-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.hydro-popup-description {
+  font-size: 1.25rem;
+  color: #bfdbfe;
+}
+
+/* Popup Simple Explanation */
+.hydro-popup-explanation {
+  background: #fef3c7;
+  padding: 1.5rem;
+  border-bottom: 4px solid #fcd34d;
+}
+
+.hydro-popup-explanation-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.hydro-popup-emoji {
+  font-size: 2.25rem;
+  flex-shrink: 0;
+}
+
+.hydro-popup-explanation-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #78350f;
+  margin-bottom: 0.5rem;
+}
+
+.hydro-popup-explanation-text {
+  font-size: 1.125rem;
+  color: #92400e;
+}
+
+/* Popup Fun Facts */
+.hydro-popup-facts {
+  padding: 1.5rem;
+}
+
+.hydro-popup-facts-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hydro-popup-facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hydro-popup-fact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: linear-gradient(to right, #faf5ff, #fce7f3);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.hydro-popup-fact-item:nth-child(1) { animation-delay: 0ms; }
+.hydro-popup-fact-item:nth-child(2) { animation-delay: 100ms; }
+.hydro-popup-fact-item:nth-child(3) { animation-delay: 200ms; }
+.hydro-popup-fact-item:nth-child(4) { animation-delay: 300ms; }
+
+.hydro-popup-fact-emoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.hydro-popup-fact-text {
+  font-size: 1.125rem;
+  color: #374151;
+}
+
+/* Popup Footer */
+.hydro-popup-footer {
+  background: linear-gradient(to right, #d1fae5, #dbeafe);
+  padding: 1.5rem;
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+
+.hydro-popup-footer-text {
+  text-align: center;
+  font-size: 1.125rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.hydro-popup-footer-progress {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+
+/* Congratulations Popup */
+.hydro-congrats-popup {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  max-width: 28rem;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  animation: bounceIn 0.6s ease-out;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.hydro-congrats-emoji {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: bounce 1s infinite;
+}
+
+.hydro-congrats-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #9333ea;
+  margin-bottom: 1rem;
+}
+
+.hydro-congrats-text {
+  font-size: 1.25rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.hydro-congrats-reward {
+  background: linear-gradient(to right, #fef3c7, #fed7aa);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hydro-congrats-trophy {
+  font-size: 3.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.hydro-congrats-points {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ea580c;
+}
+
+.hydro-congrats-button {
+  background: linear-gradient(to right, #a855f7, #ec4899);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.hydro-congrats-button:hover {
+  background: linear-gradient(to right, #9333ea, #db2777);
+  transform: scale(1.05);
+}
+
+.hydro-congrats-button:active {
+  transform: scale(0.98);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* SVG Clickable Areas */
+.hydro-svg-clickable {
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.hydro-svg-clickable:hover {
+  opacity: 0.8;
+}
+
+.hydro-svg-clickable:active {
+  opacity: 0.6;
+}
+
+/* Scrollbar styling */
+.hydro-popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hydro-popup-content::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.hydro-popup-content::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+
+.hydro-popup-content::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

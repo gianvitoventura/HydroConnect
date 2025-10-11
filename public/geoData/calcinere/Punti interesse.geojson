@@ -1,0 +1,103 @@
+{
+  "type": "FeatureCollection",
+  "name": "nature_areas",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Monviso",
+        "type": "Parco Naturale",
+        "elevation": "3.841 m s.l.m.",
+        "area": "8.727 ettari",
+        "description": "Il Monviso è la montagna più alta delle Alpi Cozie. Dal 2013 è patrimonio UNESCO come riserva della biosfera transfrontaliera con la Francia. Dal 2016 fa parte del Parco Naturale del Monviso sul settore italiano, mentre su quello francese insiste il parco naturale del Queyras.",
+        "image": "/images/poi/monviso.JPG",
+        "url": "https://www.parcomonviso.eu/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.090031573795473,
+          44.6704632169754
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sorgente del Po",
+        "type": "Area Protetta",
+        "elevation": "2.020 m s.l.m.",
+        "area": "50 ettari",
+        "description": "Pian del Re, ai piedi del Monviso, è il luogo dove nasce il Po, il fiume più lungo d'Italia. L'area è caratterizzata da torbiere e zone umide di alto valore naturalistico.",
+        "image": "/images/poi/sorgente-del-po.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.09241542981489,
+          44.700439490550586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Monte Bracco",
+        "type": "SIC",
+        "elevation": "1.305 m s.l.m.",
+        "area": "1.732 ettari",
+        "description": "Il Monte Bracco è un massiccio montuoso che si erge isolato sulla pianura. È noto per la sua importante biodiversità e per il patrimonio geologico e mineralogico.",
+        "image": "/images/poi/monte-bracco.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.3390387514056385,
+          44.681591183422945
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bosco dell'Alevè",
+        "type": "Riserva Naturale",
+        "elevation": "2.100 m s.l.m.",
+        "area": "825 ettari",
+        "description": "Il più esteso bosco di pino cembro delle Alpi occidentali. Rappresenta un habitat unico per la sua biodiversità e il suo valore paesaggistico.",
+        "image": "/images/poi/bosco-dellaleve.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.133333,
+          44.616667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Grotte di Rio Martino",
+        "type": "Monumento Naturale",
+        "elevation": "1.530 m s.l.m.",
+        "area": "10 ettari",
+        "description": "Complesso sistema di grotte carsiche con importanti formazioni geologiche e habitat per specie rare di chirotteri.",
+        "image": "/images/poi/grotte-rio-martino.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.190278,
+          44.700833
+        ]
+      }
+    }
+  ]
+}

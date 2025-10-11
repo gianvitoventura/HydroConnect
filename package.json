@@ -1,0 +1,82 @@
+{
+  "name": "idroelettrica-webapp",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@react-three/drei": "^9.115.0",
+    "@react-three/fiber": "^8.17.10",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@thatopen/components": "~2.1.0",
+    "@thatopen/components-front": "~2.1.0",
+    "@thatopen/fragments": "~2.1.0",
+    "@thatopen/ui": "~2.1.0",
+    "@thatopen/ui-obc": "~2.1.0",
+    "axios": "^1.7.7",
+    "bowser": "^2.11.0",
+    "cesium": "^1.129.0",
+    "copy-webpack-plugin": "^13.0.1",
+    "file-loader": "^6.2.0",
+    "file-saver": "^2.0.5",
+    "leaflet": "^1.9.4",
+    "localforage": "^1.10.0",
+    "lucide-react": "^0.453.0",
+    "marzipano": "^0.10.2",
+    "pannellum": "^2.5.6",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-leaflet": "^4.2.1",
+    "react-pannellum": "^0.2.16",
+    "react-router-dom": "^6.27.0",
+    "react-scripts": "^5.0.1",
+    "recharts": "^2.8.0",
+    "resium": "^1.19.0-beta.1",
+    "screenfull": "^6.0.2",
+    "three": "^0.160.1",
+    "web-ifc": "^0.0.57",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "convert-ifc": "node scripts/convertIFC.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "source-map-loader": "^5.0.0",
+    "tailwindcss": "^3.4.14"
+  },
+  "devServer": {
+    "static": {
+      "directory": "public",
+      "staticOptions": {
+        "extensions": [
+          "mp4",
+          "MP4"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,451 @@
+.tour-container {
+  max-width: 100%;
+  padding: 2rem;
+  padding-left: 200px;
+  padding-right: 200px;
+  background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+  height: calc(100vh - 116px);
+  overflow-y: auto;
+  scrollbar-color: #6366f1 #ddd;
+}
+
+.back-button {
+  padding: 8px 16px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.back-button.floating {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background-color: #0d62d0;
+}
+
+.tour-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgb(16, 185, 129) 0%, #4f46e5 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.tour-header h1 {
+  font-size: 2.5rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tour-header .subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.category-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.category-filter-button {
+  padding: 6px 12px;
+  background-color: var(--primary-color, #6366f1);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.category-filter-button:hover {
+  background-color: var(--secondary-color, #4f46e5);
+  color: #7fffd4;
+}
+
+.category-filter-button.active {
+  background-color: var(--secondary-color, #4f46e5);
+}
+
+.tour-points-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+.tour-point {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tour-point h2 {
+  font-size: 1.5rem;
+  color: #333;
+  padding: 20px 20px 0 20px;
+  margin: 0;
+}
+
+.tour-point p {
+  color: #666;
+  padding: 10px 20px 20px 20px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Media Carousel Styles */
+.tour-image-carousel {
+  width: 100%;
+  position: relative;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect ratio */
+  overflow: hidden;
+}
+
+.carousel-container img,
+.carousel-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-container img.panorama-image {
+  cursor: pointer;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.carousel-container img.panorama-image:hover {
+  transform: scale(1.02);
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.carousel-button.prev {
+  left: 10px;
+}
+
+.carousel-button.next {
+  right: 10px;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.indicator:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.indicator.active {
+  background-color: white;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.media-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8px 16px;
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Marzipano Panorama Viewer Styles */
+.panorama-viewer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: #000;
+}
+
+.panorama-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+.close-viewer-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background-color 0.3s;
+}
+
+.close-viewer-button:hover {
+  background-color: rgba(255, 0, 0, 0.8);
+}
+
+.panorama-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-size: 1.2rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  z-index: 1001;
+}
+
+/* Indicatore 360 */
+.panorama-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  z-index: 5;
+}
+
+/* Pannello informazioni extra */
+.extra-info {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.extra-info h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.info-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h3 {
+  font-size: 1.2rem;
+  color: #1a73e8;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .tour-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .tour-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .tour-header .subtitle {
+    font-size: 1rem;
+  }
+
+  .tour-point h2 {
+    font-size: 1.2rem;
+  }
+
+  .carousel-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .back-button.floating {
+    position: static;
+    margin-bottom: 20px;
+  }
+
+  .tour-header {
+    padding-top: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .tour-points-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* Stili per i punti informativi */
+.hotspot.info-point {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(0, 120, 255, 0.7);
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hotspot.info-point::after {
+  content: "i";
+  color: white;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.hotspot.info-point:hover {
+  transform: scale(2);
+  background-color: rgba(0, 120, 255, 0.9);
+}
+
+/* Stili per il modale informativo */
+.info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.info-modal {
+  background-color: white;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.info-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #3b82f6;
+}
+
+.info-modal-header h3 {
+  font-size: 1.5rem;
+  color: #3b82f6;
+}
+
+.close-modal-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-modal-button:hover {
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+}
+
+.info-modal-content {
+  padding: 20px;
+  line-height: 1.5;
+  color: #333;
+  font-size: 1rem;
+}

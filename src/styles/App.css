@@ -1,0 +1,342 @@
+@import url(https://fonts.googleapis.com/css?family=Archivo+Black:regular);
+@import url(https://fonts.googleapis.com/css?family=Roboto:regular);
+
+
+/* Layout principale */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header styles */
+header {
+  background-color: #003d9e;
+  color: white;
+  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 2rem;
+}
+
+/* Hamburger Menu */
+.hamburger-menu {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px 0;
+  background-color: white;
+  transition: transform 0.3s ease;
+}
+
+/* Nav links container */
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Button styles */
+.nav-buttons {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  position: relative;
+  align-items: bottom;
+}
+
+.nav-buttons button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  padding: 0.5rem;
+}
+
+.nav-buttons:hover {
+  color: #7fffd4;
+}
+
+.nav-buttons button:hover {
+  color: #7fffd4;
+}
+
+.nav-buttons::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #7fffd4;
+  bottom: 0;
+  left: 0;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.nav-buttons:hover::after {
+  transform: scaleX(1);
+}
+
+.popup {
+  position: absolute;
+  background-color: rgba(222, 222, 222, 1);
+  color: #003d9e;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  z-index: 10000;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.home-content h2 {
+  display: inline-block;
+  font-size: 2.5em; /* Dimensione del testo */
+  text-align: center; /* Allinea il testo */
+}
+
+/* Main content */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Homepage styles */
+.home-content {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 116px);
+  overflow: hidden;
+  /* Immagine di fallback */
+  background-image: url('./logo/DJI_0159.JPG');
+  background-size: cover;
+  background-position: center top;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-content-overlay {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px;
+  /* background: rgba(0, 0, 0, 0.4); sfondo semi-trasparente per leggibilità */
+  border-radius: 10px;
+}
+
+.overlay-image {
+  max-width: 300px;
+}
+
+.hero-section {
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: 'Archivo Black', sans-serif;
+  color: #ffffff;
+  text-align: center;
+}
+
+p {
+  color: #ffffff;
+  text-align: center;
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+.rotating-icon {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer styles */
+footer {
+  background-color: #003d9e;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.footer-content {
+  font-size: 0.875rem;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: opacity 0.3s;
+}
+
+footer a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  /* Mostra hamburger menu su dispositivi mobili */
+  .hamburger-menu {
+    display: block;
+  }
+  
+  /* Stile del menu mobile */
+  .nav-links.mobile {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 40%;
+    flex-direction: column;
+    background-color: #003d9e;
+    padding: 5rem 1.5rem 2rem;
+    transition: bottom 0.3s ease;
+    z-index: 1000;
+    gap: 2rem;
+  }
+  
+  /* Quando il menu è aperto */
+  .nav-links.mobile.open {
+    right: 0;
+  }
+  
+  /* Stile dei bottoni nel menu mobile */
+  .nav-links.mobile .nav-buttons {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-links.mobile .nav-buttons button {
+    font-size: 1.2rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links.mobile .nav-buttons:hover {
+    color: #7fffd4;
+  }
+  .nav-links.mobile .nav-buttons button:hover {
+    color: #7fffd4;
+  }
+  
+  /* Animazione per il menu hamburger quando è aperto */
+  .hamburger-menu.open .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  
+  .hamburger-menu.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger-menu.open .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+  }
+  
+  /* Modifica il logo su mobile */
+  .logo .overlay-image {
+    max-width: 200px;
+  }
+  
+  /* Regola dimensione testo */
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+/* Stili globali per il viewer */
+html, 
+body, 
+#root, 
+.App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+main {
+  height: calc(100vh - 116px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Stili per assicurare che il container del viewer abbia l'altezza corretta */
+.bim-viewer-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+main {
+  position: relative;
+  height: calc(100vh - 116px);
+  overflow: hidden;
+}
