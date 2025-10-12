@@ -249,7 +249,7 @@ function MapPage({ setCurrentPage }) {
   // Stati esistenti
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentMapStyle, setCurrentMapStyle] = useState('terrain');
+  const [currentMapStyle, setCurrentMapStyle] = useState('humanitarian');
   const [activePlant, setActivePlant] = useState(null);
   const [plantVisible, setPlantVisible] = useState(true);
   const [geoJSONLayers, setGeoJSONLayers] = useState({});
@@ -548,7 +548,7 @@ function MapPage({ setCurrentPage }) {
         setPlantVisible(true);
         setLayerErrors({});
         
-        mapInstance.setView(centerMap, 7, {
+        mapInstance.setView(centerMap, 5, {
           animate: true,
           duration: 1
         });
@@ -849,7 +849,7 @@ function MapPage({ setCurrentPage }) {
       <div className="map-container">
         <MapContainer 
           center={centerMap} 
-          zoom={7} 
+          zoom={5} 
           scrollWheelZoom={true}
         >
           <MapController onMapReady={setMapInstance} />
