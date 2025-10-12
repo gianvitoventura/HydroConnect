@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/HydroConnect/static/css/main.3e797235.css",
+    "main.js": "/HydroConnect/static/js/main.306183b0.js",
+    "static/js/123.6d203cd8.chunk.js": "/HydroConnect/static/js/123.6d203cd8.chunk.js",
+    "static/js/549.d1ea52ea.chunk.js": "/HydroConnect/static/js/549.d1ea52ea.chunk.js",
+    "static/css/841.b5fd88e0.chunk.css": "/HydroConnect/static/css/841.b5fd88e0.chunk.css",
+    "static/js/841.9f4fd2d7.chunk.js": "/HydroConnect/static/js/841.9f4fd2d7.chunk.js",
+    "static/js/216.0fb60037.chunk.js": "/HydroConnect/static/js/216.0fb60037.chunk.js",
+    "static/js/738.a238ce24.chunk.js": "/HydroConnect/static/js/738.a238ce24.chunk.js",
+    "static/css/454.d89acdec.chunk.css": "/HydroConnect/static/css/454.d89acdec.chunk.css",
+    "static/js/454.b1e86278.chunk.js": "/HydroConnect/static/js/454.b1e86278.chunk.js",
+    "static/js/511.2ecc4939.chunk.js": "/HydroConnect/static/js/511.2ecc4939.chunk.js",
+    "static/media/Calcinere.mp4": "/HydroConnect/static/media/Calcinere.88b0e1a00bf07795ad14.mp4",
+    "static/media/DJI_0159.JPG": "/HydroConnect/static/media/DJI_0159.f266cef92f52d69bc9d7.JPG",
+    "static/media/link.png": "/HydroConnect/static/media/link.88b7b754f25377356733.png",
+    "static/media/HYDROC.png": "/HydroConnect/static/media/HYDROC.9c25fdf45dbb37366753.png",
+    "index.html": "/HydroConnect/index.html",
+    "main.3e797235.css.map": "/HydroConnect/static/css/main.3e797235.css.map",
+    "main.306183b0.js.map": "/HydroConnect/static/js/main.306183b0.js.map",
+    "123.6d203cd8.chunk.js.map": "/HydroConnect/static/js/123.6d203cd8.chunk.js.map",
+    "549.d1ea52ea.chunk.js.map": "/HydroConnect/static/js/549.d1ea52ea.chunk.js.map",
+    "841.b5fd88e0.chunk.css.map": "/HydroConnect/static/css/841.b5fd88e0.chunk.css.map",
+    "841.9f4fd2d7.chunk.js.map": "/HydroConnect/static/js/841.9f4fd2d7.chunk.js.map",
+    "216.0fb60037.chunk.js.map": "/HydroConnect/static/js/216.0fb60037.chunk.js.map",
+    "738.a238ce24.chunk.js.map": "/HydroConnect/static/js/738.a238ce24.chunk.js.map",
+    "454.d89acdec.chunk.css.map": "/HydroConnect/static/css/454.d89acdec.chunk.css.map",
+    "454.b1e86278.chunk.js.map": "/HydroConnect/static/js/454.b1e86278.chunk.js.map",
+    "511.2ecc4939.chunk.js.map": "/HydroConnect/static/js/511.2ecc4939.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3e797235.css",
+    "static/js/main.306183b0.js"
+  ]
+}
