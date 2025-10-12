@@ -796,7 +796,7 @@ function MapPage({ setCurrentPage }) {
             {/* Filtro potenza */}
             <div className="filter-group">
               <label>
-                Potenza minima: {euMinPower} MW
+                Filtra per potenza minima
               </label>
               <input
                 type="range"
@@ -808,7 +808,7 @@ function MapPage({ setCurrentPage }) {
                 className="power-slider"
               />
               <div className="slider-labels">
-                <span>0 MW</span>
+                <span>3 MW</span>
                 <span>250 MW</span>
                 <span>500 MW</span>
               </div>

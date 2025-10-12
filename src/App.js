@@ -206,7 +206,7 @@ function App() {
       </main>
       <footer>
         <div className="footer-content">
-          © 2025 <a href="https://www.siedenergia.it/" target="_blank" rel="noopener noreferrer">SIED</a> and <a href="http://www.drawingtothefuture.polito.it/" target="_blank" rel="noopener noreferrer">drawingTOthefuture</a> 
+          © 2025 <a href="http://www.drawingtothefuture.polito.it/" target="_blank" rel="noopener noreferrer">drawingTOthefuture</a> 
           {/* All rights reserved. */}
         </div>
       </footer>
