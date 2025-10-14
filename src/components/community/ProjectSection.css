@@ -106,7 +106,7 @@
 /* === TOGGLE GRAFICO === */
 .chart-toggle {
   text-align: center;
-  margin: 2rem 0;
+  margin: 2rem;;
 }
 
 .toggle-chart-btn {
@@ -132,11 +132,7 @@
 
 /* === GRAFICO === */
 .chart-container {
-  background: #f8fafc;
-  padding: 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  border: 2px solid #e2e8f0;
+  margin-bottom: 3rem;
 }
 
 .chart-container h3 {

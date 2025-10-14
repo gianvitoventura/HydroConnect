@@ -26,7 +26,7 @@ const PROJECTS = [
     image: "/images/design/idee/Musealizzazione impianto.png",
     scores: {
       technical: { reliability: 3, complexity: 4, innovation: 2 },
-      economic: { investment: 4, management: 4, avoidedCosts: 1 },
+      economic: { investment: 5, management: 5, avoidedCosts: 1 },
       social: { employment: 4, accessibility: 5, community: 4 },
       environmental: { biodiversity: 2, landscape: 3, co2: 3 }
     }
@@ -112,17 +112,17 @@ const PROJECTS = [
 ];
 
 const CATEGORIES = {
-  technical: { label: 'Tecnico', color: '#2563eb' },
-  economic: { label: 'Economico', color: '#059669' },
-  social: { label: 'Sociale', color: '#d97706' },
-  environmental: { label: 'Ambientale', color: '#7c3aed' }
+  technical: { label: 'Tecnico', color: '#20a9cbff' },
+  economic: { label: 'Economico', color: '#c2b32aff' },
+  social: { label: 'Sociale', color: '#942d2dff' },
+  environmental: { label: 'Ambientale', color: '#2d9a60ff' }
 };
 
 // Palette colori per il radar chart
 const getProjectColor = (index) => {
   const colors = [
     '#2563eb', '#d97706', '#059669', '#dc2626', 
-    '#7c3aed', '#0891b2', '#ea580c', '#65a30d'
+    '#bded3aff', '#0891b2', '#ea580c', '#65a30d'
   ];
   return colors[index % colors.length];
 };
@@ -250,12 +250,6 @@ const ProjectsSection = () => {
             </div>
           ))}
         </div>
-        <div className="weights-total">
-          Totale: {Object.values(weights).reduce((a, b) => a + b, 0)}%
-          {Object.values(weights).reduce((a, b) => a + b, 0) < 100 && 
-            <span className="weights-info"> • Spazio disponibile: {100 - Object.values(weights).reduce((a, b) => a + b, 0)}%</span>
-          }
-        </div>
       </div>
 
       {/* Pulsante Grafico */}
@@ -272,8 +266,6 @@ const ProjectsSection = () => {
       {/* Grafico Radar */}
       {showChart && (
         <div className="chart-container">
-          <h3>📊 Confronto Progetti</h3>
-          
           <ResponsiveContainer width="100%" height={400}>
             <RadarChart data={radarData()}>
               <PolarGrid stroke="#e5e7eb" />

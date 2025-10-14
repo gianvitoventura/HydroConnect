@@ -85,27 +85,6 @@ const CommunityPage = () => {
             <p className="metric-trend positive">↑ questo mese</p>
           </div>
         </div>
-
-        {/* <div className="activities-section">
-          <h2>Attività in Corso</h2>
-          <div className="activities-grid">
-            {currentActivities.map((activity, index) => (
-              <div key={index} className="activity-card">
-                <div className="activity-header">
-                  <h3>{activity.title}</h3>
-                  <span className="activity-status">{activity.status}</span>
-                </div>
-                <p className="activity-date">{activity.date}</p>
-                <p className="activity-participants">
-                  {activity.participants} partecipanti
-                </p>
-                <button className="join-button">
-                  Partecipa
-                </button>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </div>
 
       {/* 🏗️ SEZIONE PROGETTI */}
@@ -120,27 +99,27 @@ const CommunityPage = () => {
               {
                 stage: 'empathize',
                 title: 'Empathize',
-                description: 'Comprendi i bisogni della community'
+                description: 'Comprendi i bisogni dell\'intera community'
               },
               {
                 stage: 'define',
                 title: 'Define',
-                description: 'Definisci il problema da risolvere'
+                description: 'Definisci il problema specifico che vouoi risolvere'
               },
               {
                 stage: 'ideate',
                 title: 'Ideate',
-                description: 'Genera idee e soluzioni innovative'
+                description: 'Esplora e genera un ventaglio di idee e soluzioni innovative'
               },
               {
                 stage: 'prototype',
                 title: 'Prototype',
-                description: 'Crea un prototipo della soluzione'
+                description: 'Crea un singolo prototipo della soluzione che ti sembra migliore'
               },
               {
                 stage: 'test',
                 title: 'Test',
-                description: 'Testa e raccogli feedback'
+                description: 'Testa la soluzione e raccogli feedback'
               }
             ].map(({ stage, title, description }) => (
               <div key={stage} className="process-card">
@@ -172,6 +151,27 @@ const CommunityPage = () => {
           </form>
         </div>
       </div>
+
+              <div className="activities-section">
+          <h2>Attività in Corso</h2>
+          <div className="activities-grid">
+            {currentActivities.map((activity, index) => (
+              <div key={index} className="activity-card">
+                <div className="activity-header">
+                  <h3>{activity.title}</h3>
+                  <span className="activity-status">{activity.status}</span>
+                </div>
+                <p className="activity-date">{activity.date}</p>
+                <p className="activity-participants">
+                  {activity.participants} partecipanti
+                </p>
+                <button className="join-button">
+                  Partecipa
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 .kids-page {
     max-width: 100%;
     padding: 2rem 200px;
-    background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+    background: #90CCCB;
     height: calc(100vh - 116px);
     overflow-y: auto;
     scrollbar-color: #6366f1 #ddd;

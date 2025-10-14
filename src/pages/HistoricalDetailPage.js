@@ -91,13 +91,15 @@ const HistoricalDetailPage = ({ plantId, setCurrentPage }) => {
   const plant = hydroplants.find(p => p.id === plantId);
 
   const filteredTimeline = useMemo(() => {
+    if (!plantData || !plantData.timeline) return [];
     return plantData.timeline.filter(event => activeEra === 'all' || event.category === activeEra);
   }, [plantData, activeEra]);
 
-  if (!plantData || !plant) {
+  // Se la centrale non esiste affatto, mostra errore
+  if (!plant) {
     return (
       <div className="historical-page-container">
-        <h1>Dati storici non disponibili</h1>
+        <h1>Centrale non trovata</h1>
         <button 
           className="back-button floating"
           onClick={() => setCurrentPage({ page: 'map' })}
@@ -107,6 +109,9 @@ const HistoricalDetailPage = ({ plantId, setCurrentPage }) => {
       </div>
     );
   }
+
+  // Se la centrale esiste ma non ha dati storici
+  const hasHistoricalData = plantData && plantData.timeline && plantData.timeline.length > 0;
 
   return (
     <div className="historical-page-container">
@@ -120,76 +125,97 @@ const HistoricalDetailPage = ({ plantId, setCurrentPage }) => {
       <div className="historical-header">
         <h1>La storia di {plant.name}</h1>
         <p className="subtitle">
-          Scopri le origini per capire come affrontare le sfide del futuro della centrale idroelettrica
+          {hasHistoricalData 
+            ? "Scopri le origini per capire come affrontare le sfide del futuro della centrale idroelettrica"
+            : "La storia di questa centrale non è ancora stata scritta"}
         </p>
       </div>
 
-      <div className="era-filters">
-        <button 
-          className={`era-filter-button ${activeEra === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveEra('all')}
-        >
-          Tutto
-        </button>
-        <button 
-          className={`era-filter-button ${activeEra === 'past' ? 'active' : ''}`}
-          onClick={() => setActiveEra('past')}
-        >
-          Le origini
-        </button>
-        <button 
-          className={`era-filter-button ${activeEra === 'today' ? 'active' : ''}`}
-          onClick={() => setActiveEra('today')}
-        >
-          Gli ultimi anni
-        </button>
-        <button 
-          className={`era-filter-button ${activeEra === 'future' ? 'active' : ''}`}
-          onClick={() => setActiveEra('future')}
-        >
-          Le sfide del futuro
-        </button>
-      </div>
+      {hasHistoricalData ? (
+        <>
+          <div className="era-filters">
+            <button 
+              className={`era-filter-button ${activeEra === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveEra('all')}
+            >
+              Tutto
+            </button>
+            <button 
+              className={`era-filter-button ${activeEra === 'past' ? 'active' : ''}`}
+              onClick={() => setActiveEra('past')}
+            >
+              Le origini
+            </button>
+            <button 
+              className={`era-filter-button ${activeEra === 'today' ? 'active' : ''}`}
+              onClick={() => setActiveEra('today')}
+            >
+              Gli ultimi anni
+            </button>
+            <button 
+              className={`era-filter-button ${activeEra === 'future' ? 'active' : ''}`}
+              onClick={() => setActiveEra('future')}
+            >
+              Le sfide del futuro
+            </button>
+          </div>
 
-      <div className="timeline-container">
-        <div className="timeline-line"></div>
-        {filteredTimeline.map((event, index) => (
-          <div 
-            key={index}
-            className={`timeline-event ${index % 2 === 0 ? 'left' : 'right'}`}
-          >
-            <div className="timeline-dot"></div>
-            <div className="timeline-year">
-              <h3>{event.year}</h3>
-              <h2>{event.title}</h2>
-              <h4>{event.description}</h4>
-            </div>
-            <div className="timeline-content">
-              <div className="timeline-card">
-                <MediaCarousel media={event.media} />
+          <div className="timeline-container">
+            <div className="timeline-line"></div>
+            {filteredTimeline.map((event, index) => (
+              <div 
+                key={index}
+                className={`timeline-event ${index % 2 === 0 ? 'left' : 'right'}`}
+              >
+                <div className="timeline-dot"></div>
+                <div className="timeline-year">
+                  <h3>{event.year}</h3>
+                  <h2>{event.title}</h2>
+                  <h4>{event.description}</h4>
+                </div>
+                <div className="timeline-content">
+                  <div className="timeline-card">
+                    <MediaCarousel media={event.media} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {plantData.extraInfo && (
+            <div className="extra-info">
+              <h2>Approfondimenti</h2>
+              <div className="info-grid">
+                {plantData.extraInfo.culturalValue && (
+                  <div className="info-card">
+                    <h3>Valore Culturale</h3>
+                    <p>{plantData.extraInfo.culturalValue}</p>
+                  </div>
+                )}
+                {plantData.extraInfo.architecturalFeatures && (
+                  <div className="info-card">
+                    <h3>Caratteristiche Architettoniche</h3>
+                    <p>{plantData.extraInfo.architecturalFeatures}</p>
+                  </div>
+                )}
+                {plantData.extraInfo.technologicalEvolution && (
+                  <div className="info-card">
+                    <h3>Evoluzione Tecnologica</h3>
+                    <p>{plantData.extraInfo.technologicalEvolution}</p>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="extra-info">
-        <h2>Approfondimenti</h2>
-        <div className="info-grid">
-          <div className="info-card">
-            <h3>Valore Culturale</h3>
-            <p>{plantData.extraInfo.culturalValue}</p>
-          </div>
-          <div className="info-card">
-            <h3>Caratteristiche Architettoniche</h3>
-            <p>{plantData.extraInfo.architecturalFeatures}</p>
-          </div>
-          <div className="info-card">
-            <h3>Evoluzione Tecnologica</h3>
-            <p>{plantData.extraInfo.technologicalEvolution}</p>
+          )}
+        </>
+      ) : (
+        <div className="no-history-message">
+          <div className="empty-state">
+            <div className="empty-icon">📜</div>
+            <h2>Storia in arrivo</h2>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

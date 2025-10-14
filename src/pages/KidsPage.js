@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Droplet, Zap, Leaf, Award, Book, Star, Check, X, Puzzle } from 'lucide-react';
+import { Droplet, Zap, Leaf, Award, Book, Star, Check, X} from 'lucide-react';
 import '../styles/KidsPage.css';
 import '../styles/KidsFont.css';
 
@@ -97,7 +97,7 @@ const KidsPage = () => {
     {
       id: 'hydro-plant',
       title: 'Centrale Idroelettrica Interattiva',
-      icon: <Puzzle className="activity-icon" />,
+      className: "activity-icon",
       description: 'Esplora come funziona una vera centrale idroelettrica!',
       emoji: '🌊',
       points: 100
@@ -112,12 +112,12 @@ const KidsPage = () => {
       description: 'Hai scoperto il viaggio dell\'acqua dalla montagna al mare!'
     },
     engineer: {
-      name: 'Ingegnere Provetto',
+      name: 'Ingegnere provetto',
       icon: <Book className="badge-icon" />,
       description: 'Hai imparato come funziona una centrale idroelettrica!'
     },
     superhero: {
-      name: 'Supereroe',
+      name: 'Difensore del pianeta',
       icon: <Star className="badge-icon" />,
       description: 'Conosci l\'importanza dell\'energia pulita per il nostro pianeta!'
     }
@@ -318,7 +318,7 @@ const KidsPage = () => {
 
             {/* Interactive Activities Section - NUOVA SEZIONE */}
             <div className="activities-section">
-              <h2>🎮 Attività Interattive</h2>
+              <h2>🎮 Attività Interattiva</h2>
               <div className="interactive-activities-grid">
                 {interactiveActivities.map(activity => (
                   <div

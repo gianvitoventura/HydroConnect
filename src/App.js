@@ -92,7 +92,7 @@ function Header({ setCurrentPage, currentPage }) {
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('models')}
-              onMouseEnter={(e) => handleMouseEnter('Naviga i modelli 3D e immergiti nelle centrali', e)}
+              onMouseEnter={(e) => handleMouseEnter('Esplora le centrali e naviga i modelli 3D', e)}
               onMouseLeave={handleMouseLeave}
             >
               Tour

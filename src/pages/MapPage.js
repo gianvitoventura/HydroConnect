@@ -39,7 +39,7 @@ const mapStyles = {
 // Colori e configurazione centrali europee
 const EU_PLANT_COLORS = {
   'HDAM': '#00d5ffff',  // Bacino 
-  'HROR': '#00ffccff',  // Acqua fluente
+  'HROR': '#00ffb7ff',  // Acqua fluente
   'HPHS': '#3300ffff'   // Accumulo
 };
 
@@ -200,20 +200,19 @@ const DynamicCircle = ({ center, type, capacity, children, ...props }) => {
       let powerMultiplier = 1;
       
       if (capacity && capacity > 0) {
-        // Usa scala logaritmica per evitare differenze troppo grandi
+        // Usa scala logaritmica con range molto più ampio per differenze marcate
         // Potenze tipiche: 1 MW - 2000 MW
         const logCapacity = Math.log10(Math.max(capacity, 1));
         const minLog = 0; // log10(1) = 0
         const maxLog = Math.log10(2000); // ~3.3
         
-        // Mappa su range 0.4 - 3.0 (aumentato per differenze più visibili)
-        powerMultiplier = 0.4 + ((logCapacity - minLog) / (maxLog - minLog)) * 2.6;
-        powerMultiplier = Math.max(0.4, Math.min(3.0, powerMultiplier));
-        
-        // Debug per le prime 5 centrali
-        if (Math.random() < 0.01) { // Log solo 1% delle volte per non intasare console
-          console.log(`🔷 Centrale ${capacity.toFixed(0)} MW → moltiplicatore: ${powerMultiplier.toFixed(2)}x`);
-        }
+        // Mappa su range 0.25 - 4.5 per differenze molto visibili
+        // Centrali piccole (<10 MW): 0.25x - 0.6x
+        // Centrali medie (10-100 MW): 0.6x - 1.8x
+        // Centrali grandi (100-500 MW): 1.8x - 3.2x
+        // Centrali molto grandi (>500 MW): 3.2x - 4.5x
+        powerMultiplier = 0.25 + ((logCapacity - minLog) / (maxLog - minLog)) * 4.25;
+        powerMultiplier = Math.max(0.25, Math.min(4.5, powerMultiplier));
       }
       
       // Formula base: più zoom è basso, più il radius è grande
@@ -230,8 +229,10 @@ const DynamicCircle = ({ center, type, capacity, children, ...props }) => {
         baseRadius = 500;
       } else if (zoom <= 10) {
         baseRadius = 300;
-      } else {
+      } else if (zoom <= 11) {
         baseRadius = 200;
+      } else {
+        baseRadius = 150;
       }
       
       // Applica il moltiplicatore di potenza
@@ -256,7 +257,7 @@ const DynamicCircle = ({ center, type, capacity, children, ...props }) => {
       radius={radius}
       pathOptions={{
         fillColor: EU_PLANT_COLORS[type],
-        fillOpacity: 0.7,
+        fillOpacity: 0.3,
         color: EU_PLANT_COLORS[type],
         weight: 1,
         opacity: 0.9
@@ -308,6 +309,7 @@ function MapPage({ setCurrentPage }) {
     const loadEuropeanPlants = async () => {
       try {
         const response = await fetch('/geoData/centraliEU.geojson');
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -319,21 +321,40 @@ function MapPage({ setCurrentPage }) {
         }
 
         // Processa e pulisci i dati
-        const plants = data.features.map(feature => ({
-          id: cleanString(feature.properties['"id"']),
-          name: cleanString(feature.properties['"name"']),
-          capacity: feature.properties['"installed_capacity_MW"'],
-          pumping: feature.properties['"pumping_MW"'],
-          type: cleanString(feature.properties['"type"']),
-          country: cleanString(feature.properties['"country_code"']),
-          lat: feature.properties['"lat"'],
-          lon: feature.properties['"lon"'],
-          damHeight: feature.properties['"dam_height_m"'],
-          volume: feature.properties['"volume_Mm3"'],
-          storage: feature.properties['"storage_capacity_MWh"'],
-          generation: feature.properties['"avg_annual_generation_GWh"'],
-          coordinates: feature.geometry.coordinates
-        }));
+        const plants = data.features.map((feature, index) => {
+          const props = feature.properties;
+          
+          // Prova TUTTE le possibili varianti
+          let capacity = props['"installed_capacity_MW"'] || 
+                        props['installed_capacity_MW'] || 
+                        props.installed_capacity_MW || 
+                        props.capacity ||
+                        props.Capacity ||
+                        props.CAPACITY ||
+                        props['Installed Capacity (MW)'] ||
+                        props['Installed_Capacity_MW'] ||
+                        props.power ||
+                        props.Power || 0;
+          
+          // Converti in numero
+          capacity = parseFloat(capacity) || 0;
+          
+          return {
+            id: cleanString(props['"id"'] || props.id || index),
+            name: cleanString(props['"name"'] || props.name || 'Unknown'),
+            capacity: capacity,
+            pumping: parseFloat(props['"pumping_MW"'] || props.pumping_MW) || 0,
+            type: cleanString(props['"type"'] || props.type || 'HDAM'),
+            country: cleanString(props['"country_code"'] || props.country_code || 'XX'),
+            lat: parseFloat(props['"lat"'] || props.lat || 0),
+            lon: parseFloat(props['"lon"'] || props.lon || 0),
+            damHeight: parseFloat(props['"dam_height_m"'] || props.dam_height_m) || 0,
+            volume: parseFloat(props['"volume_Mm3"'] || props.volume_Mm3) || 0,
+            storage: parseFloat(props['"storage_capacity_MWh"'] || props.storage_capacity_MWh) || 0,
+            generation: parseFloat(props['"avg_annual_generation_GWh"'] || props.avg_annual_generation_GWh) || 0,
+            coordinates: feature.geometry.coordinates
+          };
+        });
 
         setEuropeanPlants(plants);
 
@@ -341,10 +362,8 @@ function MapPage({ setCurrentPage }) {
         const countries = [...new Set(plants.map(p => p.country))].sort();
         setAvailableCountries(countries);
 
-        console.log(`✅ Caricate ${plants.length} centrali europee da ${countries.length} paesi`);
-
       } catch (error) {
-        console.error('❌ Errore caricamento centrali europee:', error);
+        console.error('Errore caricamento centrali europee:', error);
         setEuLoadingError(error.message);
       }
     };
@@ -406,7 +425,6 @@ function MapPage({ setCurrentPage }) {
   const loadPlantLayers = useCallback(async (plantId) => {
     const plant = hydroplants.find(p => p.id === plantId);
     if (!plant) {
-      console.error('Pianta non trovata:', plantId);
       return;
     }
 
@@ -444,7 +462,6 @@ function MapPage({ setCurrentPage }) {
           }
 
           if (data.features.length === 0) {
-            console.warn(`Layer ${fileName} è vuoto`);
             continue;
           }
 
@@ -463,10 +480,7 @@ function MapPage({ setCurrentPage }) {
             [layerKey]: true
           }));
 
-          console.log(`✅ Caricato con successo: ${fileName} (${data.features.length} features)`);
-
         } catch (error) {
-          console.error(`❌ Errore nel caricamento di ${fileName}:`, error);
           errors[fileName] = error.message;
         }
       }
@@ -481,7 +495,6 @@ function MapPage({ setCurrentPage }) {
       }
 
     } catch (error) {
-      console.error('Errore generale nel caricamento dei layer:', error);
       setLayerErrors({ general: error.message });
     } finally {
       setLoadingLayers(false);
@@ -821,7 +834,7 @@ function MapPage({ setCurrentPage }) {
             {/* Filtro potenza */}
             <div className="filter-group">
               <label>
-                Filtra per potenza minima
+                Filtra per potenza minima: {euMinPower} MW
               </label>
               <input
                 type="range"
@@ -833,7 +846,7 @@ function MapPage({ setCurrentPage }) {
                 className="power-slider"
               />
               <div className="slider-labels">
-                <span>3 MW</span>
+                <span>0 MW</span>
                 <span>250 MW</span>
                 <span>500 MW</span>
               </div>
@@ -944,12 +957,13 @@ function MapPage({ setCurrentPage }) {
             </Marker>
           ))}
 
-          {/* Centrali europee - CON RADIUS DINAMICO */}
+          {/* Centrali europee - CON RADIUS DINAMICO E PROPORZIONALE ALLA POTENZA */}
           {euPlantsVisible && filteredEuropeanPlants.map(plant => (
             <DynamicCircle
               key={`eu-${plant.id}`}
               center={[plant.lat, plant.lon]}
               type={plant.type}
+              capacity={plant.capacity}
             >
               <Popup>
                 <div className="popup-content eu-popup">
@@ -970,7 +984,7 @@ function MapPage({ setCurrentPage }) {
                       {plant.capacity && (
                         <tr>
                           <td><strong>Potenza installata:</strong></td>
-                          <td>{plant.capacity.toFixed(1)} MW</td>
+                          <td>{plant.capacity > 0 && plant.capacity.toFixed(1)} MW</td>
                         </tr>
                       )}
                       {plant.pumping && (

@@ -106,6 +106,7 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
+              style={{ borderRadius: '8px' }}
             />
           </div>
 
@@ -114,6 +115,7 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="filter-select"
+              style={{ borderRadius: '8px', marginRight: '10px' }}
             >
               <option value="all">Tutti gli impianti</option>
               <option value="A bacino">A bacino</option>
@@ -126,6 +128,7 @@ const ModelsPage = ({ plantId, setCurrentPage }) => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="sort-select"
+              style={{ borderRadius: '8px', marginRight: '10px' }}
             >
               <option value="name">Nome</option>
               <option value="power">Potenza</option>
