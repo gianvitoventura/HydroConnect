@@ -21,10 +21,7 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          7.090031573795473,
-          44.6704632169754
-        ]
+        "coordinates": [7.090031573795473, 44.6704632169754]
       }
     },
     {
@@ -39,10 +36,7 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          7.09241542981489,
-          44.700439490550586
-        ]
+        "coordinates": [7.09241542981489, 44.700439490550586]
       }
     },
     {
@@ -57,10 +51,7 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          7.3390387514056385,
-          44.681591183422945
-        ]
+        "coordinates": [7.3390387514056385, 44.681591183422945]
       }
     },
     {
@@ -75,10 +66,7 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          7.133333,
-          44.616667
-        ]
+        "coordinates": [7.133333, 44.616667]
       }
     },
     {
@@ -93,10 +81,168 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          7.190278,
-          44.700833
-        ]
+        "coordinates": [7.190278, 44.700833]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pian della Regina",
+        "type": "Rifugio",
+        "elevation": "2.400 m s.l.m.",
+        "description": "Rifugio alpino situato nel cuore del Parco del Monviso, punto di partenza per escursioni e ascese.",
+        "image": "/images/poi/pian-della-regina.jpg",
+        "url": "https://www.rifugiopiandellaregina.it/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.117681869311524, 44.70080598014919]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pian del Re",
+        "type": "Area Naturalistica",
+        "elevation": "2.020 m s.l.m.",
+        "description": "Altopiano alpino ai piedi del Monviso, conosciuto come il luogo di nascita del fiume Po.",
+        "image": "/images/poi/pian-del-re.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.096209373133259, 44.70038568720676]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rifugio Quintino Sella",
+        "type": "Rifugio",
+        "elevation": "2.640 m s.l.m.",
+        "description": "Rifugio alpino al Monviso, dedicato all'alpinista e uomo politico Quintino Sella, fondatore del CAI.",
+        "image": "/images/poi/rifugio-quintino-sella.jpg",
+        "url": "https://www.rifugioquintinosella.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.111641658414931, 44.66610807933497]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Borgata Museo di Balma Boves",
+        "type": "Museo Etnografico",
+        "elevation": "1.350 m s.l.m.",
+        "description": "Antico borgo di case-grotta scavate nella roccia, testimonianza della vita montana tradizionale della Valle Po.",
+        "image": "/images/poi/balma-boves.jpg",
+        "url": "https://www.balmaboves.it/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.31226436757408, 44.666036629034735]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Museo naturalistico del Monviso e del fiume Po",
+        "type": "Museo Naturalistico",
+        "elevation": "400 m s.l.m.",
+        "description": "Museo dedicato alla natura del Monviso e alla storia del fiume Po, con percorsi didattici e collezioni naturalistiche.",
+        "image": "/images/poi/museo-naturalistico-monviso.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3885305964095345, 44.65484497523301]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Museo del Piropo",
+        "type": "Museo Mineralogico",
+        "elevation": "450 m s.l.m.",
+        "description": "Museo dedicato al piropo, il celebre granato rosso estratto nelle miniere della Val Varaita.",
+        "image": "/images/poi/museo-piropo.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.366723269405436, 44.62688286128788]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Il castello della Manta",
+        "type": "Castello Storico",
+        "elevation": "465 m s.l.m.",
+        "description": "Castello medievale del XV secolo, famoso per gli affreschi gotici della Sala Baronale con le figure dei Nove Prodi e delle Nove Eroine.",
+        "image": "/images/poi/castello-manta.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.483236440062636, 44.614529654598655]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cartiere Burgo Verzuolo",
+        "type": "Sito Industriale",
+        "elevation": "420 m s.l.m.",
+        "description": "Storico stabilimento per la produzione della carta, simbolo dell'archeologia industriale piemontese.",
+        "image": "/images/poi/cartiere-burgo.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.485426399730332, 44.59735303440626]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Il Museo di Casa Cavassa",
+        "type": "Museo Storico-Artistico",
+        "elevation": "395 m s.l.m.",
+        "description": "Dimora rinascimentale che ospita il museo civico di Saluzzo, con collezioni d'arte e arredi d'epoca.",
+        "image": "/images/poi/casa-cavassa.jpg",
+        "url": "https://comune.saluzzo.cn.it/vivere-il-comune/luoghi/casa-cavassa-10/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.486363196408939, 44.644457071506416]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Il Museo della Memoria Carceraria",
+        "type": "Museo Storico",
+        "elevation": "395 m s.l.m.",
+        "description": "Museo allestito nell'antica Castiglia di Saluzzo, racconta la storia del carcere e della giustizia attraverso i secoli.",
+        "image": "/images/poi/memoria-carceraria.jpg",
+        "url": "https://www.museodellamemoriacarceraria.it/castiglia/ingresso-orari-della-castiglia-saluzzo/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.487643935695994, 44.64325755079251]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Riserva Naturale Ciciu del Villar",
+        "type": "Riserva Naturale",
+        "elevation": "650-950 m s.l.m.",
+        "area": "64 ettari",
+        "description": "Area protetta istituita nel 1989 per preservare un fenomeno geologico unico: le colonne di erosione chiamate 'ciciu' (pupazzi in piemontese). Si contano circa 479 formazioni a forma di fungo, con un cappello di gneiss occhiadino e un gambo di terra e pietrisco. Un vero 'giardino roccioso' immerso in un bosco ricco di biodiversità.",
+        "image": "/images/poi/ciciu-del-villar.jpg",
+        "url": "https://www.ciciudelvillar.areeprotettealpimarittime.it/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.383832488096598, 44.49027486189329]
       }
     }
   ]

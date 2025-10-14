@@ -340,3 +340,22 @@ main {
   height: calc(100vh - 116px);
   overflow: hidden;
 }
+
+p {
+  color: #ffffff;
+  text-align: center;
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+.clickable-word {
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.clickable-word:hover {
+  color: #7fffd4;
+  text-shadow: 0 0 10px rgba(127, 255, 212, 0.5);
+}

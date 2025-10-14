@@ -83,7 +83,7 @@ function Header({ setCurrentPage, currentPage }) {
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('map')}
-              onMouseEnter={(e) => handleMouseEnter('Esplora il parco centrali e il territorio circostante', e)}
+              onMouseEnter={(e) => handleMouseEnter('Conosci il territorio e il parco idroelettrico', e)}
               onMouseLeave={handleMouseLeave}
             >
               Map
@@ -92,7 +92,7 @@ function Header({ setCurrentPage, currentPage }) {
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('models')}
-              onMouseEnter={(e) => handleMouseEnter('Naviga i modelli 3D e le foto 360 delle centrali', e)}
+              onMouseEnter={(e) => handleMouseEnter('Naviga i modelli 3D e immergiti nelle centrali', e)}
               onMouseLeave={handleMouseLeave}
             >
               Tour
@@ -128,7 +128,7 @@ function Header({ setCurrentPage, currentPage }) {
   );
 }
 
-function HomePage() {
+function HomePage({ setCurrentPage }) {
   const [videoError, setVideoError] = useState(false);
 
   return (
@@ -149,7 +149,7 @@ function HomePage() {
       <div className="home-content-overlay">
         <h1>Benvenuto</h1>
         <p>
-          Conosci il territorio, esplora il parco idroelettrico e partecipa alle decisioni per un futuro sostenibile.
+          <span className="clickable-word" onClick={() => setCurrentPage({ page: 'map' })}>Conosci</span> il territorio, <span className="clickable-word" onClick={() => setCurrentPage({ page: 'models' })}>esplora</span> il parco idroelettrico e <span className="clickable-word" onClick={() => setCurrentPage({ page: 'Community-Hub' })}>partecipa</span> alle decisioni per un futuro sostenibile.
         </p>
       </div>
     </div>
@@ -166,7 +166,7 @@ function App() {
   const renderPage = () => {
     switch(currentPage.page) {
       case 'home':
-        return <HomePage />;
+        return <HomePage setCurrentPage={setCurrentPage} />;
       case 'map':
         return <MapPage setCurrentPage={setCurrentPage} />;
       case 'historical':
@@ -194,7 +194,7 @@ function App() {
       case 'Kids':
         return <KidsPage />;
       default:
-        return <HomePage />;        
+        return <HomePage setCurrentPage={setCurrentPage} />;        
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/CommunityPage.css';
+import ProjectsSection from '../components/community/ProjectSection';
 
 const CommunityPage = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ const CommunityPage = () => {
         </div>
       )}
 
-      <div className="dashboard-section">
+            <div className="dashboard-section">
         <div className="metrics-grid">
           <div className="metric-card">
             <h3>Membri della community</h3>
@@ -85,15 +86,7 @@ const CommunityPage = () => {
           </div>
         </div>
 
-         <div className="image-container">
-          <img 
-            src="/images/design/proposte.png" 
-            alt="Prendi parte agli orientamenti progettuali delle centali"
-            className="section-image"
-          />
-        </div>
-
-        <div className="activities-section">
+        {/* <div className="activities-section">
           <h2>Attività in Corso</h2>
           <div className="activities-grid">
             {currentActivities.map((activity, index) => (
@@ -112,56 +105,60 @@ const CommunityPage = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
 
+      {/* 🏗️ SEZIONE PROGETTI */}
+      <ProjectsSection />
+
+
       <div className="activities-section">
-      <div className="design-thinking-section">
-        <h2>Design Thinking Workshop</h2>
-        <div className="process-grid">
-          {[
-            {
-              stage: 'empathize',
-              title: 'Empathize',
-              description: 'Comprendi i bisogni della community'
-            },
-            {
-              stage: 'define',
-              title: 'Define',
-              description: 'Definisci il problema da risolvere'
-            },
-            {
-              stage: 'ideate',
-              title: 'Ideate',
-              description: 'Genera idee e soluzioni innovative'
-            },
-            {
-              stage: 'prototype',
-              title: 'Prototype',
-              description: 'Crea un prototipo della soluzione'
-            },
-            {
-              stage: 'test',
-              title: 'Test',
-              description: 'Testa e raccogli feedback'
-            }
-          ].map(({ stage, title, description }) => (
-            <div key={stage} className="process-card">
-              <h3>{title}</h3>
-              <p>{description}</p>
-              <textarea
-                value={formData[stage]}
-                onChange={(e) => handleInputChange(stage, e.target.value)}
-                placeholder={`Inserisci le tue note per la fase ${title}...`}
-                className="process-input"
-              />
-            </div>
-          ))}
-        </div>
+        <div className="design-thinking-section">
+          <h2>Design Thinking Workshop</h2>
+          <div className="process-grid">
+            {[
+              {
+                stage: 'empathize',
+                title: 'Empathize',
+                description: 'Comprendi i bisogni della community'
+              },
+              {
+                stage: 'define',
+                title: 'Define',
+                description: 'Definisci il problema da risolvere'
+              },
+              {
+                stage: 'ideate',
+                title: 'Ideate',
+                description: 'Genera idee e soluzioni innovative'
+              },
+              {
+                stage: 'prototype',
+                title: 'Prototype',
+                description: 'Crea un prototipo della soluzione'
+              },
+              {
+                stage: 'test',
+                title: 'Test',
+                description: 'Testa e raccogli feedback'
+              }
+            ].map(({ stage, title, description }) => (
+              <div key={stage} className="process-card">
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <textarea
+                  value={formData[stage]}
+                  onChange={(e) => handleInputChange(stage, e.target.value)}
+                  placeholder={`Inserisci le tue note per la fase ${title}...`}
+                  className="process-input"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="submit-section">
-        <h3>Riassumi i tuoi risultati:</h3>
+          <h3>Riassumi i tuoi risultati:</h3>
           <form onSubmit={handleSubmit}>
             <label>
               <textarea

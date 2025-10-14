@@ -38,9 +38,9 @@ const mapStyles = {
 
 // Colori e configurazione centrali europee
 const EU_PLANT_COLORS = {
-  'HDAM': '#00d5ffff',  // Bacino - Turquoise/Acqua
-  'HROR': '#0099ffff',  // Acqua fluente - Verde
-  'HPHS': '#3300ffff'   // Accumulo - Viola
+  'HDAM': '#00d5ffff',  // Bacino 
+  'HROR': '#00ffccff',  // Acqua fluente
+  'HPHS': '#3300ffff'   // Accumulo
 };
 
 const EU_PLANT_TYPES = {
@@ -55,10 +55,10 @@ const LAYER_CONFIG = {
     type: 'coverage',
     displayName: 'Valle Po',
     style: {
-      color: '#FF6B35',
+      color: '#FFF000',
       weight: 2,
       opacity: 0.8,
-      fillColor: '#FF7401',
+      fillColor: '#FFF000',
       fillOpacity: 0.2
     },
     zIndex: 1
@@ -67,10 +67,10 @@ const LAYER_CONFIG = {
     type: 'plots',
     displayName: 'Particelle catastali',
     style: {
-      color: '#8E44AD',
+      color: '#9c9200ff',
       weight: 2,
       opacity: 0.8,
-      fillColor: '#8E44AD',
+      fillColor: '#9c9200ff',
       fillOpacity: 0.3
     },
     zIndex: 2
@@ -79,7 +79,7 @@ const LAYER_CONFIG = {
     type: 'rivers',
     displayName: 'Bacino idrografico',
     style: {
-      color: '#01E7FF',
+      color: '#0096a7ff',
       weight: 2,
       opacity: 1,
     },
@@ -90,7 +90,7 @@ const LAYER_CONFIG = {
     displayName: 'Opere lineari',
     style: {
       color: '#FFF000',
-      weight: 3,
+      weight: 4,
       opacity: 0.9
     },
     zIndex: 4
@@ -100,8 +100,8 @@ const LAYER_CONFIG = {
     displayName: 'Opere puntuali',
     style: {
       radius: 4,
-      fillColor: "#E74C3C",
-      color: "#C0392B",
+      fillColor: '#FFF000',
+      color: '#9c9200ff',
       weight: 2,
       opacity: 1,
       fillOpacity: 0.8
@@ -112,10 +112,10 @@ const LAYER_CONFIG = {
     type: 'unesco_buffer',
     displayName: 'MaB UNESCO',
     style: {
-      color: '#ffff00',
+      color: '#66c474ff',
       weight: 2,
       opacity: 0.8,
-      fillColor: '#ffff00',
+      fillColor: '#66c474ff',
       fillOpacity: 0.15,
     },
     zIndex: 6
@@ -124,10 +124,10 @@ const LAYER_CONFIG = {
     type: 'unesco_core',
     displayName: 'Core zone UNESCO',
     style: {
-      color: '#fd1100',
+      color: '#306f3eff',
       weight: 3,
       opacity: 0.9,
-      fillColor: '#fd1100',
+      fillColor: '#306f3eff',
       fillOpacity: 0.25,
     },
     zIndex: 7
@@ -137,8 +137,8 @@ const LAYER_CONFIG = {
     displayName: 'Punti di interesse',
     style: {
       radius: 6,
-      fillColor: "#00b00fff",
-      color: "#00870bff",
+      fillColor: '#66c474ff',
+      color: "#004406ff",
       weight: 2,
       opacity: 1,
       fillOpacity: 0.8
@@ -187,8 +187,8 @@ const MapController = ({ onMapReady }) => {
   return null;
 };
 
-// Componente Circle con radius dinamico in base allo zoom
-const DynamicCircle = ({ center, type, children, ...props }) => {
+// Componente Circle con radius dinamico in base allo zoom e alla potenza
+const DynamicCircle = ({ center, type, capacity, children, ...props }) => {
   const map = useMap();
   const [radius, setRadius] = useState(200);
 
@@ -196,21 +196,46 @@ const DynamicCircle = ({ center, type, children, ...props }) => {
     const updateRadius = () => {
       const zoom = map.getZoom();
       
-      // Formula: più zoom è basso, più il radius è grande
-      let newRadius;
-      if (zoom <= 5) {
-        newRadius = 10000;
-      } else if (zoom <= 6) {
-        newRadius = 5000;
-      } else if (zoom <= 7) {
-        newRadius = 2000;
-      } else if (zoom <= 8) {
-        newRadius = 1000;
-      } else if (zoom <= 9) {
-        newRadius = 500;
-      } else if (zoom <= 10) {
+      // Calcola il moltiplicatore basato sulla potenza
+      let powerMultiplier = 1;
+      
+      if (capacity && capacity > 0) {
+        // Usa scala logaritmica per evitare differenze troppo grandi
+        // Potenze tipiche: 1 MW - 2000 MW
+        const logCapacity = Math.log10(Math.max(capacity, 1));
+        const minLog = 0; // log10(1) = 0
+        const maxLog = Math.log10(2000); // ~3.3
+        
+        // Mappa su range 0.4 - 3.0 (aumentato per differenze più visibili)
+        powerMultiplier = 0.4 + ((logCapacity - minLog) / (maxLog - minLog)) * 2.6;
+        powerMultiplier = Math.max(0.4, Math.min(3.0, powerMultiplier));
+        
+        // Debug per le prime 5 centrali
+        if (Math.random() < 0.01) { // Log solo 1% delle volte per non intasare console
+          console.log(`🔷 Centrale ${capacity.toFixed(0)} MW → moltiplicatore: ${powerMultiplier.toFixed(2)}x`);
+        }
       }
       
+      // Formula base: più zoom è basso, più il radius è grande
+      let baseRadius;
+      if (zoom <= 5) {
+        baseRadius = 10000;
+      } else if (zoom <= 6) {
+        baseRadius = 5000;
+      } else if (zoom <= 7) {
+        baseRadius = 2000;
+      } else if (zoom <= 8) {
+        baseRadius = 1000;
+      } else if (zoom <= 9) {
+        baseRadius = 500;
+      } else if (zoom <= 10) {
+        baseRadius = 300;
+      } else {
+        baseRadius = 200;
+      }
+      
+      // Applica il moltiplicatore di potenza
+      const newRadius = baseRadius * powerMultiplier;
       setRadius(newRadius);
     };
 
@@ -223,7 +248,7 @@ const DynamicCircle = ({ center, type, children, ...props }) => {
     return () => {
       map.off('zoomend', updateRadius);
     };
-  }, [map]);
+  }, [map, capacity]);
 
   return (
     <Circle

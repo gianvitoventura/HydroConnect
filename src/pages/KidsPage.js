@@ -8,7 +8,7 @@ const StorybookViewer = React.lazy(() => import('../components/kids/StorybookVie
 const QuizGame = React.lazy(() => import('../components/kids/QuizGame'));
 const BadgeCertificate = React.lazy(() => import('../components/kids/BadgeCertificate'));
 const AchievementPopup = React.lazy(() => import('../components/kids/AchievementPopup'));
-const ProgressTracker = React.lazy(() => import('../components/kids/ProgressTracker'));
+// const ProgressTracker = React.lazy(() => import('../components/kids/ProgressTracker'));
 const CentraleIdroelettricaKids = React.lazy(() => import('../components/kids/Hydrokids'));
 
 const KidsPage = () => {
@@ -428,7 +428,7 @@ const KidsPage = () => {
         </p>
       </div>
 
-      {/* Progress Tracker - Mostrato solo nella vista griglia */}
+      {/* Progress Tracker - Mostrato solo nella vista griglia
       {currentView === 'grid' && (
         <React.Suspense fallback={<div>Caricamento del tracker...</div>}>
           <ProgressTracker 
@@ -436,7 +436,7 @@ const KidsPage = () => {
             onAchievementUnlocked={handleAchievementUnlocked}
           />
         </React.Suspense>
-      )}
+      )} */}
 
       {renderView()}
 

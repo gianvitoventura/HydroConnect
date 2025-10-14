@@ -133,18 +133,14 @@ export const historicalData = {
                         type: "image",
                         url: "/images/historical/calcinere/Documento storico - Bollettino della Cartiera.jpg",
                     },
-                    {
-                        type: "image",
-                        url: "/images/historical/calcinere/Foto storica - L'arrivo di Giovanni Giolitti all'evento.JPG",
-                    },
+                    // {
+                    //     type: "image",
+                    //     url: "/images/historical/calcinere/Foto storica - L'arrivo di Giovanni Giolitti all'evento.JPG",
+                    // },
                     {
                         type: "image",
                         url: "/images/historical/calcinere/Foto storica - Benedizione della Centrale.jpg",
                     },
-                    // {
-                    //     type: "image",
-                    //     url: "/images/historical/calcinere/Foto storica - Prefetti di Saluzzo e Ingegneri Burgo.jpg",
-                    // },
                     {
                         type: "image",
                         url: "/images/historical/calcinere/Foto storica - Sala macchine con i 3 gruppi di produzione.jpg",
@@ -355,10 +351,10 @@ export const historicalData = {
                         type: "image",
                         url: "/images/historical/calcinere/Suggestioni progettuali 2.png",
                     },
-                    {
-                        type: "video",
-                        url: "/images/historical/calcinere/Fruizione in realtà virtuale.mp4",
-                    },
+                      {
+                        type: "image",
+                        url: "/images/historical/calcinere/Suggestioni progettuali 3.png",
+                    }
                 ]
             },
             {
