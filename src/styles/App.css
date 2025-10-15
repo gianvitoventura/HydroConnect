@@ -253,8 +253,8 @@ footer a:hover {
     background-color: #003d9e;
     padding: 5rem 1.5rem 2rem;
     transition: bottom 0.3s ease;
-    z-index: 1000;
-    gap: 2rem;
+    z-index: 10000;
+    gap: 1rem;
   }
   
   /* Quando il menu è aperto */
