@@ -33,7 +33,12 @@ const mapStyles = {
     url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     name: 'Cycle'
-  }
+  },
+  satelliteEsri: {
+  url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+  name: 'Satellite'
+}
 };
 
 // Colori e configurazione centrali europee
@@ -275,7 +280,7 @@ function MapPage({ setCurrentPage }) {
   // Stati esistenti
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentMapStyle, setCurrentMapStyle] = useState('humanitarian');
+  const [currentMapStyle, setCurrentMapStyle] = useState('satelliteEsri');
   const [activePlant, setActivePlant] = useState(null);
   const [plantVisible, setPlantVisible] = useState(true);
   const [geoJSONLayers, setGeoJSONLayers] = useState({});
@@ -642,7 +647,6 @@ function MapPage({ setCurrentPage }) {
     'A bacino': '#3b82f6',
     'Ad acqua fluente': '#10b981',
     'Ad accumulo': '#8b5cf6',
-    'A derivazione': '#007684ff'
   };
 
   // Categorizzazione dei layer
@@ -1090,12 +1094,6 @@ function MapPage({ setCurrentPage }) {
               onClick={() => setActiveFilter('Ad accumulo')}
             >
               Ad accumulo
-            </button>
-            <button 
-              className={activeFilter === 'A derivazione' ? 'active' : ''} 
-              onClick={() => setActiveFilter('A derivazione')}
-            >
-              A derivazione
             </button>
           </div>
         </div>
