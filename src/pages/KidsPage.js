@@ -100,7 +100,7 @@ const KidsPage = () => {
       className: "activity-icon",
       description: 'Esplora come funziona una vera centrale idroelettrica!',
       emoji: '🌊',
-      points: 100
+      points: 500
     }
   ];
 

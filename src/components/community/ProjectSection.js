@@ -197,21 +197,53 @@ const ProjectsSection = () => {
   };
   
   const radarData = () => {
-    const data = [];
-    Object.keys(CATEGORIES).forEach(cat => {
-      const point = { category: CATEGORIES[cat].label };
-      selectedProjects.forEach(pid => {
-        const proj = PROJECTS.find(p => p.id === pid);
-        if (proj) {
-          const scores = Object.values(proj.scores[cat]);
-          const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-          point[proj.shortName] = avg;
-        }
-      });
-      data.push(point);
+  // Definizione di tutti gli indicatori con le loro etichette
+  const indicators = [
+    // TECNICI (3)
+    { key: 'reliability', label: 'Affidabilità', category: 'technical', categoryLabel: 'Tecnico' },
+    { key: 'complexity', label: 'Complessità', category: 'technical', categoryLabel: 'Tecnico' },
+    { key: 'innovation', label: 'Innovazione', category: 'technical', categoryLabel: 'Tecnico' },
+    
+    // ECONOMICI (3)
+    { key: 'investment', label: 'Investimento', category: 'economic', categoryLabel: 'Economico' },
+    { key: 'management', label: 'Gestione', category: 'economic', categoryLabel: 'Economico' },
+    { key: 'avoidedCosts', label: 'Benefici evitati', category: 'economic', categoryLabel: 'Economico' },
+    
+    // SOCIALI (3)
+    { key: 'employment', label: 'Occupazione', category: 'social', categoryLabel: 'Sociale' },
+    { key: 'accessibility', label: 'Accessibilità', category: 'social', categoryLabel: 'Sociale' },
+    { key: 'community', label: 'Comunità', category: 'social', categoryLabel: 'Sociale' },
+    
+    // AMBIENTALI (3)
+    { key: 'biodiversity', label: 'Biodiversità', category: 'environmental', categoryLabel: 'Ambientale' },
+    { key: 'landscape', label: 'Paesaggio', category: 'environmental', categoryLabel: 'Ambientale' },
+    { key: 'co2', label: 'CO2', category: 'environmental', categoryLabel: 'Ambientale' }
+  ];
+  
+  const data = [];
+  
+  // Per ogni indicatore, crea un punto del radar
+  indicators.forEach(indicator => {
+    const point = { 
+      // Label completo: "Categoria - Indicatore"
+      category: `${indicator.categoryLabel} - ${indicator.label}`
+    };
+    
+    // Per ogni progetto selezionato, prendi il valore specifico dell'indicatore
+    selectedProjects.forEach(pid => {
+      const proj = PROJECTS.find(p => p.id === pid);
+      if (proj) {
+        // Accedi direttamente al valore dell'indicatore (es: project.scores.technical.reliability)
+        const value = proj.scores[indicator.category][indicator.key];
+        point[proj.shortName] = value;
+      }
     });
-    return data;
-  };
+    
+    data.push(point);
+  });
+  
+  return data;
+};
   
   const sortedProjects = [...PROJECTS].sort((a, b) => 
     calculateScore(b) - calculateScore(a)

@@ -1,20 +1,6 @@
 /* CentraleIdroelettricaKids.css */
 
 /* Container principale */
-.hydro-plant-kids-container {
-  width: 100%;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #bae6fd, #93c5fd, #86efac);
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-@media (min-width: 768px) {
-  .hydro-plant-kids-container {
-    padding: 2rem;
-  }
-}
-
 .hydro-plant-content {
   max-width: 1536px;
   margin: 0 auto;
@@ -126,17 +112,21 @@
   color: #9333ea;
 }
 
-.hydro-controls-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+/* NUOVA GRIGLIA PER SLIDER E TOGGLE */
+.hydro-sliders-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .hydro-controls-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    .hydro-sliders-grid {
+        /* 4 colonne per il pulsante + 3 slider */
+        grid-template-columns: repeat(4, 1fr); 
+    }
 }
+/* FINE NUOVA GRIGLIA */
 
 .hydro-flow-control {
   display: flex;
@@ -166,16 +156,19 @@
   transform: scale(1);
   border: none;
   cursor: pointer;
+  height: 3.5rem; /* Aggiunto per allineamento */
 }
 
 .hydro-toggle-button:hover {
   transform: scale(1.05);
 }
 
+/* CORREZIONE COLORE: PRODUZIONE (Running) è VERDE */
 .hydro-toggle-button.running {
-  background: linear-gradient(to right, #f87171, #ef4444);
+  background: linear-gradient(to right, #f87171, #ef4444); 
 }
 
+/* CORREZIONE COLORE: FERMO (Stopped) è ROSSO */
 .hydro-toggle-button.stopped {
   background: linear-gradient(to right, #4ade80, #22c55e);
 }
@@ -188,28 +181,58 @@
   cursor: pointer;
   outline: none;
   -webkit-appearance: none;
+  /* IMPORTANTE: L'immagine di background per il fill è gestita tramite style inline nel JSX */
 }
 
+/* Stile comune del pallino (thumb) - Ora ha un bordo colorato */
 .hydro-slider::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background: #3b82f6;
+  background: white; /* Thumb sempre bianco */
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 3px solid; /* Aggiungi un bordo dinamico */
 }
 
 .hydro-slider::-moz-range-thumb {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background: #3b82f6;
+  background: white; /* Thumb sempre bianco */
   cursor: pointer;
-  border: none;
+  border: 3px solid; /* Aggiungi un bordo dinamico */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+/* CLASSI PER IL BORDO DEL THUMB */
+/* 1. Flusso d'Acqua (Blue) */
+.blue-fill::-webkit-slider-thumb {
+    border-color: #60a5fa;
+}
+.blue-fill::-moz-range-thumb {
+    border-color: #60a5fa;
+}
+
+/* 2. Altezza Bacino (Green) */
+.green-fill::-webkit-slider-thumb {
+    border-color: #10b981;
+}
+.green-fill::-moz-range-thumb {
+    border-color: #10b981;
+}
+
+/* 3. Rendimento Impianto (Yellow) */
+.yellow-fill::-webkit-slider-thumb {
+    border-color: #facc15;
+}
+.yellow-fill::-moz-range-thumb {
+    border-color: #facc15;
+}
+/* FINE CLASSI PER IL BORDO DEL THUMB */
+
 
 .hydro-slider-value {
   text-align: center;
@@ -218,6 +241,33 @@
   font-weight: bold;
   color: #2563eb;
 }
+
+/* Colori testo per i nuovi slider */
+.hydro-slider-value.green-text {
+  color: #10b981;
+}
+
+.hydro-slider-value.yellow-text {
+  color: #facc15;
+}
+/* FINE Colori testo */
+
+/* GRIGLIA PER METRICHE */
+.hydro-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .hydro-metrics-grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+/* FINE GRIGLIA PER METRICHE */
+
 
 .hydro-metric-card {
   border-radius: 1rem;
@@ -283,20 +333,8 @@
 /* Instructions Card */
 .hydro-instructions-card {
   border-radius: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   padding: 1.5rem;
-}
-
-.hydro-instructions-title {
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: #581c87;
-  margin-bottom: 1rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
 }
 
 .hydro-instructions-grid {
@@ -321,6 +359,13 @@
 .hydro-instruction-title {
   color: #581c87;
   font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .hydro-instruction-text {
