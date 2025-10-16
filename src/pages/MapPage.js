@@ -14,21 +14,21 @@ const mapStyles = {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     name: 'Humanitarian'
   },
-  terrain: {
-    url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.jpg',
-    attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-    name: 'Terrain'
-  },
-  toner: {
-    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-    name: 'Toner'
-  },
-  watercolor: {
-    url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-    attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-    name: 'Watercolor'
-  },
+  // terrain: {
+  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.jpg',
+  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
+  //   name: 'Terrain'
+  // },
+  // toner: {
+  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
+  //   name: 'Toner'
+  // },
+  // watercolor: {
+  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
+  //   name: 'Watercolor'
+  // },
   cycle: {
     url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
