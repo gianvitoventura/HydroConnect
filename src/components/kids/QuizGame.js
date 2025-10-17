@@ -467,7 +467,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
           <div className="score-display">
             <div className="score-circle">
               <div className="score-number">{Math.round((score / (questions.length * 25)) * 100)}</div>
-              <div className="score-label">%</div>
             </div>
             <div className="score-details">
               <p>Punti totali: <strong>{score}</strong></p>

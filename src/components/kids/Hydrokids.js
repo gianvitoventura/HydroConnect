@@ -204,7 +204,7 @@ const CentraleIdroelettricaKids = ({ onBack, onComplete }) => {
             <div className="hydro-popup-explanation-content">
               <div className="hydro-popup-emoji">💡</div>
               <div>
-                <h3 className="hydro-popup-explanation-title">Spiegazione Semplice</h3>
+                <h3 className="hydro-popup-explanation-title">Spiegazione</h3>
                 <p className="hydro-popup-explanation-text">{data.simpleExplanation}</p>
               </div>
             </div>

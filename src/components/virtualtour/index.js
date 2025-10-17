@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import PanoramaApp from './PanoramaApp';
+import PanoramaApp from './calcinere/PanoramaApp';
 
 // Load the required scripts before mounting the React app
 document.addEventListener('DOMContentLoaded', () => {
