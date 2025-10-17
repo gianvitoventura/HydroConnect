@@ -418,38 +418,15 @@ html, body {
   max-width: 180px;
 }
 
-/* Nuovo contenitore per layout orizzontale immagine + bottoni */
-.popup-body {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-  align-items: stretch;
-}
-
-.popup-image-container {
-  flex: 1;
-  max-width: 200px;
-}
-
-.popup-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
-
 .popup-actions {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  justify-content: center;
-  min-width: 150px;
+  margin-top: 15px;
 }
 
 .popup-button {
-  padding: 10px 16px;
+  padding: 8px 16px;
   background-color: #6366f1;
   color: white;
   border: none;
@@ -458,7 +435,6 @@ html, body {
   transition: all 0.3s ease;
   font-size: 0.9rem;
   font-weight: 500;
-  white-space: nowrap;
 }
 
 .popup-button:hover {
@@ -466,13 +442,6 @@ html, body {
   color: #7fffd4;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.plant-description {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #6b7280;
-  line-height: 1.5;
 }
 
 .leaflet-popup-content-wrapper {
@@ -612,6 +581,75 @@ html, body {
   color: #6b7280;
 }
 
+/* Responsive Design - MIGLIORATO */
+@media (max-width: 1024px) {
+  .map-control-panel {
+    width: 30%;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-page-container {
+    flex-direction: column;
+  }
+
+  .map-control-panel {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    padding: 15px;
+  }
+
+  .layer-section {
+    padding: 0.75rem 0;
+    margin: 0.75rem 0;
+  }
+
+  .layer-item {
+    padding: 8px 10px;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .filter-buttons button {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-control-panel {
+    max-height: 50vh;
+    padding: 10px;
+  }
+
+  .map-control-panel h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .map-control-panel h3 {
+    font-size: 1rem;
+    margin: 0.8rem 0 0.4rem;
+  }
+
+  .layer-info {
+    gap: 8px;
+  }
+
+  .layer-name {
+    font-size: 0.8rem;
+  }
+
+  .layer-count {
+    font-size: 0.7rem;
+  }
+}
+
 /* Menu a tendina per i risultati */
 .results-section {
   margin-top: 20px;
@@ -700,8 +738,121 @@ html, body {
   background: #555;
 }
 
+/* Popup Styles - Layout orizzontale */
+.popup-content {
+  padding: 15px;
+  min-width: 400px;
+}
+
+.popup-content h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #6366f1;
+  padding-bottom: 6px;
+}
+
+/* Nuovo contenitore per layout orizzontale immagine + bottoni */
+.popup-body {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: stretch;
+}
+
+.popup-image-container {
+  flex: 1;
+  max-width: 200px;
+}
+
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.popup-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-width: 150px;
+}
+
+.popup-button {
+  padding: 10px 16px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.popup-button:hover {
+  background-color: #4f46e5;
+  color: #7fffd4;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabella dettagli */
+.plant-details {
+  width: 100%;
+  margin: 15px 0;
+  border-collapse: collapse;
+}
+
+.plant-details td {
+  padding: 6px 8px;
+  vertical-align: top;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.plant-details td:first-child {
+  width: 40%;
+  font-weight: 500;
+  color: #374151;
+}
+
+.plant-description {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Responsive per popup piccoli */
+@media (max-width: 480px) {
+  .popup-content {
+    min-width: 280px;
+  }
+  
+  .popup-body {
+    flex-direction: column;
+  }
+  
+  .popup-image-container {
+    max-width: 100%;
+    max-height: 150px;
+  }
+  
+  .popup-actions {
+    min-width: 100%;
+  }
+}
+
 /* ========================================
    STILI PER CENTRALI EUROPEE
+   Aggiungi questo codice al file MapPage.css
    ======================================== */
 
 /* Sezione principale centrali europee */
@@ -1016,210 +1167,39 @@ html, body {
   margin-top: 10px;
 }
 
-/* Responsive Design - MIGLIORATO */
-@media (max-width: 1024px) {
-  .map-control-panel {
-    width: 30%;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .map-page-container {
-    flex-direction: column;
-  }
-
-  .map-control-panel {
-    width: 100%;
-    height: auto;
-    max-height: 40vh;
-    border-left: none;
-    border-top: 1px solid #e5e7eb;
+  .european-plants-section {
     padding: 15px;
   }
 
-  .layer-section {
-    padding: 0.75rem 0;
-    margin: 0.75rem 0;
+  .toggle-switch {
+    width: 44px;
+    height: 24px;
   }
 
-  .layer-item {
+  .toggle-slider:before {
+    height: 18px;
+    width: 18px;
+  }
+
+  .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+  }
+
+  .country-select {
+    font-size: 0.9rem;
     padding: 8px 10px;
   }
 
-  .filter-buttons {
+  .plants-counter {
     flex-direction: column;
-  }
-
-  .filter-buttons button {
-    width: 100%;
-    margin-bottom: 4px;
-  }
-  
-  /* POPUP MOBILE - CENTRALI PRINCIPALI */
-  .popup-content {
-    padding: 10px;
-    min-width: 260px;
-    max-width: 280px;
-  }
-  
-  .popup-content h3 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-  }
-  
-  .popup-body {
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .popup-image-container {
-    max-width: 100%;
-    max-height: 120px;
-  }
-  
-  .popup-actions {
-    min-width: 100%;
-    gap: 6px;
-  }
-  
-  .popup-button {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-  }
-  
-  .plant-details {
-    margin: 10px 0;
-  }
-  
-  .plant-details td {
-    padding: 4px 6px;
-    font-size: 0.8rem;
-  }
-  
-  .plant-details td:first-child {
-    width: 45%;
-  }
-  
-  .plant-description {
-    font-size: 0.8rem;
-    margin-top: 8px;
-    line-height: 1.4;
-  }
-  
-  /* POPUP MOBILE - CENTRALI EUROPEE */
-  .eu-popup {
-    min-width: 240px;
-    max-width: 280px;
-  }
-  
-  .eu-popup h3 {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-  }
-  
-  .eu-plant-badge {
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-  
-  .country-badge,
-  .type-badge {
-    padding: 3px 10px;
-    font-size: 0.75rem;
-  }
-  
-  .eu-popup .plant-details td {
-    padding: 5px 4px;
-    font-size: 0.8rem;
-  }
-  
-  .eu-popup .plant-details td:first-child {
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .map-control-panel {
-    max-height: 50vh;
-    padding: 10px;
-  }
-
-  .map-control-panel h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-
-  .map-control-panel h3 {
-    font-size: 1rem;
-    margin: 0.8rem 0 0.4rem;
-  }
-
-  .layer-info {
     gap: 8px;
+    text-align: center;
   }
 
-  .layer-name {
-    font-size: 0.8rem;
-  }
-
-  .layer-count {
-    font-size: 0.7rem;
-  }
-  
-  /* POPUP EXTRA SMALL - CENTRALI PRINCIPALI */
-  .popup-content {
-    padding: 8px;
-    min-width: 240px;
-    max-width: 260px;
-  }
-  
-  .popup-content h3 {
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-  }
-  
-  .popup-image-container {
-    max-height: 100px;
-  }
-  
-  .popup-button {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .plant-details td {
-    padding: 3px 4px;
-    font-size: 0.75rem;
-  }
-  
-  .plant-description {
-    font-size: 0.75rem;
-    line-height: 1.3;
-  }
-  
-  /* POPUP EXTRA SMALL - CENTRALI EUROPEE */
-  .eu-popup {
-    min-width: 220px;
-    max-width: 260px;
-  }
-  
-  .eu-popup h3 {
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-  }
-  
-  .country-badge,
-  .type-badge {
-    padding: 2px 8px;
-    font-size: 0.7rem;
-  }
-  
-  .eu-popup .plant-details td {
-    padding: 4px 3px;
-    font-size: 0.75rem;
+  .counter-value {
+    font-size: 1.1rem;
   }
 }
 
