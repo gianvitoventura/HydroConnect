@@ -30,3 +30,4 @@ yarn-error.log*
 *.mp4
 *.MP4
 public/models/
+public/tiles/

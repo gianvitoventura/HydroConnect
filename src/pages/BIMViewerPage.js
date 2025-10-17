@@ -468,7 +468,7 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     // Renderizza il pannello di controllo
     const renderControlPanel = () => {
         if (isLoadingData) return <div className="control-panel">Caricamento dati modello...</div>;
-        if (!processedData) return <div className="control-panel">Nessun dato disponibile</div>;
+        if (!processedData) return <div className="control-panel">🏗️ Modello in arrivo</div>;
 
         return (
             <div className="control-panel">
