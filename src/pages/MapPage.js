@@ -300,7 +300,7 @@ function MapPage({ setCurrentPage }) {
     'HROR': true,
     'HPHS': true
   });
-  const [euMinPower, setEuMinPower] = useState(0);
+  const [euMinPower, setEuMinPower] = useState(3);
   const [availableCountries, setAvailableCountries] = useState([]);
 
   // Funzione per pulire i nomi dalle virgolette escapate
@@ -842,15 +842,15 @@ function MapPage({ setCurrentPage }) {
               </label>
               <input
                 type="range"
-                min="0"
+                min="3"
                 max="500"
-                step="10"
+                step="1"
                 value={euMinPower}
                 onChange={(e) => setEuMinPower(Number(e.target.value))}
                 className="power-slider"
               />
               <div className="slider-labels">
-                <span>0 MW</span>
+                <span>3 MW</span>
                 <span>250 MW</span>
                 <span>500 MW</span>
               </div>

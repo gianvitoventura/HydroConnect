@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Gianvito Marino Ventura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .presentation-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h1 {
+            color: #2d3748;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .slide h3 {
+            color: #4a5568;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        .slide p, .slide li {
+            color: #4a5568;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .slide li {
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .slide li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+        }
+
+        .title-slide p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.5em;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .nav-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: #718096;
+            font-size: 1em;
+        }
+
+        .experience-item, .education-item {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .experience-item h3, .education-item h3 {
+            margin-top: 0;
+        }
+
+        .date {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+
+        .company {
+            color: #718096;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .skill-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .contact-info {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .contact-item strong {
+            color: #667eea;
+            margin-right: 10px;
+            min-width: 100px;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Titolo -->
+        <div class="slide active title-slide">
+            <h1>GIANVITO MARINO VENTURA</h1>
+            <p>Architetto | Ricercatore</p>
+            <p style="margin-top: 40px; font-size: 1.2em;">Politecnico di Torino</p>
+        </div>
+
+        <!-- Slide 2: Presentazione -->
+        <div class="slide">
+            <h2>Chi Sono</h2>
+            <p>Laureato in <span class="highlight">Architettura-Ingegneria Edile</span>, attualmente sto svolgendo un <span class="highlight">dottorato</span> di ricerca in Urban and Regional Development presso il Politecnico di Torino.</p>
+            <p>Profondamente interessato ai vari processi di trasformazione che il settore delle costruzioni sta vivendo, nel corso delle mie esperienze ho approfondito temi legati alla:</p>
+            <ul>
+                <li><span class="highlight">Digitalizzazione</span></li>
+                <li><span class="highlight">Sostenibilità</span></li>
+                <li><span class="highlight">Conservazione</span> del patrimonio</li>
+                <li><span class="highlight">Valorizzazione</span> del patrimonio costruito</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Esperienza 1 -->
+        <div class="slide">
+            <h2>Esperienza Lavorativa</h2>
+            <div class="experience-item">
+                <div class="date">NOV 2022 - PRESENTE</div>
+                <h3>RICERCATORE</h3>
+                <p class="company">SIED | Torino</p>
+                <p>Collaborazione su progetto di <span class="highlight">digitalizzazione del parco centrali</span> con metodologia <span class="highlight">infraBIM</span>.</p>
+                <p>Sviluppato modello della centrale idroelettrica di Calcinere (CN) integrando dati storici, rilievi e GIS mediante linguaggi di programmazione visuale.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Esperienza 2 -->
+        <div class="slide">
+            <h2>Esperienza Lavorativa</h2>
+            <div class="experience-item">
+                <div class="date">GIU 2019 - GIU 2022</div>
+                <h3>RICERCATORE</h3>
+                <p class="company">UPO - Università del Piemonte Orientale | Novara</p>
+                <p>Progetto europeo <span class="highlight">MAIN10ANCE</span> per la tutela del patrimonio culturale UNESCO.</p>
+                <p>Focus sui <span class="highlight">Sacri Monti</span>, con particolare riferimento al Sacro Monte di Varallo.</p>
+                <p>Metodologia <span class="highlight">ScanToBIM</span> e integrazione <span class="highlight">GIS-HBIM</span> per piattaforma web-based di conservazione e valorizzazione turistica.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Esperienza 3 -->
+        <div class="slide">
+            <h2>Esperienza Lavorativa</h2>
+            <div class="experience-item">
+                <div class="date">NOV 2015 - APR 2016</div>
+                <h3>ARCHITETTO</h3>
+                <p class="company">Marco Visconti | Torino</p>
+                <p><span class="highlight">Progettazione esecutiva</span> per la riqualificazione della Torre di Lodi.</p>
+                <p>Focus su efficienza energetica e sostenibilità per ottenimento certificazione <span class="highlight">LEED Platinum</span>.</p>
+                <p>Studio approfondito di materiali e dettagli tecnologici.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Educazione -->
+        <div class="slide">
+            <h2>Percorso Formativo</h2>
+            <div class="education-item">
+                <div class="date">2025</div>
+                <h3>DOTTORATO</h3>
+                <p class="company">Politecnico di Torino & KTH Royal Institute of Technology</p>
+                <p>Urban and Regional Development - "Modelli di resilienza per le grandi derivazioni idroelettriche: il caso studio di Calcinere (CN)"</p>
+            </div>
+            <div class="education-item">
+                <div class="date">2025</div>
+                <h3>SPECIALIZZAZIONE</h3>
+                <p class="company">Politecnico di Torino</p>
+                <p>Beni Architettonici e del Paesaggio - "Intelligenza artificiale e Patrimonio Culturale: sfide e opportunità"</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Educazione continua -->
+        <div class="slide">
+            <h2>Percorso Formativo</h2>
+            <div class="education-item">
+                <div class="date">2019</div>
+                <h3>LAUREA MAGISTRALE</h3>
+                <p class="company">Politecnico di Torino</p>
+                <p>Competenze nel settore delle costruzioni con focus su metodologia BIM per certificazione LEED tramite VPL</p>
+            </div>
+            <div class="education-item">
+                <div class="date">2017</div>
+                <h3>LAUREA TRIENNALE</h3>
+                <p class="company">Politecnico di Torino</p>
+                <p>Architettura - Tesi sulla "Circolazione come metafora scientifica nella progettazione architettonica"</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Competenze -->
+        <div class="slide">
+            <h2>Competenze</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Soft Skills</h3>
+                    <div class="skills-grid">
+                        <div class="skill-item">Team working</div>
+                        <div class="skill-item">Problem solving</div>
+                        <div class="skill-item">Communication</div>
+                        <div class="skill-item">Project management</div>
+                        <div class="skill-item">Research</div>
+                        <div class="skill-item">Creativity</div>
+                        <div class="skill-item">Proactivity</div>
+                        <div class="skill-item">Adaptation</div>
+                    </div>
+                </div>
+                <div>
+                    <h3>Software</h3>
+                    <div class="skills-grid">
+                        <div class="skill-item">Autodesk</div>
+                        <div class="skill-item">QGIS</div>
+                        <div class="skill-item">Adobe Creative Suite</div>
+                        <div class="skill-item">Microsoft 365</div>
+                        <div class="skill-item">VPL, Python, JS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Contatti -->
+        <div class="slide">
+            <h2>Contatti</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong>Telefono:</strong> +39 3398475649
+                </div>
+                <div class="contact-item">
+                    <strong>Email:</strong> gianvito.ventura@polito.it
+                </div>
+                <div class="contact-item">
+                    <strong>Indirizzo:</strong> Via Giovanni Battista Viotti, 4, Torino, 10121, Italy
+                </div>
+                <div class="contact-item">
+                    <strong>LinkedIn:</strong> linkedin.com/in/gianvito-ventura-b73a94162/
+                </div>
+                <div class="contact-item">
+                    <strong>Lingue:</strong> Italiano (madrelingua), Inglese (IELTS)
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Grazie -->
+        <div class="slide title-slide">
+            <h1>Grazie per l'attenzione</h1>
+            <p style="margin-top: 40px;">Gianvito Marino Ventura</p>
+            <p>gianvito.ventura@polito.it</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◄ Indietro</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Avanti ►</button>
+        </div>
+        
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">10</span>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+        
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            if (currentSlideIndex < 0) currentSlideIndex = 0;
+            if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+            showSlide(currentSlideIndex);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>

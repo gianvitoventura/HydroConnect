@@ -13,8 +13,8 @@ const PROJECTS = [
     image: "/images/design/idee/Percorsi escursionistici.png",
     scores: {
       technical: { reliability: 5, complexity: 4, innovation: 1 },
-      economic: { investment: 3, management: 4, avoidedCosts: 1 },
-      social: { employment: 3, accessibility: 5, community: 4 },
+      economic: { investment: 3, management: 4, avoidedCosts: 2 },
+      social: { employment: 3, accessibility: 5, community: 5 },
       environmental: { biodiversity: 3, landscape: 4, co2: 5 }
     }
   },
@@ -25,10 +25,10 @@ const PROJECTS = [
     description: "Il progetto mira alla musealizzazione di una centrale idroelettrica attraverso il restauro degli spazi interni e la valorizzazione di macchinari storici, creando percorsi espositivi interattivi e multimediali che illustrano la produzione energetica. L'iniziativa include anche lo sviluppo di programmi educativi e laboratori pratici su sostenibilità ed energia rinnovabile, integrando infine la centrale nei percorsi culturali e turistici della valle per aumentarne il valore e la promozione.",
     image: "/images/design/idee/Musealizzazione impianto.png",
     scores: {
-      technical: { reliability: 3, complexity: 4, innovation: 2 },
+      technical: { reliability: 3, complexity: 4, innovation: 3 },
       economic: { investment: 5, management: 5, avoidedCosts: 1 },
       social: { employment: 4, accessibility: 5, community: 4 },
-      environmental: { biodiversity: 2, landscape: 3, co2: 3 }
+      environmental: { biodiversity: 3, landscape: 3, co2: 3 }
     }
   },
   {
@@ -207,7 +207,7 @@ const ProjectsSection = () => {
     // ECONOMICI (3)
     { key: 'investment', label: 'Investimento', category: 'economic', categoryLabel: 'Economico' },
     { key: 'management', label: 'Gestione', category: 'economic', categoryLabel: 'Economico' },
-    { key: 'avoidedCosts', label: 'Benefici evitati', category: 'economic', categoryLabel: 'Economico' },
+    { key: 'avoidedCosts', label: 'Costi evitati', category: 'economic', categoryLabel: 'Economico' },
     
     // SOCIALI (3)
     { key: 'employment', label: 'Occupazione', category: 'social', categoryLabel: 'Sociale' },

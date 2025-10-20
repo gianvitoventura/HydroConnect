@@ -215,7 +215,7 @@
 /* Immagine Progetto */
 .project-image {
   position: relative;
-  height: 360px;
+  height: 400px;
   overflow: hidden;
   background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
 }
