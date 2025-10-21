@@ -98,22 +98,22 @@ const CommunityPage = () => {
             {[
               {
                 stage: 'empathize',
-                title: 'Empathize',
+                title: 'Empatizza',
                 description: 'Comprendi i bisogni dell\'intera community'
               },
               {
                 stage: 'define',
-                title: 'Define',
+                title: 'Definisci',
                 description: 'Definisci il problema specifico che vouoi risolvere'
               },
               {
                 stage: 'ideate',
-                title: 'Ideate',
+                title: 'Immagina',
                 description: 'Esplora e genera un ventaglio di idee e soluzioni innovative'
               },
               {
                 stage: 'prototype',
-                title: 'Prototype',
+                title: 'Prototipa',
                 description: 'Crea un singolo prototipo della soluzione che ti sembra migliore'
               },
               {

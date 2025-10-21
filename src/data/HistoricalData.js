@@ -10,11 +10,11 @@ export const historicalData = {
                 media: [
                     {
                         type: "image",
-                        url: "/images/historical/calcinere/Canton de Verzol, 10 Ventoso Anno XII della Repubblica Francese (1 marzo 1803).png",
+                        url: "/images/historical/calcinere/Gazzetta Piemontese, martedì 29 agosto 1882, pagina 3, edizione numero 238.png",
                     },
                     {
                         type: "image",
-                        url: "/images/historical/calcinere/Gazzetta Piemontese, martedì 29 agosto 1882, pagina 3, edizione numero 238.png",
+                        url: "/images/historical/calcinere/Canton de Verzol, 10 Ventoso Anno XII della Repubblica Francese (1 marzo 1803).png",
                     },
                     {
                         type: "image",

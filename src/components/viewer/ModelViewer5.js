@@ -10,6 +10,10 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
   const [popupPosition, setPopupPosition] = useState(null);
   const worldRef = useRef(null);
   const modelRef = useRef(null);
+  const handleClosePopup = () => {
+    setSelectedElement(null);
+    setPopupPosition(null);
+};
 
   useEffect(() => {
     const init = async () => {
@@ -127,9 +131,9 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
   return (
     <div className="viewer-container">
       <div ref={containerRef} className="viewer-canvas" />
-    
+
       {selectedElement && popupPosition && (
-        <div 
+        <div
           className="popup-content"
           style={{
             position: 'absolute',
@@ -139,6 +143,23 @@ const ModelViewer = ({ modelFiles, isDarkTheme }) => {
             marginTop: '-10px'
           }}
         >
+          <button
+            className="popup-close-button"
+            onClick={handleClosePopup}
+            style={{
+                position: 'absolute',
+                top: '5px',   
+                right: '5px', 
+                border: 'none',
+                background: 'transparent',
+                fontSize: '1.2em',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                lineHeight: '1',
+            }}
+          >
+            &times; {/* Questo è il codice HTML per una 'X' elegante */}
+          </button>
           <h3>Proprietà</h3>
           <table className="plant-details">
             <tbody>
