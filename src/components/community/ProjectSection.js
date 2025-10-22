@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp, BarChart3 } from 'lucide-react';
+import { Star, TrendingUp, BarChart3, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from 'recharts';
 import './ProjectSection.css';
 
@@ -127,6 +127,295 @@ const getProjectColor = (index) => {
   return colors[index % colors.length];
 };
 
+// === COMPONENTE MODAL IMMAGINI ===
+const ImageModal = ({ isOpen, currentIndex, onClose, onNavigate, allProjects }) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isOpen) return;
+      
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onNavigate('prev');
+      if (e.key === 'ArrowRight') onNavigate('next');
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose, onNavigate]);
+
+  if (!isOpen) return null;
+
+  const currentProject = allProjects[currentIndex];
+
+  return (
+    <div className="image-modal-overlay" onClick={onClose}>
+      <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+        {/* Pulsante chiusura */}
+        <button className="modal-close-btn" onClick={onClose} aria-label="Chiudi">
+          <X size={24} />
+        </button>
+
+        {/* Freccia sinistra */}
+        <button 
+          className="modal-nav-btn modal-nav-prev" 
+          onClick={() => onNavigate('prev')}
+          aria-label="Immagine precedente"
+        >
+          <ChevronLeft size={32} />
+        </button>
+
+        {/* Immagine principale */}
+        <div className="modal-image-container">
+          <img 
+            src={currentProject.image} 
+            alt={currentProject.name}
+            className="modal-image"
+          />
+          <div className="modal-image-caption">
+            <h3>{currentProject.shortName}</h3>
+            <p>{currentProject.description}</p>
+          </div>
+        </div>
+
+        {/* Freccia destra */}
+        <button 
+          className="modal-nav-btn modal-nav-next" 
+          onClick={() => onNavigate('next')}
+          aria-label="Immagine successiva"
+        >
+          <ChevronRight size={32} />
+        </button>
+
+        {/* Indicatori (dots) */}
+        <div className="modal-dots">
+          {allProjects.map((_, index) => (
+            <button
+              key={index}
+              className={`modal-dot ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => onNavigate('goto', index)}
+              aria-label={`Vai all'immagine ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Contatore */}
+        <div className="modal-counter">
+          {currentIndex + 1} / {allProjects.length}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// === COMPONENTE MODAL AGGIUNTA PROGETTO ===
+const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    shortName: '',
+    description: '',
+    image: '',
+    scores: {
+      technical: { reliability: 3, complexity: 3, innovation: 3 },
+      economic: { investment: 3, management: 3, avoidedCosts: 3 },
+      social: { employment: 3, accessibility: 3, community: 3 },
+      environmental: { biodiversity: 3, landscape: 3, co2: 3 }
+    }
+  });
+
+  const [imagePreview, setImagePreview] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleScoreChange = (category, subcategory, value) => {
+    setFormData(prev => ({
+      ...prev,
+      scores: {
+        ...prev.scores,
+        [category]: {
+          ...prev.scores[category],
+          [subcategory]: parseInt(value)
+        }
+      }
+    }));
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, image: reader.result }));
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validazione
+    if (!formData.name || !formData.shortName || !formData.description || !formData.image) {
+      alert('Compila tutti i campi obbligatori');
+      return;
+    }
+
+    const newProject = {
+      id: nextId,
+      ...formData
+    };
+
+    onSave(newProject);
+    
+    // Reset form
+    setFormData({
+      name: '',
+      shortName: '',
+      description: '',
+      image: '',
+      scores: {
+        technical: { reliability: 3, complexity: 3, innovation: 3 },
+        economic: { investment: 3, management: 3, avoidedCosts: 3 },
+        social: { employment: 3, accessibility: 3, community: 3 },
+        environmental: { biodiversity: 3, landscape: 3, co2: 3 }
+      }
+    });
+    setImagePreview('');
+  };
+
+  if (!isOpen) return null;
+
+  const scoreLabels = {
+    technical: ['Affidabilità', 'Complessità', 'Innovazione'],
+    economic: ['Investimento', 'Gestione', 'Costi Evitati'],
+    social: ['Occupazione', 'Accessibilità', 'Comunità'],
+    environmental: ['Biodiversità', 'Paesaggio', 'CO2']
+  };
+
+  return (
+    <div className="add-project-modal-overlay" onClick={onClose}>
+      <div className="add-project-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="add-project-header">
+          <h2>Aggiungi Nuovo Progetto</h2>
+          <button onClick={onClose} className="modal-close-btn" aria-label="Chiudi">
+            <X size={24} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="add-project-form">
+          {/* Dati Base */}
+          <div className="form-section">
+            <h3>Informazioni Base</h3>
+            
+            <div className="form-group">
+              <label>Nome Completo *</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Es: Adeguamento sentieristica e piste ciclabili"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Nome Breve *</label>
+              <input
+                type="text"
+                value={formData.shortName}
+                onChange={(e) => handleInputChange('shortName', e.target.value)}
+                placeholder="Es: Adeguamento della sentieristica"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Descrizione *</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Inserisci una descrizione dettagliata del progetto..."
+                rows={4}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Immagine *</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="file-input"
+              />
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Preview" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Valutazioni */}
+          <div className="form-section">
+            <h3>Valutazioni (1-5)</h3>
+            <p className="section-description">Valuta ogni aspetto del progetto da 1 (minimo) a 5 (massimo)</p>
+            
+            {Object.keys(CATEGORIES).map((category, idx) => (
+              <div key={category} className="score-category">
+                <h4 style={{ color: CATEGORIES[category].color }}>
+                  {CATEGORIES[category].label}
+                </h4>
+                <div className="score-grid">
+                  {Object.keys(formData.scores[category]).map((subcategory, subIdx) => (
+                    <div key={subcategory} className="score-item">
+                      <label>{scoreLabels[category][subIdx]}</label>
+                      <div className="score-input-group">
+                        <input
+                          type="range"
+                          min="1"
+                          max="5"
+                          value={formData.scores[category][subcategory]}
+                          onChange={(e) => handleScoreChange(category, subcategory, e.target.value)}
+                          style={{ accentColor: CATEGORIES[category].color }}
+                        />
+                        <span className="score-value">
+                          {formData.scores[category][subcategory]}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="form-actions">
+            <button type="button" onClick={onClose} className="btn-cancel">
+              Annulla
+            </button>
+            <button type="submit" className="btn-save">
+              Salva Progetto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // === COMPONENTE PRINCIPALE ===
 const ProjectsSection = () => {
   const [weights, setWeights] = useState({
@@ -139,16 +428,56 @@ const ProjectsSection = () => {
   const [votes, setVotes] = useState({});
   const [showChart, setShowChart] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState([1, 2, 3]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [customProjects, setCustomProjects] = useState([]);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  
+  // Combina progetti predefiniti e custom
+  const allProjects = [...PROJECTS, ...customProjects];
   
   useEffect(() => {
     const savedVotes = localStorage.getItem('vallepo_votes');
     if (savedVotes) setVotes(JSON.parse(savedVotes));
+    
+    const savedCustomProjects = localStorage.getItem('vallepo_custom_projects');
+    if (savedCustomProjects) setCustomProjects(JSON.parse(savedCustomProjects));
   }, []);
+  
+  const handleAddProject = (newProject) => {
+    const updatedProjects = [...customProjects, newProject];
+    setCustomProjects(updatedProjects);
+    localStorage.setItem('vallepo_custom_projects', JSON.stringify(updatedProjects));
+    setShowAddProjectModal(false);
+  };
   
   const handleVote = (projectId, rating) => {
     const newVotes = { ...votes, [projectId]: rating };
     setVotes(newVotes);
     localStorage.setItem('vallepo_votes', JSON.stringify(newVotes));
+  };
+  
+  // === GESTIONE MODAL IMMAGINI ===
+  const openImageModal = (projectId) => {
+    const index = allProjects.findIndex(p => p.id === projectId);
+    setCurrentImageIndex(index);
+    setModalOpen(true);
+    document.body.style.overflow = 'hidden'; // Previene scroll del body
+  };
+
+  const closeImageModal = () => {
+    setModalOpen(false);
+    document.body.style.overflow = ''; // Ripristina scroll
+  };
+
+  const navigateImage = (direction, targetIndex) => {
+    if (direction === 'goto') {
+      setCurrentImageIndex(targetIndex);
+    } else if (direction === 'prev') {
+      setCurrentImageIndex((prev) => (prev === 0 ? allProjects.length - 1 : prev - 1));
+    } else if (direction === 'next') {
+      setCurrentImageIndex((prev) => (prev === allProjects.length - 1 ? 0 : prev + 1));
+    }
   };
   
   // === GESTIONE SLIDER CON BLOCCO SEMPLICE ===
@@ -170,84 +499,68 @@ const ProjectsSection = () => {
       // C'è abbastanza spazio, permetti il cambiamento
       setWeights({...weights, [category]: newValue});
     } else {
-      // Non c'è abbastanza spazio, blocca al massimo possibile
-      const maxPossible = currentValue + spaceAvailable;
-      setWeights({...weights, [category]: maxPossible});
+      // Non c'è abbastanza spazio, imposta al massimo possibile
+      setWeights({...weights, [category]: currentValue + spaceAvailable});
     }
   };
   
+  // === CALCOLO PUNTEGGIO ===
   const calculateScore = (project) => {
-    let total = 0;
-    Object.keys(CATEGORIES).forEach(cat => {
-      const catScores = Object.values(project.scores[cat]);
-      const avg = catScores.reduce((a, b) => a + b, 0) / catScores.length;
-      total += avg * (weights[cat] / 100);
+    let totalScore = 0;
+    
+    Object.keys(CATEGORIES).forEach(category => {
+      const categoryScores = project.scores[category];
+      const avgScore = Object.values(categoryScores).reduce((a, b) => a + b, 0) / 
+                      Object.values(categoryScores).length;
+      totalScore += (avgScore * weights[category]) / 100;
     });
-    return total.toFixed(1);
+    
+    return totalScore.toFixed(2);
   };
   
-  // === SELEZIONE ILLIMITATA PROGETTI ===
+  // === ORDINAMENTO PROGETTI ===
+  const sortedProjects = [...allProjects].sort((a, b) => 
+    calculateScore(b) - calculateScore(a)
+  );
+  
+  // === SELEZIONE PROGETTI ===
   const toggleProjectSelection = (projectId) => {
     if (selectedProjects.includes(projectId)) {
       setSelectedProjects(selectedProjects.filter(id => id !== projectId));
     } else {
-      // Nessun limite, aggiungi sempre
       setSelectedProjects([...selectedProjects, projectId]);
     }
   };
   
+  // === DATI RADAR CHART ===
   const radarData = () => {
-  // Definizione di tutti gli indicatori con le loro etichette
-  const indicators = [
-    // TECNICI (3)
-    { key: 'reliability', label: 'Affidabilità', category: 'technical', categoryLabel: 'Tecnico' },
-    { key: 'complexity', label: 'Complessità', category: 'technical', categoryLabel: 'Tecnico' },
-    { key: 'innovation', label: 'Innovazione', category: 'technical', categoryLabel: 'Tecnico' },
+    const dataPoints = [];
+    const categories = Object.keys(CATEGORIES);
     
-    // ECONOMICI (3)
-    { key: 'investment', label: 'Investimento', category: 'economic', categoryLabel: 'Economico' },
-    { key: 'management', label: 'Gestione', category: 'economic', categoryLabel: 'Economico' },
-    { key: 'avoidedCosts', label: 'Costi evitati', category: 'economic', categoryLabel: 'Economico' },
-    
-    // SOCIALI (3)
-    { key: 'employment', label: 'Occupazione', category: 'social', categoryLabel: 'Sociale' },
-    { key: 'accessibility', label: 'Accessibilità', category: 'social', categoryLabel: 'Sociale' },
-    { key: 'community', label: 'Comunità', category: 'social', categoryLabel: 'Sociale' },
-    
-    // AMBIENTALI (3)
-    { key: 'biodiversity', label: 'Biodiversità', category: 'environmental', categoryLabel: 'Ambientale' },
-    { key: 'landscape', label: 'Paesaggio', category: 'environmental', categoryLabel: 'Ambientale' },
-    { key: 'co2', label: 'CO2', category: 'environmental', categoryLabel: 'Ambientale' }
-  ];
-  
-  const data = [];
-  
-  // Per ogni indicatore, crea un punto del radar
-  indicators.forEach(indicator => {
-    const point = { 
-      // Label completo: "Categoria - Indicatore"
-      category: `${indicator.categoryLabel} - ${indicator.label}`
+    // Mappa dei nomi dei parametri
+    const parameterNames = {
+      technical: { reliability: 'Affidabilità', complexity: 'Complessità', innovation: 'Innovazione' },
+      economic: { investment: 'Investimento', management: 'Gestione', avoidedCosts: 'Costi Evitati' },
+      social: { employment: 'Occupazione', accessibility: 'Accessibilità', community: 'Comunità' },
+      environmental: { biodiversity: 'Biodiversità', landscape: 'Paesaggio', co2: 'CO2' }
     };
     
-    // Per ogni progetto selezionato, prendi il valore specifico dell'indicatore
-    selectedProjects.forEach(pid => {
-      const proj = PROJECTS.find(p => p.id === pid);
-      if (proj) {
-        // Accedi direttamente al valore dell'indicatore (es: project.scores.technical.reliability)
-        const value = proj.scores[indicator.category][indicator.key];
-        point[proj.shortName] = value;
-      }
+    categories.forEach(cat => {
+      const params = Object.keys(parameterNames[cat]);
+      params.forEach(param => {
+        const dataPoint = { category: parameterNames[cat][param] };
+        selectedProjects.forEach(pid => {
+          const proj = allProjects.find(p => p.id === pid);
+          if (proj) {
+            dataPoint[proj.shortName] = proj.scores[cat][param];
+          }
+        });
+        dataPoints.push(dataPoint);
+      });
     });
     
-    data.push(point);
-  });
-  
-  return data;
-};
-  
-  const sortedProjects = [...PROJECTS].sort((a, b) => 
-    calculateScore(b) - calculateScore(a)
-  );
+    return dataPoints;
+  };
   
   return (
     <div className="projects-section">
@@ -293,6 +606,17 @@ const ProjectsSection = () => {
           <BarChart3 size={20} />
           {showChart ? 'Nascondi' : 'Mostra'} Grafico Comparativo
         </button>
+        
+        <button 
+          className="add-project-btn"
+          onClick={() => setShowAddProjectModal(true)}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Aggiungi Progetto
+        </button>
       </div>
 
       {/* Grafico Radar */}
@@ -304,7 +628,7 @@ const ProjectsSection = () => {
               <PolarAngleAxis dataKey="category" tick={{ fill: '#64748b', fontSize: 12 }} />
               <PolarRadiusAxis domain={[0, 5]} tick={{ fill: '#94a3b8' }} />
               {selectedProjects.map((pid, idx) => {
-                const proj = PROJECTS.find(p => p.id === pid);
+                const proj = allProjects.find(p => p.id === pid);
                 const color = getProjectColor(idx);
                 return proj ? (
                   <Radar
@@ -336,26 +660,56 @@ const ProjectsSection = () => {
             onVote={(rating) => handleVote(project.id, rating)}
             isSelected={selectedProjects.includes(project.id)}
             onSelect={() => toggleProjectSelection(project.id)}
+            onImageClick={() => openImageModal(project.id)}
           />
         ))}
       </div>
 
-      {/* Legenda
-      <div className="projects-legend">
-        <p>💡 <strong>Suggerimento:</strong> Clicca sulle card per selezionarle. Puoi confrontare tutti i progetti che vuoi nel grafico radar!</p>
-      </div> */}
+      {/* Legenda interazioni */}
+      <div className="interaction-legend">
+        <div className="legend-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <span>Clicca sull'<strong>immagine</strong> per ingrandirla</span>
+        </div>
+        <div className="legend-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>Clicca sul <strong>testo</strong> per selezionare il progetto</span>
+        </div>
+      </div>
+
+      {/* Modal Aggiunta Progetto */}
+      <AddProjectModal
+        isOpen={showAddProjectModal}
+        onClose={() => setShowAddProjectModal(false)}
+        onSave={handleAddProject}
+        nextId={allProjects.length + 1}
+      />
+
+      {/* Modal Immagini */}
+      <ImageModal
+        isOpen={modalOpen}
+        currentIndex={currentImageIndex}
+        onClose={closeImageModal}
+        onNavigate={navigateImage}
+        allProjects={allProjects}
+      />
     </div>
   );
 };
 
 // === COMPONENTE CARD PROGETTO ===
-const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect }) => {
+const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect, onImageClick }) => {
   const [showVoting, setShowVoting] = useState(false);
   
   return (
     <div 
       className={`project-card ${isSelected ? 'selected' : ''}`}
-      onClick={onSelect}
     >
       {/* Badge Posizione */}
       <div className="rank-badge">#{rank}</div>
@@ -364,8 +718,36 @@ const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect 
       {isSelected && <div className="selected-indicator">✓ Selezionato</div>}
       
       {/* Immagine */}
-      <div className="project-image">
+      <div 
+        className="project-image"
+        onClick={(e) => {
+          e.stopPropagation();
+          onImageClick();
+        }}
+      >
         <img src={project.image} alt={project.name} />
+        
+        {/* Icona Zoom sempre visibile */}
+        <div className="image-zoom-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+            <line x1="11" y1="8" x2="11" y2="14"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </div>
+        
+        {/* Hint che appare al hover */}
+        <div className="image-zoom-hint">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+            <line x1="11" y1="8" x2="11" y2="14"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+          <span>Clicca per ingrandire</span>
+        </div>
+        
         <div className="score-badge">
           <TrendingUp size={14} />
           <span>{score}</span>
@@ -373,7 +755,7 @@ const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect 
       </div>
       
       {/* Contenuto */}
-      <div className="project-content">
+      <div className="project-content" onClick={onSelect}>
         <h4>{project.shortName}</h4>
         <p className="project-description">{project.description}</p>
         
