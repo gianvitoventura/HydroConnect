@@ -378,7 +378,7 @@ export const EuropeanPlantsControls = ({
               onChange={(e) => onCountryFilterChange(e.target.value)}
               className="country-select"
             >
-              <option value="all">Tutti i paesi ({availableCountries.length})</option>
+              <option value="all">Tutti i paesi</option>
               {availableCountries.map(country => (
                 <option key={country.code} value={country.code}>
                   {country.code} ({country.count})

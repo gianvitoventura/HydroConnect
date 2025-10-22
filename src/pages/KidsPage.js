@@ -7,7 +7,7 @@ import '../styles/KidsFont.css';
 const StorybookViewer = React.lazy(() => import('../components/kids/StorybookViewer'));
 const QuizGame = React.lazy(() => import('../components/kids/QuizGame'));
 const BadgeCertificate = React.lazy(() => import('../components/kids/BadgeCertificate'));
-const AchievementPopup = React.lazy(() => import('../components/kids/AchievementPopup'));
+// const AchievementPopup = React.lazy(() => import('../components/kids/AchievementPopup'));
 // const ProgressTracker = React.lazy(() => import('../components/kids/ProgressTracker'));
 const CentraleIdroelettricaKids = React.lazy(() => import('../components/kids/Hydrokids'));
 
@@ -56,7 +56,7 @@ const KidsPage = () => {
       totalSteps: 4,
       storybookFile: 'la_gocciolina_esploratrice_1.md',
       character: {
-        name: 'Goccia Blu',
+        name: 'Goccy',
         color: '#3b82f6'
       }
     },
@@ -439,15 +439,6 @@ const KidsPage = () => {
       )} */}
 
       {renderView()}
-
-      {/* Achievement Popup */}
-      <React.Suspense fallback={null}>
-        <AchievementPopup 
-          achievement={currentAchievement}
-          onClose={closeAchievement}
-          show={showAchievement}
-        />
-      </React.Suspense>
     </div>
   );
 };

@@ -142,6 +142,14 @@ const CentraleIdroelettricaKids = ({ onBack, onComplete }) => {
     };
   }, [selectedComponent, showCongrats]);
 
+  // Mostra congratulazioni quando chiudi l'ultimo popup
+  useEffect(() => {
+    // Se selectedComponent diventa null e abbiamo esplorato tutti i 5 componenti
+    if (selectedComponent === null && exploredComponents.length === 5 && !showCongrats) {
+      setTimeout(() => setShowCongrats(true), 300);
+    }
+  }, [selectedComponent, exploredComponents, showCongrats]);
+
 
   const handleComponentClick = (component) => {
     setSelectedComponent(component);
@@ -150,10 +158,7 @@ const CentraleIdroelettricaKids = ({ onBack, onComplete }) => {
       const newExplored = [...exploredComponents, component];
       setExploredComponents(newExplored);
       
-      // Controllo di completamento del gioco
-      if (newExplored.length === 5) {
-        setTimeout(() => setShowCongrats(true), 500);
-      }
+      // Il popup di congratulazioni apparirà quando chiudi l'ultimo popup
     }
   };
 

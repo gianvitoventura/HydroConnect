@@ -6,7 +6,7 @@ import '../../styles/KidsModules.css';
 const moduleContents = {
   'water-cycle': {
     0: {
-      title: 'Ciao, sono Goccy, la goccia blu!',
+      title: 'Ciao, sono Goccy, la Goccia Blu!',
       content: `
         <div class="step-content">
           <div class="character-container">
@@ -134,7 +134,7 @@ const moduleContents = {
             </div>
           </div>
             <div class="step-text">
-              <h2>La nostra velocità viene trasformata in <strong>elettricità</strong>! Non sono più solo una goccia Blu, ora passo la mia forza ad una goccia altrettanto importante, <strong>una goccia elettrica</strong>!</h2>
+              <h2>La nostra velocità viene trasformata in <strong>elettricità</strong>! Non sono più solo una Goccy, ora passo la mia forza ad una goccia altrettanto importante, <strong>una goccia elettrica</strong>!</h2>
               <h2>L'elettricità è una forma di energia che viaggia velocissima attraverso i cavi e arriva in tutte le case.</h2>
               <h2>Questa energia può fare tantissime cose: accendere le luci, far funzionare il frigorifero, la televisione, i computer e tanti altri oggetti che usiamo ogni giorno.</h2>
               <h2>Tutto questo è possibile grazie alla nostra forza! Noi gocce d'acqua abbiamo un super potere: possiamo trasformarci in energia che è utilissima per le persone.</h2>

@@ -571,7 +571,6 @@
   width: 100%;
   padding: 2rem;
   text-align: center;
-  animation: bounceIn 1s ease-out;
   pointer-events: auto;
   -webkit-user-select: none;
   -moz-user-select: none;

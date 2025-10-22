@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp, BarChart3, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, BarChart3, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from 'recharts';
 import './ProjectSection.css';
 
@@ -209,7 +209,6 @@ const ImageModal = ({ isOpen, currentIndex, onClose, onNavigate, allProjects }) 
 // === COMPONENTE MODAL AGGIUNTA PROGETTO ===
 const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
   const [formData, setFormData] = useState({
-    name: '',
     shortName: '',
     description: '',
     image: '',
@@ -267,13 +266,14 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
     e.preventDefault();
     
     // Validazione
-    if (!formData.name || !formData.shortName || !formData.description || !formData.image) {
+    if (!formData.shortName || !formData.description || !formData.image) {
       alert('Compila tutti i campi obbligatori');
       return;
     }
 
     const newProject = {
       id: nextId,
+      name: formData.shortName, // Usa shortName anche come name
       ...formData
     };
 
@@ -281,7 +281,6 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
     
     // Reset form
     setFormData({
-      name: '',
       shortName: '',
       description: '',
       image: '',
@@ -304,6 +303,29 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
     environmental: ['Biodiversità', 'Paesaggio', 'CO2']
   };
 
+  const scoreDescriptions = {
+    technical: {
+      reliability: 'Quanto è affidabile e sicura la tecnologia utilizzata?',
+      complexity: 'Quanto è complessa la realizzazione e gestione del progetto?',
+      innovation: 'Quanto è innovativo e all\'avanguardia il progetto?'
+    },
+    economic: {
+      investment: 'Quanto investimento economico iniziale richiede?',
+      management: 'Quanto costa la gestione e manutenzione nel tempo?',
+      avoidedCosts: 'Quanti costi futuri permette di evitare o risparmiare?'
+    },
+    social: {
+      employment: 'Quanti posti di lavoro crea o mantiene?',
+      accessibility: 'Quanto migliora l\'accessibilità per la comunità?',
+      community: 'Quanto beneficio porta alla comunità locale?'
+    },
+    environmental: {
+      biodiversity: 'Quanto impatto positivo ha sulla biodiversità?',
+      landscape: 'Quanto valorizza e protegge il paesaggio?',
+      co2: 'Quanto riduce le emissioni di CO2 e l\'impatto ambientale?'
+    }
+  };
+
   return (
     <div className="add-project-modal-overlay" onClick={onClose}>
       <div className="add-project-modal" onClick={(e) => e.stopPropagation()}>
@@ -320,18 +342,7 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
             <h3>Informazioni Base</h3>
             
             <div className="form-group">
-              <label>Nome Completo *</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Es: Adeguamento sentieristica e piste ciclabili"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Nome Breve *</label>
+              <label>Nome Progetto *</label>
               <input
                 type="text"
                 value={formData.shortName}
@@ -382,6 +393,7 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
                   {Object.keys(formData.scores[category]).map((subcategory, subIdx) => (
                     <div key={subcategory} className="score-item">
                       <label>{scoreLabels[category][subIdx]}</label>
+                      <p className="section-description">{scoreDescriptions[category][subcategory]}</p>
                       <div className="score-input-group">
                         <input
                           type="range"
@@ -457,6 +469,11 @@ const ProjectsSection = () => {
     localStorage.setItem('vallepo_votes', JSON.stringify(newVotes));
   };
   
+  // === CALCOLO MEDIA VOTI ===
+  const getAverageVote = (projectId) => {
+    return votes[projectId] || null;
+  };
+  
   // === GESTIONE MODAL IMMAGINI ===
   const openImageModal = (projectId) => {
     const index = allProjects.findIndex(p => p.id === projectId);
@@ -519,9 +536,28 @@ const ProjectsSection = () => {
   };
   
   // === ORDINAMENTO PROGETTI ===
-  const sortedProjects = [...allProjects].sort((a, b) => 
-    calculateScore(b) - calculateScore(a)
-  );
+  const sortedProjects = [...allProjects].sort((a, b) => {
+    const voteA = votes[a.id] || 0;
+    const voteB = votes[b.id] || 0;
+    
+    // Se entrambi hanno voti, ordina per voto (decrescente)
+    if (voteA !== 0 && voteB !== 0) {
+      return voteB - voteA;
+    }
+    
+    // Se solo A ha voto, metti A prima
+    if (voteA !== 0 && voteB === 0) {
+      return -1;
+    }
+    
+    // Se solo B ha voto, metti B prima
+    if (voteA === 0 && voteB !== 0) {
+      return 1;
+    }
+    
+    // Se nessuno ha voti, ordina per score tecnico
+    return calculateScore(b) - calculateScore(a);
+  });
   
   // === SELEZIONE PROGETTI ===
   const toggleProjectSelection = (projectId) => {
@@ -656,6 +692,7 @@ const ProjectsSection = () => {
             project={project}
             rank={index + 1}
             score={calculateScore(project)}
+            averageVote={getAverageVote(project.id)}
             vote={votes[project.id]}
             onVote={(rating) => handleVote(project.id, rating)}
             isSelected={selectedProjects.includes(project.id)}
@@ -704,7 +741,7 @@ const ProjectsSection = () => {
 };
 
 // === COMPONENTE CARD PROGETTO ===
-const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect, onImageClick }) => {
+const ProjectCard = ({ project, rank, score, averageVote, vote, onVote, isSelected, onSelect, onImageClick }) => {
   const [showVoting, setShowVoting] = useState(false);
   
   return (
@@ -749,8 +786,17 @@ const ProjectCard = ({ project, rank, score, vote, onVote, isSelected, onSelect,
         </div>
         
         <div className="score-badge">
-          <TrendingUp size={14} />
-          <span>{score}</span>
+          {averageVote ? (
+            <>
+              <Star size={14} fill="#d97706" stroke="#d97706" />
+              <span>{averageVote.toFixed(1)}</span>
+            </>
+          ) : (
+            <>
+              <Star size={14} fill="none" stroke="#94a3b8" />
+              <span>N/A</span>
+            </>
+          )}
         </div>
       </div>
       

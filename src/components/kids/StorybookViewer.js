@@ -41,11 +41,11 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
       'water-cycle': [
         {
           title: "L'inizio del viaggio",
-          content: `C'era una volta, tra le vette maestose delle Alpi, una piccola gocciolina d'acqua di nome <strong>Goccia Blu</strong>. 
+          content: `C'era una volta, tra le vette maestose delle Alpi, una piccola gocciolina d'acqua di nome <strong>Goccy</strong>. 
           
           Era nata da un fiocco di neve scintillante e sognava di esplorare il mondo. Un giorno di primavera, il sole caldo la svegliò con i suoi raggi dorati.
 
-          "È ora di partire per una grande avventura!", pensò Goccia Blu, mentre si scioglieva dolcemente e si univa a migliaia di altre goccioline che aspettavano come lei.
+          "È ora di partire per una grande avventura!", pensò Goccy, mentre si scioglieva dolcemente e si univa a migliaia di altre goccioline che aspettavano come lei.
 
           Insieme formarono un piccolo rivolo che iniziò a scorrere giù per la montagna, cantando una melodia cristallina.`,
           image: "🏔️",
@@ -54,11 +54,11 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
         },
         {
           title: "Il ruscello danzante", 
-          content: `Il piccolo rivolo crebbe e divenne un ruscello vivace che danzava giù per la montagna. Goccia Blu era emozionata!
+          content: `Il piccolo rivolo crebbe e divenne un ruscello vivace che danzava giù per la montagna. Goccy era emozionata!
           
           Superarono rocce lisce come specchi, saltarono piccole cascate spumeggianti e si fecero strada tra boschi di pini profumati.
 
-          "Guarda quanti amici abbiamo!" esclamò Goccia Blu, vedendo che man mano che scendevano, altri ruscelli si univano a loro, rendendo il loro viaggio sempre più grande e potente.
+          "Guarda quanti amici abbiamo!" esclamò Goccy, vedendo che man mano che scendevano, altri ruscelli si univano a loro, rendendo il loro viaggio sempre più grande e potente.
 
           Il suono dell'acqua che scorreva era come una musica allegra che riempiva la valle di gioia.`,
           image: "🌊",
@@ -67,11 +67,11 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
         },
         {
           title: "Il grande fiume",
-          content: `Il ruscello divenne un torrente, poi un fiume sempre più grande. Goccia Blu non riusciva a credere ai suoi occhi!
+          content: `Il ruscello divenne un torrente, poi un fiume sempre più grande. Goccy non riusciva a credere ai suoi occhi!
           
           Era parte di qualcosa di enorme e maestoso, che scorreva attraverso valli verdi punteggiate di fiori colorati e città animate piene di vita.
 
-          "Sono nel <strong>Po</strong>, il fiume più lungo d'Italia!" realizzò Goccia Blu con orgoglio. "Ho realizzato il mio sogno: sono diventata una grande esploratrice!"
+          "Sono nel <strong>Po</strong>, il fiume più lungo d'Italia!" realizzò Goccy con orgoglio. "Ho realizzato il mio sogno: sono diventata una grande esploratrice!"
 
           Attraversò ponti antichi, vide pescatori pazienti e bambini che giocavano sulle rive.`,
           image: "🏞️", 
@@ -80,7 +80,7 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
         },
         {
           title: "Il ciclo magico",
-          content: `Ma il viaggio di Goccia Blu non finì al mare. Quando arrivò alle acque blu del mare Adriatico, accadde qualcosa di magico!
+          content: `Ma il viaggio di Goccy non finì al mare. Quando arrivò alle acque blu del mare Adriatico, accadde qualcosa di magico!
           
           Il sole la fece evaporare dolcemente e salire verso il cielo, dove divenne parte di una nuvola soffice e bianca.
 
@@ -88,7 +88,7 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
 
           Poi, come pioggia, tornò sulla terra per iniziare un nuovo viaggio. Aveva scoperto il <strong>ciclo dell'acqua</strong> - un viaggio infinito che non finisce mai!
 
-          <em>"Ogni goccia d'acqua ha una storia da raccontare"</em>, sussurrò Goccia Blu, pronta per la prossima avventura.`,
+          <em>"Ogni goccia d'acqua ha una storia da raccontare"</em>, sussurrò Goccy, pronta per la prossima avventura.`,
           image: "☁️",
           character: "💧", 
           mood: "wise"
@@ -412,7 +412,6 @@ const StorybookViewer = ({ module, step, onComplete, onBack }) => {
         .storybook-title {
           color: #0369a1;
           font-size: 1.5rem;
-          margin: 0;
           display: flex;
           align-items: center;
           gap: 0.5rem;

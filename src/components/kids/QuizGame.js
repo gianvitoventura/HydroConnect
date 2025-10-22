@@ -29,7 +29,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
   const quizQuestions = {
     'water-cycle': [
       {
-        question: 'Da dove inizia il viaggio di Goccia Blu nella storia?',
+        question: 'Da dove inizia il viaggio di Goccy nella storia?',
         options: [
           'Dal mare Adriatico',
           'Da un fiocco di neve sulle Alpi',
@@ -37,7 +37,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
           'Da un lago di montagna'
         ],
         correctAnswer: 1,
-        explanation: 'Goccia Blu inizia il suo viaggio da un fiocco di neve candida sulle vette delle Alpi, che si scioglie con il calore del sole.',
+        explanation: 'Goccy inizia il suo viaggio da un fiocco di neve candida sulle vette delle Alpi, che si scioglie con il calore del sole.',
         difficulty: 'easy',
         category: 'story'
       },
@@ -55,7 +55,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
         category: 'science'
       },
       {
-        question: 'Come si chiama il fiume più lungo d\'Italia che attraversa Goccia Blu?',
+        question: 'Come si chiama il fiume più lungo d\'Italia che attraversa Goccy?',
         options: [
           'Il Tevere',
           'L\'Arno',
@@ -81,7 +81,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
         category: 'science'
       },
       {
-        question: 'Cosa succede a Goccia Blu quando arriva al mare?',
+        question: 'Cosa succede a Goccy quando arriva al mare?',
         options: [
           'Si ferma per sempre',
           'Evapora e diventa parte di una nuvola',
@@ -89,7 +89,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
           'Scompare definitivamente'
         ],
         correctAnswer: 1,
-        explanation: 'Quando Goccia Blu arriva al mare, il sole la fa evaporare e lei sale verso il cielo per diventare parte di una nuvola, iniziando un nuovo ciclo.',
+        explanation: 'Quando Goccy arriva al mare, il sole la fa evaporare e lei sale verso il cielo per diventare parte di una nuvola, iniziando un nuovo ciclo.',
         difficulty: 'easy',
         category: 'story'
       }
