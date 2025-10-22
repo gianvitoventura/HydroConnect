@@ -608,7 +608,7 @@ const ProjectsSection = () => {
       </div>
 
       {/* Controlli Pesi */}
-      <div className="weights-control">
+      {/* <div className="weights-control">
         <h3>Regola le tue priorità</h3>
         <div className="weights-grid">
           {Object.keys(CATEGORIES).map(cat => (
@@ -631,7 +631,7 @@ const ProjectsSection = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Pulsante Grafico */}
       <div className="chart-toggle">
@@ -775,7 +775,7 @@ const ProjectCard = ({ project, rank, score, averageVote, vote, onVote, isSelect
         </div>
         
         {/* Hint che appare al hover */}
-        <div className="image-zoom-hint">
+        {/* <div className="image-zoom-hint">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.35-4.35"/>
@@ -783,7 +783,7 @@ const ProjectCard = ({ project, rank, score, averageVote, vote, onVote, isSelect
             <line x1="8" y1="11" x2="14" y2="11"/>
           </svg>
           <span>Clicca per ingrandire</span>
-        </div>
+        </div> */}
         
         <div className="score-badge">
           {averageVote ? (

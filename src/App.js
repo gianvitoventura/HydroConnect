@@ -89,7 +89,7 @@ function Header({ setCurrentPage, currentPage }) {
               Map
             </button>
           </div>
-          <div className="nav-buttons">
+          {/* <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('models')}
               onMouseEnter={(e) => handleMouseEnter('Esplora le centrali e naviga i modelli 3D', e)}
@@ -97,7 +97,7 @@ function Header({ setCurrentPage, currentPage }) {
             >
               Tour
             </button>
-          </div>
+          </div> */}
           <div className="nav-buttons">
             <button
               onClick={() => handleButtonClick('Community-Hub')}
@@ -149,7 +149,9 @@ function HomePage({ setCurrentPage }) {
       <div className="home-content-overlay">
         <h1>Benvenuto</h1>
         <p>
-          <span className="clickable-word" onClick={() => setCurrentPage({ page: 'map' })}>Conosci</span> il territorio, <span className="clickable-word" onClick={() => setCurrentPage({ page: 'models' })}>esplora</span> il parco idroelettrico e <span className="clickable-word" onClick={() => setCurrentPage({ page: 'Community-Hub' })}>partecipa</span> alle decisioni per un futuro sostenibile.
+          <span className="clickable-word" onClick={() => setCurrentPage({ page: 'map' })}>Conosci</span> il territorio, 
+          {/* <span className="clickable-word" onClick={() => setCurrentPage({ page: 'models' })}>esplora</span>  */}
+           esplora il parco idroelettrico e <span className="clickable-word" onClick={() => setCurrentPage({ page: 'Community-Hub' })}>partecipa</span> alle decisioni per un futuro sostenibile.
         </p>
       </div>
     </div>
