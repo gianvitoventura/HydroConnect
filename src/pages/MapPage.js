@@ -60,10 +60,10 @@ const LAYER_CONFIG = {
     type: 'coverage',
     displayName: 'Valle Po',
     style: {
-      color: '#FFF000',
+      color: '#ffa600ff',
       weight: 2,
       opacity: 0.8,
-      fillColor: '#FFF000',
+      fillColor: '#ffa600ff',
       fillOpacity: 0.2
     },
     zIndex: 1
@@ -104,7 +104,7 @@ const LAYER_CONFIG = {
     type: 'works',
     displayName: 'Opere puntuali',
     style: {
-      radius: 4,
+      radius: 6,
       fillColor: '#FFF000',
       color: '#9c9200ff',
       weight: 2,
@@ -129,10 +129,10 @@ const LAYER_CONFIG = {
     type: 'unesco_core',
     displayName: 'Core zone UNESCO',
     style: {
-      color: '#306f3eff',
+      color: '#871616ff',
       weight: 3,
       opacity: 0.9,
-      fillColor: '#306f3eff',
+      fillColor: '#871616ff',
       fillOpacity: 0.25,
     },
     zIndex: 7

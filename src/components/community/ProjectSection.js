@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Star, BarChart3, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from 'recharts';
 import './ProjectSection.css';
+import { auth } from '../../firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth'; 
+import Auth from './Auth';
 
 // === DATI PROGETTI ===
 const PROJECTS = [
@@ -207,7 +210,7 @@ const ImageModal = ({ isOpen, currentIndex, onClose, onNavigate, allProjects }) 
 };
 
 // === COMPONENTE MODAL AGGIUNTA PROGETTO ===
-const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
+const AddProjectModal = ({ isOpen, onClose, onSave, nextId, user }) => { // Aggiunto 'user'
   const [formData, setFormData] = useState({
     shortName: '',
     description: '',
@@ -255,6 +258,8 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
+        // Nota: in un'app reale, l'immagine andrebbe caricata su storage (es. Firebase Storage) 
+        // e 'image' conterrebbe l'URL pubblico. Qui usiamo data URL per semplicità.
         setFormData(prev => ({ ...prev, image: reader.result }));
         setImagePreview(reader.result);
       };
@@ -274,7 +279,11 @@ const AddProjectModal = ({ isOpen, onClose, onSave, nextId }) => {
     const newProject = {
       id: nextId,
       name: formData.shortName, // Usa shortName anche come name
-      ...formData
+      ...formData,
+      isPredefined: false, // Aggiunto per identificare i progetti custom
+      createdBy: user ? user.uid : 'anonimo', // Aggiunto ID utente
+      createdByEmail: user ? user.email : 'anonimo@example.com', // Aggiunto email utente (opzionale)
+      // createdAt: serverTimestamp() // Solo se usi Firestore
     };
 
     onSave(newProject);
@@ -445,8 +454,23 @@ const ProjectsSection = () => {
   const [customProjects, setCustomProjects] = useState([]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   
+  const [user, setUser] = useState(null); // NUOVO: Stato utente
+  const [showAuth, setShowAuth] = useState(false); // NUOVO: Stato modal autenticazione
+  
   // Combina progetti predefiniti e custom
   const allProjects = [...PROJECTS, ...customProjects];
+  
+  // Monitora stato autenticazione
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      // Chiudi il modal Auth se l'utente si è loggato
+      if (currentUser) {
+        setShowAuth(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
   
   useEffect(() => {
     const savedVotes = localStorage.getItem('vallepo_votes');
@@ -461,6 +485,17 @@ const ProjectsSection = () => {
     setCustomProjects(updatedProjects);
     localStorage.setItem('vallepo_custom_projects', JSON.stringify(updatedProjects));
     setShowAddProjectModal(false);
+  };
+  
+  // NUOVO: Gestisce il click sul pulsante Aggiungi Progetto
+  const handleAddProjectClick = () => {
+    if (!user) {
+      // Se non loggato, mostra login
+      setShowAuth(true);
+    } else {
+      // Se loggato, mostra form
+      setShowAddProjectModal(true);
+    }
   };
   
   const handleVote = (projectId, rating) => {
@@ -497,7 +532,7 @@ const ProjectsSection = () => {
     }
   };
   
-  // === GESTIONE SLIDER CON BLOCCO SEMPLICE ===
+  // === GESTIONE SLIDER CON BLOCCO SEMPLICE (commentato) ===
   const handleWeightChange = (category, newValue) => {
     const currentValue = weights[category];
     const difference = newValue - currentValue;
@@ -607,32 +642,6 @@ const ProjectsSection = () => {
         </p>
       </div>
 
-      {/* Controlli Pesi */}
-      {/* <div className="weights-control">
-        <h3>Regola le tue priorità</h3>
-        <div className="weights-grid">
-          {Object.keys(CATEGORIES).map(cat => (
-            <div key={cat} className="weight-item">
-              <div className="weight-header">
-                <span className="weight-label">{CATEGORIES[cat].label}</span>
-                <span className="weight-value" style={{ color: CATEGORIES[cat].color }}>
-                  {weights[cat]}%
-                </span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={weights[cat]}
-                onChange={(e) => handleWeightChange(cat, parseInt(e.target.value))}
-                className="weight-slider"
-                style={{ accentColor: CATEGORIES[cat].color }}
-              />
-            </div>
-          ))}
-        </div>
-      </div> */}
-
       {/* Pulsante Grafico */}
       <div className="chart-toggle">
         <button 
@@ -645,13 +654,13 @@ const ProjectsSection = () => {
         
         <button 
           className="add-project-btn"
-          onClick={() => setShowAddProjectModal(true)}
+          onClick={handleAddProjectClick} // Modificato per usare la nuova funzione
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19"/>
             <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          Aggiungi Progetto
+          {user ? 'Aggiungi Progetto' : 'Accedi per Aggiungere'} 
         </button>
       </div>
 
@@ -726,7 +735,16 @@ const ProjectsSection = () => {
         onClose={() => setShowAddProjectModal(false)}
         onSave={handleAddProject}
         nextId={allProjects.length + 1}
+        user={user} // Passa l'oggetto utente
       />
+      
+      {/* Modal Autenticazione */}
+      {showAuth && (
+        <Auth 
+          user={user} 
+          onClose={() => setShowAuth(false)} 
+        />
+      )}
 
       {/* Modal Immagini */}
       <ImageModal
@@ -773,17 +791,6 @@ const ProjectCard = ({ project, rank, score, averageVote, vote, onVote, isSelect
             <line x1="8" y1="11" x2="14" y2="11"/>
           </svg>
         </div>
-        
-        {/* Hint che appare al hover */}
-        {/* <div className="image-zoom-hint">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
-            <line x1="11" y1="8" x2="11" y2="14"/>
-            <line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-          <span>Clicca per ingrandire</span>
-        </div> */}
         
         <div className="score-badge">
           {averageVote ? (
