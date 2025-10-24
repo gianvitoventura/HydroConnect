@@ -254,7 +254,7 @@ const CentraleIdroelettricaKids = ({ onBack, onComplete }) => {
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             setShowCongrats(false);
-            if (onComplete) onComplete(100);
+            if (onComplete) onComplete(500);
           }
         }}
       >
@@ -274,7 +274,7 @@ const CentraleIdroelettricaKids = ({ onBack, onComplete }) => {
           <button
             onClick={() => {
               setShowCongrats(false);
-              if (onComplete) onComplete(100);
+              if (onComplete) onComplete(500);
             }}
             className="hydro-congrats-button"
             type="button"

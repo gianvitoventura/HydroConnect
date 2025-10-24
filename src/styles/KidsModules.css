@@ -856,15 +856,7 @@
   background: #4f46e5;
 }
 
-.action-button.screenshot {
-  background: #10b981;
-  color: white;
-  border: none;
-}
 
-.action-button.screenshot:hover {
-  background: #059669;
-}
 
 .action-button.share {
   background: #eab308;

@@ -607,6 +607,12 @@
   color: #475569;
 }
 
+.score-description {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
 .score-input-group {
   display: flex;
   align-items: center;

@@ -10,20 +10,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [timerActive, setTimerActive] = useState(false);
 
-  // Timer per ogni domanda (opzionale, può essere disabilitato)
-  useEffect(() => {
-    let timer;
-    if (timerActive && timeLeft > 0 && selectedOption === null) {
-      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0 && selectedOption === null) {
-      // Auto-submit se il tempo finisce
-      handleOptionSelect(-1); // -1 significa nessuna risposta
-    }
-    return () => clearTimeout(timer);
-  }, [timeLeft, timerActive, selectedOption]);
 
   // Database delle domande migliorato
   const quizQuestions = {
@@ -246,9 +233,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
       const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
       setQuestions(shuffled.slice(0, 4));
       
-      // Attiva timer (opzionale)
-      // setTimerActive(true);
-      setTimeLeft(30);
     }
   }, [moduleId]);
 
@@ -281,7 +265,7 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
     const correct = optionIndex === currentQuestion.correctAnswer;
     setIsCorrect(correct);
     
-    // Calcola punti basati su difficoltà e tempo
+    // Calcola punti basati su difficoltà
     let points = 0;
     if (correct) {
       const basePoints = {
@@ -291,8 +275,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
       };
       points = basePoints[currentQuestion.difficulty] || 25;
       
-      // Bonus tempo (se timer attivo)
-      if (timerActive && timeLeft > 20) points += 5;
       
       setScore(score + points);
     }
@@ -306,7 +288,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
     }]);
     
     setShowExplanation(true);
-    setTimerActive(false);
   };
 
   const handleNextQuestion = () => {
@@ -314,8 +295,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
       setShowExplanation(false);
-      setTimeLeft(30);
-      setTimerActive(true);
     } else {
       setQuizCompleted(true);
     }
@@ -386,13 +365,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
               </span>
             </div>
             
-            {timerActive && (
-              <div className="timer">
-                <div className="timer-circle">
-                  <span>{timeLeft}</span>
-                </div>
-              </div>
-            )}
           </div>
           
           <h2 className="quiz-question">{currentQuestion.question}</h2>
@@ -611,28 +583,6 @@ const QuizGame = ({ moduleId, onComplete, onBack }) => {
           font-weight: 500;
         }
 
-        .timer {
-          display: flex;
-          align-items: center;
-        }
-
-        .timer-circle {
-          width: 3rem;
-          height: 3rem;
-          border: 3px solid #ef4444;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          color: #ef4444;
-          animation: timerPulse 1s infinite;
-        }
-
-        @keyframes timerPulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
 
         .quiz-question {
           font-size: 1.5rem;

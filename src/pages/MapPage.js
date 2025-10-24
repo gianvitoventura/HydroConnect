@@ -642,6 +642,11 @@ function MapPage({ setCurrentPage }) {
     setCurrentPage({ page: 'bim', plantId: plantId, viewMode: 'viewer' });
   };
 
+  const handleProjectsClick = (plantId) => {
+    setCurrentPage({ page: 'community', plantId: plantId });
+  };
+
+
   // Colori per il grafico radar
   const CHART_COLORS = {
     'A bacino': '#3b82f6',
@@ -941,6 +946,9 @@ function MapPage({ setCurrentPage }) {
                       </button>
                       <button className="popup-button" onClick={() => handleModelClick(plant.id)}>
                         Modello
+                      </button>
+                      <button className="popup-button" onClick={() => handleProjectsClick(plant.id)}>
+                        Progetti
                       </button>
                     </div>
                   </div>

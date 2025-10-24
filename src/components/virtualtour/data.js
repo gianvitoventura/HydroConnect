@@ -630,38 +630,6 @@ export default {
           "target": "8-pt_sala-macchine-1"
         }
       ],
-      "infoHotspots": [
-        {
-          "yaw": -0.7205735656377801,
-          "pitch": -0.06272323307513616,
-          "title": "Quadro di azionamento",
-          "text": "Text"
-        },
-        {
-          "yaw": -1.758444313240096,
-          "pitch": 0.28294921886547186,
-          "title": "Centralina idraulica",
-          "text": "Text"
-        },
-        {
-          "yaw": -2.9161721587839384,
-          "pitch": 0.23780988018677185,
-          "title": "Turbina Pelton",
-          "text": "Text"
-        },
-        {
-          "yaw": -2.2437460881127453,
-          "pitch": -0.0044665978406221996,
-          "title": "Alternatore",
-          "text": "Text"
-        },
-        {
-          "yaw": -0.12402719609553259,
-          "pitch": -0.20426799024825115,
-          "title": "Gruppo filtraggio",
-          "text": "Text"
-        }
-      ]
     },
     {
       "id": "12-pt_gruppo-2",

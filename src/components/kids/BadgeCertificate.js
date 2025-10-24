@@ -100,12 +100,6 @@ const BadgeCertificate = ({ badge, moduleId, onContinue }) => {
     printWindow.document.close();
   };
   
-  const handleScreenshot = () => {
-    // In una implementazione reale, qui utilizzeremmo una libreria come html2canvas
-    // per catturare uno screenshot del certificato
-    alert('Funzionalità di screenshot non implementata in questa demo. Usa la funzione di stampa per salvare il certificato.');
-  };
-  
   const handleShare = () => {
     // In una implementazione reale, qui implementeremmo la condivisione
     // usando l'API Web Share se disponibile
@@ -201,10 +195,6 @@ const BadgeCertificate = ({ badge, moduleId, onContinue }) => {
             <button className="action-button print" onClick={handlePrint}>
               <Download />
               <span>Scarica</span>
-            </button>
-            <button className="action-button screenshot" onClick={handleScreenshot}>
-              <Camera />
-              <span>Screenshot</span>
             </button>
             <button className="action-button share" onClick={handleShare}>
               <Share2 />

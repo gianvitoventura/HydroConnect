@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/CommunityPage.css';
 import ProjectsSection from '../components/community/ProjectSection';
+import { useCommunityMetrics } from '../components/hooks/useAnalitics';
 
 const CommunityPage = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ const CommunityPage = () => {
     test: ''
   });
   const [notification, setNotification] = useState('');
+
+  // 📊 METRICHE REALI DA FIREBASE
+  const metrics = useCommunityMetrics();
 
   // Dati attività in corso
   const currentActivities = [
@@ -47,6 +51,16 @@ const CommunityPage = () => {
     setTimeout(() => setNotification(''), 3000);
   };
 
+  // Formatta trend con freccia e colore
+  const formatTrend = (value) => {
+    if (value === 0) return null;
+    const isPositive = value > 0;
+    return {
+      text: `${isPositive ? '↑' : '↓'} ${Math.abs(value)}% questo mese`,
+      className: isPositive ? 'positive' : 'negative'
+    };
+  };
+
   return (
     <div className="community-page">
       <div className="community-header-section">
@@ -62,34 +76,83 @@ const CommunityPage = () => {
         </div>
       )}
 
-            <div className="dashboard-section">
+      <div className="dashboard-section">
         <div className="metrics-grid">
+          {/* MEMBRI DELLA COMMUNITY */}
           <div className="metric-card">
             <h3>Membri della community</h3>
-            <p className="metric-value">156</p>
-            <p className="metric-trend positive">↑ 12% questo mese</p>
+            {metrics.loading ? (
+              <p className="metric-value">...</p>
+            ) : (
+              <>
+                <p className="metric-value">{metrics.totalUsers}</p>
+                {metrics.usersTrend !== 0 && (
+                  <p className={`metric-trend ${metrics.usersTrend > 0 ? 'positive' : 'negative'}`}>
+                    {metrics.usersTrend > 0 ? '↑' : '↓'} {Math.abs(metrics.usersTrend)}% questo mese
+                  </p>
+                )}
+              </>
+            )}
           </div>
+
+          {/* PROGETTI AVVIATI */}
           <div className="metric-card">
-            <h3>Progetti avviati</h3>
-            <p className="metric-value">8</p>
-            <p className="metric-trend">3 in corso</p>
+            <h3>Progetti totali</h3>
+            {metrics.loading ? (
+              <p className="metric-value">...</p>
+            ) : (
+              <>
+                <p className="metric-value">{metrics.totalProjects}</p>
+                <p className="metric-trend">
+                  {metrics.customProjects} creati dalla community
+                </p>
+              </>
+            )}
           </div>
+
+          {/* VOTI TOTALI */}
           <div className="metric-card">
-            <h3>Ore di formazione</h3>
-            <p className="metric-value">240</p>
-            <p className="metric-trend positive">↑ 25% quest'anno</p>
+            <h3>Voti raccolti</h3>
+            {metrics.loading ? (
+              <p className="metric-value">...</p>
+            ) : (
+              <>
+                <p className="metric-value">{metrics.totalVotes}</p>
+                <p className="metric-trend positive">
+                  {metrics.totalProjects > 0 
+                    ? `Media ${(metrics.totalVotes / metrics.totalProjects).toFixed(1)} voti/progetto`
+                    : 'Inizia a votare!'}
+                </p>
+              </>
+            )}
           </div>
+
+          {/* COINVOLGIMENTO */}
           <div className="metric-card">
             <h3>Coinvolgimento</h3>
-            <p className="metric-value">85%</p>
-            <p className="metric-trend positive">↑ questo mese</p>
+            {metrics.loading ? (
+              <p className="metric-value">...</p>
+            ) : (
+              <>
+                <p className="metric-value">{metrics.engagement}%</p>
+                <p className="metric-trend positive">
+                  {metrics.engagement > 70 ? '↑ Ottimo engagement!' : 'Partecipa anche tu!'}
+                </p>
+              </>
+            )}
           </div>
         </div>
+
+        {/* Messaggio di errore se c'è */}
+        {metrics.error && (
+          <div className="metrics-error">
+            ⚠️ Errore nel caricamento delle metriche. Riprova più tardi.
+          </div>
+        )}
       </div>
 
-      {/* 🏗️ SEZIONE PROGETTI */}
+      {/* 🗃️ SEZIONE PROGETTI */}
       <ProjectsSection />
-
 
       <div className="activities-section">
         <div className="design-thinking-section">
@@ -104,7 +167,7 @@ const CommunityPage = () => {
               {
                 stage: 'define',
                 title: 'Definisci',
-                description: 'Definisci il problema specifico che vouoi risolvere'
+                description: 'Definisci il problema specifico che vuoi risolvere'
               },
               {
                 stage: 'ideate',
@@ -152,26 +215,26 @@ const CommunityPage = () => {
         </div>
       </div>
 
-              <div className="activities-section">
-          <h2>Attività in Corso</h2>
-          <div className="activities-grid">
-            {currentActivities.map((activity, index) => (
-              <div key={index} className="activity-card">
-                <div className="activity-header">
-                  <h3>{activity.title}</h3>
-                  <span className="activity-status">{activity.status}</span>
-                </div>
-                <p className="activity-date">{activity.date}</p>
-                <p className="activity-participants">
-                  {activity.participants} partecipanti
-                </p>
-                <button className="join-button">
-                  Partecipa
-                </button>
+      <div className="activities-section">
+        <h2>Attività in Corso</h2>
+        <div className="activities-grid">
+          {currentActivities.map((activity, index) => (
+            <div key={index} className="activity-card">
+              <div className="activity-header">
+                <h3>{activity.title}</h3>
+                <span className="activity-status">{activity.status}</span>
               </div>
-            ))}
-          </div>
+              <p className="activity-date">{activity.date}</p>
+              <p className="activity-participants">
+                {activity.participants} partecipanti
+              </p>
+              <button className="join-button">
+                Partecipa
+              </button>
+            </div>
+          ))}
         </div>
+      </div>
     </div>
   );
 };

@@ -3,23 +3,41 @@ import { Droplet, Zap, Leaf, Award, Book, Star, Check, X} from 'lucide-react';
 import '../styles/KidsPage.css';
 import '../styles/KidsFont.css';
 
+// Firebase imports
+import { db } from '../firebaseConfig';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+
+// Hook Analytics
+import { useKidsMetrics } from '../components/hooks/useAnalitics';
+
 // Importazioni dei componenti
 const StorybookViewer = React.lazy(() => import('../components/kids/StorybookViewer'));
 const QuizGame = React.lazy(() => import('../components/kids/QuizGame'));
 const BadgeCertificate = React.lazy(() => import('../components/kids/BadgeCertificate'));
-// const AchievementPopup = React.lazy(() => import('../components/kids/AchievementPopup'));
-// const ProgressTracker = React.lazy(() => import('../components/kids/ProgressTracker'));
 const CentraleIdroelettricaKids = React.lazy(() => import('../components/kids/Hydrokids'));
 
 const KidsPage = () => {
   // Stati per la navigazione e il progresso
-  const [currentView, setCurrentView] = useState('grid'); // 'grid', 'module', 'quiz', 'badge', 'interactive'
+  const [currentView, setCurrentView] = useState('grid');
   const [currentModule, setCurrentModule] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Nuovi stati per achievement e gamificazione
+  // Stati per achievement e gamificazione
   const [showAchievement, setShowAchievement] = useState(false);
   const [currentAchievement, setCurrentAchievement] = useState(null);
+
+  // 📊 METRICHE GLOBALI DA FIREBASE
+  const globalMetrics = useKidsMetrics();
+
+  // Genera ID anonimo univoco per questo browser
+  const [anonymousId, setAnonymousId] = useState(() => {
+    let id = localStorage.getItem('hydrokids_anonymous_id');
+    if (!id) {
+      id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('hydrokids_anonymous_id', id);
+    }
+    return id;
+  });
 
   // Carica progresso dal localStorage o usa valori predefiniti
   const [progress, setProgress] = useState(() => {
@@ -29,7 +47,7 @@ const KidsPage = () => {
       completedQuizzes: 0,
       totalPoints: 0,
       badges: [],
-      interactiveCompleted: false, // Nuovo: traccia se ha completato l'interattivo
+      interactiveCompleted: false,
       moduleProgress: {
         'water-cycle': { completed: false, step: 0, points: 0 },
         'hydro-power': { completed: false, step: 0, points: 0 },
@@ -43,13 +61,36 @@ const KidsPage = () => {
     localStorage.setItem('kidsProgress', JSON.stringify(progress));
   }, [progress]);
 
+  // 🔥 Salva progresso su Firebase (SEMPRE, anche senza login)
+  useEffect(() => {
+    const saveProgressToFirebase = async () => {
+      try {
+        await setDoc(doc(db, 'hydrokids_progress', anonymousId), {
+          ...progress,
+          anonymousId: anonymousId,
+          completed: progress.completedLessons === 3 && progress.interactiveCompleted,
+          score: progress.totalPoints,
+          lastUpdated: serverTimestamp()
+        }, { merge: true });
+        
+        console.log('✅ Progresso salvato su Firebase:', anonymousId);
+      } catch (error) {
+        console.error('❌ Errore salvataggio progresso su Firebase:', error);
+      }
+    };
+
+    // Salva ogni volta che il progresso cambia (debounced)
+    const timeoutId = setTimeout(saveProgressToFirebase, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [progress, anonymousId]);
+
   // Definizione dei moduli di apprendimento
   const learningModules = [
     {
       id: 'water-cycle',
       title: 'Il Viaggio dell\'Acqua',
       icon: <Droplet className="module-icon" />,
-      description: 'Scopri come l\'acqua viaggia dalla montagna al mare',
+      description: 'Come l\'acqua viaggia dalla montagna al mare',
       level: 'Principiante',
       points: 100,
       badge: 'explorer',
@@ -128,7 +169,9 @@ const KidsPage = () => {
     setCurrentAchievement(achievement);
     setShowAchievement(true);
     
-    if (achievement.points) {
+    // NON aggiungere punti qui per il gioco interattivo
+    // (già gestiti in handleInteractiveComplete)
+    if (achievement.points && achievement.title !== '🎉 Esploratore Completato!') {
       setProgress(prevProgress => ({
         ...prevProgress,
         totalPoints: prevProgress.totalPoints + achievement.points
@@ -143,20 +186,26 @@ const KidsPage = () => {
 
   // Gestione del completamento dell'attività interattiva
   const handleInteractiveComplete = (pointsEarned) => {
-    setProgress(prevProgress => ({
-      ...prevProgress,
-      totalPoints: prevProgress.totalPoints + pointsEarned,
-      interactiveCompleted: true
-    }));
+    console.log('🎮 Gioco completato! Punti guadagnati:', pointsEarned);
+    console.log('📊 Punti attuali prima:', progress.totalPoints);
+    
+    setProgress(prevProgress => {
+      const newTotalPoints = prevProgress.totalPoints + pointsEarned;
+      console.log('📊 Punti totali dopo:', newTotalPoints);
+      
+      return {
+        ...prevProgress,
+        totalPoints: newTotalPoints,
+        interactiveCompleted: true
+      };
+    });
 
-    // Mostra un achievement
     handleAchievementUnlocked({
       title: '🎉 Esploratore Completato!',
       description: 'Hai esplorato tutti i componenti della centrale!',
       points: pointsEarned
     });
 
-    // Torna alla griglia dopo un momento
     setTimeout(() => {
       backToGrid();
     }, 2000);
@@ -206,36 +255,35 @@ const KidsPage = () => {
   };
 
   // Gestione del progresso nei passi del modulo
-  const handleStorybookStep = (newStep) => {
-    if (newStep === undefined) {
-      setCurrentView('quiz');
-      return;
-    }
+  const handleStorybookStep = () => {
+    const module = learningModules.find(m => m.id === currentModule);
+    const nextStep = currentStep + 1;
 
-    setCurrentStep(newStep);
-
-    if (newStep > (progress.moduleProgress[currentModule]?.step || 0)) {
-      setProgress({
-        ...progress,
-        moduleProgress: {
-          ...progress.moduleProgress,
-          [currentModule]: {
-            ...progress.moduleProgress[currentModule],
-            step: newStep
-          }
+    setProgress(prevProgress => ({
+      ...prevProgress,
+      moduleProgress: {
+        ...prevProgress.moduleProgress,
+        [currentModule]: {
+          ...prevProgress.moduleProgress[currentModule],
+          step: Math.max(prevProgress.moduleProgress[currentModule]?.step || 0, nextStep)
         }
-      });
+      }
+    }));
+
+    if (nextStep >= module.totalSteps) {
+      setCurrentView('quiz');
+    } else {
+      setCurrentStep(nextStep);
     }
   };
 
-  // Torna alla vista griglia
+  // Ritorna alla vista principale
   const backToGrid = () => {
     setCurrentView('grid');
     setCurrentModule(null);
     setCurrentStep(0);
   };
 
-  // Renderizza la vista appropriata
   const renderView = () => {
     switch (currentView) {
       case 'interactive':
@@ -284,8 +332,9 @@ const KidsPage = () => {
       default:
         return (
           <div className="kids-grid-view">
-            {/* Metrics Grid */}
+            {/* 📊 METRICHE PERSONALI (come originale) */}
             <div className="metrics-grid">
+              {/* LEZIONI COMPLETATE */}
               <div className="metric-card">
                 <h3>Lezioni Completate</h3>
                 <p className="metric-value">{progress.completedLessons}</p>
@@ -293,6 +342,8 @@ const KidsPage = () => {
                   {progress.completedLessons > 0 ? `${progress.completedLessons} su ${learningModules.length}` : 'Inizia ad imparare!'}
                 </p>
               </div>
+
+              {/* QUIZ COMPLETATI */}
               <div className="metric-card">
                 <h3>Quiz Completati</h3>
                 <p className="metric-value">{progress.completedQuizzes}</p>
@@ -300,6 +351,8 @@ const KidsPage = () => {
                   {progress.completedQuizzes > 0 ? `${progress.completedQuizzes} su ${learningModules.length}` : 'Completa le lezioni!'}
                 </p>
               </div>
+
+              {/* PUNTI TOTALI */}
               <div className="metric-card">
                 <h3>Punti Totali</h3>
                 <p className="metric-value">{progress.totalPoints}</p>
@@ -307,6 +360,8 @@ const KidsPage = () => {
                   {progress.totalPoints > 0 ? `+${progress.totalPoints} punti` : 'Guadagna punti!'}
                 </p>
               </div>
+
+              {/* BADGE OTTENUTI */}
               <div className="metric-card">
                 <h3>Badge Ottenuti</h3>
                 <p className="metric-value">{progress.badges.length}</p>
@@ -316,7 +371,55 @@ const KidsPage = () => {
               </div>
             </div>
 
-            {/* Interactive Activities Section - NUOVA SEZIONE */}
+            {/* 🌍 STATISTICHE GLOBALI - Banner separato */}
+            {!globalMetrics.loading && !globalMetrics.error && (
+              <div className="global-stats-banner" style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                margin: '1.5rem 0',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  🌍 Statistiche Globali della Community
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                  <div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.totalAttempts}</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Giovani Esploratori</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.completions}</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Hanno Completato Tutto</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.averageScore}</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Punti Medi</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.completionRate}%</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Tasso di Successo</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Messaggio di errore se c'è */}
+            {globalMetrics.error && (
+              <div className="metrics-error" style={{
+                background: '#fee2e2',
+                color: '#dc2626',
+                padding: '1rem',
+                borderRadius: '8px',
+                margin: '1rem 0',
+                textAlign: 'center'
+              }}>
+                ⚠️ Impossibile caricare statistiche globali. Le tue metriche personali sono salvate localmente.
+              </div>
+            )}
+
+            {/* Interactive Activities Section */}
             <div className="activities-section">
               <h2>🎮 Attività Interattiva</h2>
               <div className="interactive-activities-grid">
@@ -384,7 +487,7 @@ const KidsPage = () => {
                       
                       <div className="module-footer">
                         <span className="module-level">{module.level}</span>
-                        <span className="module-points">{module.points} punti</span>
+                        {/* <span className="module-points">{module.points} punti</span> */}
                       </div>
                     </div>
                   );
@@ -427,16 +530,6 @@ const KidsPage = () => {
           Scopri i segreti dell'energia rinnovabile e come funziona una centrale idroelettrica!
         </p>
       </div>
-
-      {/* Progress Tracker - Mostrato solo nella vista griglia
-      {currentView === 'grid' && (
-        <React.Suspense fallback={<div>Caricamento del tracker...</div>}>
-          <ProgressTracker 
-            progress={progress} 
-            onAchievementUnlocked={handleAchievementUnlocked}
-          />
-        </React.Suspense>
-      )} */}
 
       {renderView()}
     </div>
