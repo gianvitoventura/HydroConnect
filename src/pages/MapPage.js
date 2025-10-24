@@ -3,6 +3,9 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, Circle } from 
 import { hydroplants } from '../data/HydroData';
 import GpsTracker from '../components/map/GpsTraker';
 import HydroRadarChart from '../components/map/HydroRadarChart';
+import MapAnnotations from '../components/map/MapAnnotation';
+import AnnotationToolbar from '../components/map/AnnotationToolbar';
+
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/MapPage.css';
@@ -302,6 +305,11 @@ function MapPage({ setCurrentPage }) {
   });
   const [euMinPower, setEuMinPower] = useState(3);
   const [availableCountries, setAvailableCountries] = useState([]);
+
+    // NUOVI STATI anntonazioni
+  const [showAnnotations, setShowAnnotations] = useState(true);
+  const [showMyAnnotations, setShowMyAnnotations] = useState(false);
+  const [isAnnotationMode, setIsAnnotationMode] = useState(false);
 
   // Funzione per pulire i nomi dalle virgolette escapate
   const cleanString = (str) => {
@@ -1053,6 +1061,14 @@ function MapPage({ setCurrentPage }) {
                   />
                 );
               })}
+                {/* ⭐ NUOVO - Componente Annotazioni */}
+            {showAnnotations && (
+              <MapAnnotations 
+                showMyAnnotations={showMyAnnotations}
+                isCreating={isAnnotationMode}
+                onAnnotationCreated={() => setIsAnnotationMode(false)}
+            />
+          )}
         </MapContainer>
       </div>
 
@@ -1065,6 +1081,18 @@ function MapPage({ setCurrentPage }) {
             {isTracking ? '❌ Disattiva GPS' : '📍 Attiva GPS'}
           </button>
         </div>
+
+        {/* ⭐ NUOVO - Toolbar Annotazioni */}
+        <AnnotationToolbar
+          onToggleAnnotationMode={() => setIsAnnotationMode(!isAnnotationMode)}
+          isAnnotationMode={isAnnotationMode}
+          onToggleAnnotationsVisibility={() => setShowAnnotations(!showAnnotations)}
+          showAnnotations={showAnnotations}
+          onToggleMyAnnotations={() => setShowMyAnnotations(!showMyAnnotations)}
+          showMyAnnotations={showMyAnnotations}
+          activePlant={activePlant}
+          plantData={activePlant ? hydroplants.find(p => p.id === activePlant) : null}
+        />
 
         <div className="search-box">
           <h3>Cerca una centrale</h3>

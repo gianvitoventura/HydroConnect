@@ -1,0 +1,389 @@
+/* src/components/map/MapAnnotations.css */
+
+/* ==================== MARKER ANNOTAZIONI ==================== */
+.annotation-icon-wrapper {
+  background: transparent !important;
+  border: none !important;
+}
+
+.annotation-marker {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: 2px solid #3b82f6;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.annotation-marker:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.annotation-marker.annotation-general {
+  border-color: #3b82f6;
+}
+
+.annotation-marker.annotation-photo {
+  border-color: #10b981;
+}
+
+.annotation-marker.annotation-issue {
+  border-color: #ef4444;
+}
+
+.annotation-marker.annotation-suggestion {
+  border-color: #f59e0b;
+}
+
+.annotation-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid white;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+}
+
+.annotation-icon {
+  font-size: 18px;
+}
+
+/* ==================== POPUP ANNOTAZIONI ==================== */
+.annotation-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.annotation-popup .leaflet-popup-content {
+  margin: 0;
+  min-width: 280px;
+  max-width: 350px;
+}
+
+.annotation-content {
+  padding: 16px;
+}
+
+.annotation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.annotation-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.annotation-category {
+  padding: 4px 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: capitalize;
+  margin-left: 8px;
+}
+
+.annotation-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.annotation-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.annotation-image:hover {
+  transform: scale(1.05);
+}
+
+.annotation-description {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.annotation-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.annotation-author {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.annotation-date {
+  font-style: italic;
+}
+
+.annotation-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background: #e5e7eb;
+}
+
+.like-button {
+  color: #ef4444;
+}
+
+.like-button:hover {
+  background: #fee2e2;
+}
+
+.delete-button {
+  color: #ef4444;
+}
+
+.delete-button:hover {
+  background: #fee2e2;
+}
+
+/* ==================== FORM ANNOTAZIONI ==================== */
+.annotation-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.annotation-form {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #1f2937;
+}
+
+.annotation-form form {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.form-group.checkbox label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.form-group.checkbox input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.upload-button:hover {
+  background: #2563eb;
+}
+
+.file-count {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.coordinates-info {
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.coordinates-info small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.submit-button,
+.cancel-button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-button {
+  background: #3b82f6;
+  color: white;
+}
+
+.submit-button:hover {
+  background: #2563eb;
+}
+
+.cancel-button {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.cancel-button:hover {
+  background: #d1d5db;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .annotation-form-overlay {
+    padding: 10px;
+  }
+
+  .annotation-form {
+    max-width: 100%;
+  }
+
+  .annotation-popup .leaflet-popup-content {
+    min-width: 240px;
+  }
+}

@@ -1,0 +1,198 @@
+/* src/components/map/AnnotationsToolbar.css */
+
+.annotations-toolbar {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.toolbar-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ==================== BOTTONI TOOLBAR ==================== */
+.toolbar-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f3f4f6;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.toolbar-button:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toolbar-button.active {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.toolbar-button svg {
+  flex-shrink: 0;
+}
+
+/* Bottone Preferito */
+.favorite-button {
+  color: #6b7280;
+}
+
+.favorite-button.is-favorite {
+  background: #fef3c7;
+  border-color: #fbbf24;
+  color: #92400e;
+}
+
+.favorite-button.is-favorite:hover {
+  background: #fde68a;
+}
+
+/* ==================== INFO MESSAGGI ==================== */
+.toolbar-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.info-message {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.info-message.warning {
+  background: #fef3c7;
+  color: #92400e;
+  border-left: 3px solid #f59e0b;
+}
+
+.info-message.active {
+  background: #dbeafe;
+  color: #1e40af;
+  border-left: 3px solid #3b82f6;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.info-message strong {
+  font-weight: 600;
+}
+
+/* ==================== LISTA PREFERITI ==================== */
+.favorites-list {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.favorites-list h5 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.favorites-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.favorites-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 3px solid #fbbf24;
+}
+
+.favorite-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.favorite-type {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 4px 8px;
+  background: white;
+  border-radius: 4px;
+}
+
+/* ==================== SCROLLBAR ==================== */
+.annotations-toolbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.annotations-toolbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.annotations-toolbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.annotations-toolbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .annotations-toolbar {
+    max-height: 60vh;
+    padding: 16px;
+  }
+
+  .toolbar-button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .toolbar-button span {
+    font-size: 13px;
+  }
+}
