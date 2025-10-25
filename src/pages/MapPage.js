@@ -17,21 +17,6 @@ const mapStyles = {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     name: 'Humanitarian'
   },
-  // terrain: {
-  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.jpg',
-  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-  //   name: 'Terrain'
-  // },
-  // toner: {
-  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
-  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-  //   name: 'Toner'
-  // },
-  // watercolor: {
-  //   url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-  //   attribution: '&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a>',
-  //   name: 'Watercolor'
-  // },
   cycle: {
     url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -306,16 +291,68 @@ function MapPage({ setCurrentPage }) {
   const [euMinPower, setEuMinPower] = useState(3);
   const [availableCountries, setAvailableCountries] = useState([]);
 
-    // NUOVI STATI anntonazioni
+  // NUOVI STATI annotazioni
   const [showAnnotations, setShowAnnotations] = useState(true);
   const [showMyAnnotations, setShowMyAnnotations] = useState(false);
   const [isAnnotationMode, setIsAnnotationMode] = useState(false);
+
+  // ⭐ NUOVI STATI per sezioni espandibili
+  const [expandedSections, setExpandedSections] = useState({
+    interactive: false,
+    italian: false,
+    european: false
+  });
+
+  // Funzione toggle per sezioni
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // Funzione per pulire i nomi dalle virgolette escapate
   const cleanString = (str) => {
     if (!str) return '';
     return str.toString().replace(/^"|"$/g, '').trim();
   };
+
+  // AGGIUNGI QUESTO NUOVO useEffect:
+  // Ripristina lo stato della mappa quando si torna indietro
+  useEffect(() => {
+    const savedState = sessionStorage.getItem('mapPageState');
+    if (savedState && mapInstance) {
+      try {
+        const mapState = JSON.parse(savedState);
+        // Verifica che lo stato sia recente (max 1 ora)
+        if (Date.now() - mapState.timestamp < 3600000) {
+          // Imposta la centrale attiva
+          setActivePlant(mapState.plantId);
+          
+          // Centra la mappa sulla centrale con zoom
+          setTimeout(() => {
+            mapInstance.setView(mapState.center, mapState.zoom || 14);
+            
+            // Trova e apri il popup del marker
+            mapInstance.eachLayer((layer) => {
+              if (layer instanceof L.Marker) {
+                const position = layer.getLatLng();
+                if (position.lat === mapState.center[0] && position.lng === mapState.center[1]) {
+                  layer.openPopup();
+                }
+              }
+            });
+          }, 100);
+          
+          // Pulisci lo stato salvato
+          sessionStorage.removeItem('mapPageState');
+        }
+      } catch (error) {
+        console.error('Errore nel ripristino dello stato della mappa:', error);
+        sessionStorage.removeItem('mapPageState');
+      }
+    }
+  }, [mapInstance]);
 
   // Caricamento centrali europee
   useEffect(() => {
@@ -637,20 +674,41 @@ function MapPage({ setCurrentPage }) {
     return matchesFilter && matchesSearch;
   });
 
+  // AGGIUNGI QUESTA NUOVA FUNZIONE:
+  // Funzione per salvare lo stato della mappa prima di navigare
+  const saveMapState = (plantId) => {
+    if (mapInstance && plantId) {
+      const plant = hydroplants.find(p => p.id === plantId);
+      if (plant) {
+        const mapState = {
+          plantId: plantId,
+          center: plant.coordinates,
+          zoom: mapInstance.getZoom(),
+          timestamp: Date.now()
+        };
+        sessionStorage.setItem('mapPageState', JSON.stringify(mapState));
+      }
+    }
+  };
+
   // Gestione click sui pulsanti
   const handleHistoricalClick = (plantId) => {
+    saveMapState(plantId);  // ✅ Salva stato
     setCurrentPage({ page: 'historical', plantId: plantId });
   };
 
   const handleTourClick = (plantId) => {
+    saveMapState(plantId);  // ✅ Salva stato
     setCurrentPage({ page: '360', plantId: plantId });
   };
 
   const handleModelClick = (plantId) => {
+    saveMapState(plantId);  // ✅ Salva stato
     setCurrentPage({ page: 'bim', plantId: plantId, viewMode: 'viewer' });
   };
 
   const handleProjectsClick = (plantId) => {
+    saveMapState(plantId);  // ✅ Salva stato
     setCurrentPage({ page: 'community', plantId: plantId });
   };
 
@@ -668,14 +726,79 @@ function MapPage({ setCurrentPage }) {
     'Territorio': ['Core zone UNESCO', 'MaB UNESCO', 'Valle Po', 'Bacino idrografico', 'Punti interesse']
   };
 
-  // Rendering della legenda
-  const renderLegend = () => {
+  // ⭐ NUOVA FUNZIONE: Rendering sezione Strumenti Interattivi
+  const renderInteractiveToolsSection = () => {
+    return (
+      <div className="control-section">
+        <div className="section-header" onClick={() => toggleSection('interactive')}>
+          <h3>🛠️ Strumenti Interattivi</h3>
+          <div className="section-header-controls">
+            <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={showAnnotations}
+                onChange={(e) => setShowAnnotations(e.target.checked)}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className={`section-arrow ${expandedSections.interactive ? 'expanded' : ''}`}>▼</span>
+          </div>
+        </div>
+
+        {expandedSections.interactive && (
+          <div className="section-content">
+            {/* Stile mappa */}
+            <div className="map-style-section">
+              <h4>Stile mappa</h4>
+              <div className="map-style-selector">
+                {Object.entries(mapStyles).map(([key, style]) => (
+                  <button
+                    key={key}
+                    className={`style-button ${currentMapStyle === key ? 'active' : ''}`}
+                    onClick={() => setCurrentMapStyle(key)}
+                  >
+                    {style.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* GPS Tracker */}
+            <div className="gps-control">
+              <h4>Qui sei tu!</h4>
+              <button className={`gps-button ${isTracking ? 'active' : ''}`} onClick={toggleTracking}>
+                {isTracking ? '❌ Disattiva GPS' : '📍 Attiva GPS'}
+              </button>
+            </div>
+
+            {/* Annotazioni */}
+            <div className="annotation-control">
+              <h4>Strumenti di Annotazione</h4>
+              <AnnotationToolbar
+                onToggleAnnotationMode={() => setIsAnnotationMode(!isAnnotationMode)}
+                isAnnotationMode={isAnnotationMode}
+                onToggleAnnotationsVisibility={() => setShowAnnotations(!showAnnotations)}
+                showAnnotations={showAnnotations}
+                onToggleMyAnnotations={() => setShowMyAnnotations(!showMyAnnotations)}
+                showMyAnnotations={showMyAnnotations}
+                activePlant={activePlant}
+                plantData={activePlant ? hydroplants.find(p => p.id === activePlant) : null}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ⭐ NUOVA FUNZIONE: Rendering legenda layer
+  const renderLayerLegend = () => {
     const currentLayers = (activePlant && geoJSONLayers[activePlant]) ? geoJSONLayers[activePlant] : {};
 
     return (
       <div className="layer-section">
         <div className="layer-header">
-          <h3>Controllo Layer</h3>
+          <h4>Controllo Layer</h4>
           {loadingLayers && (
             <div className="loading-spinner">
               <div className="spinner-icon">⟳</div>
@@ -780,20 +903,120 @@ function MapPage({ setCurrentPage }) {
     );
   };
 
-  // Rendering controlli centrali europee
-  const renderEuropeanControls = () => {
+  // ⭐ NUOVA FUNZIONE: Rendering sezione Centrali Italiane
+  const renderItalianPlantsSection = () => {
     return (
-      <div className="european-plants-section">
-        <div className="section-header">
-          <h3>Grandi derivazioni Europee</h3>
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={euPlantsVisible}
-              onChange={(e) => setEuPlantsVisible(e.target.checked)}
-            />
-            <span className="toggle-slider"></span>
-          </label>
+      <div className="control-section">
+        <div className="section-header" onClick={() => toggleSection('italian')}>
+          <h3>💧 Parco SIED</h3>
+          <div className="section-header-controls">
+            <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={plantVisible}
+                onChange={(e) => setPlantVisible(e.target.checked)}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className={`section-arrow ${expandedSections.italian ? 'expanded' : ''}`}>▼</span>
+          </div>
+        </div>
+
+        {expandedSections.italian && (
+          <div className="section-content">
+            {/* Ricerca */}
+            <div className="search-box">
+              <h4>Cerca una centrale</h4>
+              <input
+                type="text"
+                placeholder="Cerca centrali..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Filtri per tipo */}
+            <div className="filter-section">
+              <h4>Filtra per tipo</h4>
+              <div className="filter-buttons">
+                <button 
+                  className={activeFilter === 'all' ? 'active' : ''} 
+                  onClick={() => setActiveFilter('all')}
+                >
+                  Tutti gli impianti
+                </button>
+                <button 
+                  className={activeFilter === 'A bacino' ? 'active' : ''} 
+                  onClick={() => setActiveFilter('A bacino')}
+                >
+                  A bacino
+                </button>
+                <button 
+                  className={activeFilter === 'Ad acqua fluente' ? 'active' : ''} 
+                  onClick={() => setActiveFilter('Ad acqua fluente')}
+                >
+                  Ad acqua fluente
+                </button>
+                <button 
+                  className={activeFilter === 'Ad accumulo' ? 'active' : ''} 
+                  onClick={() => setActiveFilter('Ad accumulo')}
+                >
+                  Ad accumulo
+                </button>
+              </div>
+            </div>
+
+            {/* Legenda Layer */}
+            {renderLayerLegend()}
+
+            {/* Grafico radar */}
+            <div className="radar-section">
+              <h4>Confronto Centrali</h4>
+              <HydroRadarChart 
+                plants={filteredPlants} 
+                COLORS={filteredPlants.map(plant => CHART_COLORS[plant.type])} 
+              />
+            </div>
+
+            {/* Risultati */}
+            <div className="results-section">
+              <details className="results-dropdown">
+                <summary className="results-summary">
+                  <h4>{filteredPlants.length} centrali trovate</h4>
+                  <span className="dropdown-arrow">▼</span>
+                </summary>
+                <ul className="plants-list">
+                  {filteredPlants.map(plant => (
+                    <li key={plant.id} style={{ color: CHART_COLORS[plant.type] }}>
+                      {plant.name} - {plant.type}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ⭐ NUOVA FUNZIONE: Rendering sezione Centrali Europee
+  const renderEuropeanPlantsSection = () => {
+    return (
+      <div className="control-section">
+        <div className="section-header" onClick={() => toggleSection('european')}>
+          <h3>🌍 Grandi Derivazioni Europee</h3>
+          <div className="section-header-controls">
+            <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={euPlantsVisible}
+                onChange={(e) => setEuPlantsVisible(e.target.checked)}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className={`section-arrow ${expandedSections.european ? 'expanded' : ''}`}>▼</span>
+          </div>
         </div>
 
         {euLoadingError && (
@@ -802,96 +1025,81 @@ function MapPage({ setCurrentPage }) {
           </div>
         )}
 
-        {euPlantsVisible && europeanPlants.length > 0 && (
-          <div className="european-controls">
-            {/* Filtro paese */}
-            <div className="filter-group">
-              <label>Filtra per paese:</label>
-              <select 
-                value={euCountryFilter} 
-                onChange={(e) => setEuCountryFilter(e.target.value)}
-                className="country-select"
-              >
-                <option value="all">Tutti i paesi ({availableCountries.length})</option>
-                {availableCountries.map(country => {
-                  const count = europeanPlants.filter(p => p.country === country).length;
-                  return (
-                    <option key={country} value={country}>
-                      {country} ({count})
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-
-            {/* Filtro tipo */}
-            <div className="filter-group">
-              <label>Filtra per tipo:</label>
-              <div className="type-checkboxes">
-                {Object.entries(EU_PLANT_TYPES).map(([typeCode, typeName]) => (
-                  <label key={typeCode} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={euTypeFilters[typeCode]}
-                      onChange={(e) => setEuTypeFilters(prev => ({
-                        ...prev,
-                        [typeCode]: e.target.checked
-                      }))}
-                    />
-                    <span 
-                      className="type-indicator"
-                      style={{ backgroundColor: EU_PLANT_COLORS[typeCode] }}
-                    ></span>
-                    {typeName}
-                  </label>
-                ))}
+        {expandedSections.european && euPlantsVisible && europeanPlants.length > 0 && (
+          <div className="section-content">
+            <div className="european-controls">
+              {/* Filtro paese */}
+              <div className="filter-group">
+                <label>Filtra per paese:</label>
+                <select 
+                  value={euCountryFilter} 
+                  onChange={(e) => setEuCountryFilter(e.target.value)}
+                  className="country-select"
+                >
+                  <option value="all">Tutti i paesi ({availableCountries.length})</option>
+                  {availableCountries.map(country => {
+                    const count = europeanPlants.filter(p => p.country === country).length;
+                    return (
+                      <option key={country} value={country}>
+                        {country} ({count})
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
-            </div>
 
-            {/* Filtro potenza */}
-            <div className="filter-group">
-              <label>
-                Filtra per potenza minima: {euMinPower} MW
-              </label>
-              <input
-                type="range"
-                min="3"
-                max="500"
-                step="1"
-                value={euMinPower}
-                onChange={(e) => setEuMinPower(Number(e.target.value))}
-                className="power-slider"
-              />
-              <div className="slider-labels">
-                <span>3 MW</span>
-                <span>250 MW</span>
-                <span>500 MW</span>
-              </div>
-            </div>
-
-            {/* Contatore */}
-            <div className="plants-counter">
-              <strong>📊 Centrali visibili:</strong>
-              <span className="counter-value">
-                {filteredEuropeanPlants.length.toLocaleString()} / {europeanPlants.length.toLocaleString()}
-              </span>
-            </div>
-
-            {/* Legenda colori */}
-            <div className="eu-legend">
-              <h4>Legenda:</h4>
-              {Object.entries(EU_PLANT_TYPES).map(([typeCode, typeName]) => (
-                <div key={typeCode} className="legend-item">
-                  <div 
-                    className="legend-circle"
-                    style={{ 
-                      backgroundColor: EU_PLANT_COLORS[typeCode],
-                      opacity: 0.7 
-                    }}
-                  ></div>
-                  <span>{typeName}</span>
+              {/* Filtro tipo */}
+              <div className="filter-group">
+                <label>Filtra per tipo:</label>
+                <div className="type-checkboxes">
+                  {Object.entries(EU_PLANT_TYPES).map(([typeCode, typeName]) => (
+                    <label key={typeCode} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={euTypeFilters[typeCode]}
+                        onChange={(e) => setEuTypeFilters(prev => ({
+                          ...prev,
+                          [typeCode]: e.target.checked
+                        }))}
+                      />
+                      <span 
+                        className="type-indicator"
+                        style={{ backgroundColor: EU_PLANT_COLORS[typeCode] }}
+                      ></span>
+                      {typeName}
+                    </label>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* Filtro potenza */}
+              <div className="filter-group">
+                <label>
+                  Filtra per potenza minima: {euMinPower} MW
+                </label>
+                <input
+                  type="range"
+                  min="3"
+                  max="500"
+                  step="1"
+                  value={euMinPower}
+                  onChange={(e) => setEuMinPower(Number(e.target.value))}
+                  className="power-slider"
+                />
+                <div className="slider-labels">
+                  <span>3 MW</span>
+                  <span>250 MW</span>
+                  <span>500 MW</span>
+                </div>
+              </div>
+
+              {/* Contatore */}
+              <div className="plants-counter">
+                <strong>📊 Centrali visibili:</strong>
+                <span className="counter-value">
+                  {filteredEuropeanPlants.length.toLocaleString()} / {europeanPlants.length.toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -902,24 +1110,26 @@ function MapPage({ setCurrentPage }) {
   return (
     <div className="map-page-container">
       <div className="map-container">
-        <MapContainer 
-          center={centerMap} 
-          zoom={5} 
-          scrollWheelZoom={true}
+        <MapContainer
+          center={centerMap}
+          zoom={8}
+          className="leaflet-map"
+          zoomControl={true}
         >
           <MapController onMapReady={setMapInstance} />
+          
           <TileLayer
             url={mapStyles[currentMapStyle].url}
             attribution={mapStyles[currentMapStyle].attribution}
           />
-          
-          <GpsTracker isTracking={isTracking} />
 
-          {/* Markers delle centrali principali */}
+          {isTracking && <GpsTracker isTracking={isTracking} />}
+
+          {/* Centrali italiane */}
           {plantVisible && filteredPlants.map(plant => (
             <Marker 
               key={plant.id} 
-              position={plant.coordinates}
+              position={plant.coordinates} 
               icon={turbineIcon}
               eventHandlers={{
                 click: () => {
@@ -929,28 +1139,25 @@ function MapPage({ setCurrentPage }) {
             >
               <Popup>
                 <div className="popup-content">
-                  <h3>Centrale di {plant.name}</h3>
+                  <h3>{plant.name}</h3>
                   
                   <div className="popup-body">
                     {plant.image && (
                       <div className="popup-image-container">
                         <img 
                           src={plant.image} 
-                          alt={`Centrale di ${plant.name}`}
+                          alt={plant.name}
                           className="popup-image"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
                         />
                       </div>
                     )}
                     
                     <div className="popup-actions">
                       <button className="popup-button" onClick={() => handleHistoricalClick(plant.id)}>
-                        Scopri di più
+                        Schede
                       </button>
                       <button className="popup-button" onClick={() => handleTourClick(plant.id)}>
-                        Virtual tour
+                        360 Tour
                       </button>
                       <button className="popup-button" onClick={() => handleModelClick(plant.id)}>
                         Modello
@@ -1044,8 +1251,8 @@ function MapPage({ setCurrentPage }) {
             </DynamicCircle>
           ))}
 
-          {/* Layer GeoJSON */}
-          {activePlant && geoJSONLayers[activePlant] && 
+          {/* Layer GeoJSON - Visibili solo se toggle centrali italiane è ON */}
+          {plantVisible && activePlant && geoJSONLayers[activePlant] && 
             Object.entries(geoJSONLayers[activePlant] || {})
               .sort((a, b) => a[1].config.zIndex - b[1].config.zIndex)
               .map(([layerKey, layer]) => {
@@ -1061,12 +1268,13 @@ function MapPage({ setCurrentPage }) {
                   />
                 );
               })}
-                {/* ⭐ NUOVO - Componente Annotazioni */}
-            {showAnnotations && (
-              <MapAnnotations 
-                showMyAnnotations={showMyAnnotations}
-                isCreating={isAnnotationMode}
-                onAnnotationCreated={() => setIsAnnotationMode(false)}
+          
+          {/* Componente Annotazioni */}
+          {showAnnotations && (
+            <MapAnnotations 
+              showMyAnnotations={showMyAnnotations}
+              isCreating={isAnnotationMode}
+              onAnnotationCreated={() => setIsAnnotationMode(false)}
             />
           )}
         </MapContainer>
@@ -1075,110 +1283,14 @@ function MapPage({ setCurrentPage }) {
       <div className="map-control-panel">
         <h2>Parco Idroelettrico</h2>
 
-        <div className="gps-control">
-          <h3>Qui sei tu!</h3>
-          <button className={`gps-button ${isTracking ? 'active' : ''}`} onClick={toggleTracking}>
-            {isTracking ? '❌ Disattiva GPS' : '📍 Attiva GPS'}
-          </button>
-        </div>
+        {/* ⭐ SEZIONE 1: Strumenti Interattivi */}
+        {renderInteractiveToolsSection()}
 
-        {/* ⭐ NUOVO - Toolbar Annotazioni */}
-        <AnnotationToolbar
-          onToggleAnnotationMode={() => setIsAnnotationMode(!isAnnotationMode)}
-          isAnnotationMode={isAnnotationMode}
-          onToggleAnnotationsVisibility={() => setShowAnnotations(!showAnnotations)}
-          showAnnotations={showAnnotations}
-          onToggleMyAnnotations={() => setShowMyAnnotations(!showMyAnnotations)}
-          showMyAnnotations={showMyAnnotations}
-          activePlant={activePlant}
-          plantData={activePlant ? hydroplants.find(p => p.id === activePlant) : null}
-        />
+        {/* ⭐ SEZIONE 2: Centrali Italiane */}
+        {renderItalianPlantsSection()}
 
-        <div className="search-box">
-          <h3>Cerca una centrale</h3>
-          <input
-            type="text"
-            placeholder="Cerca centrali..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="filter-section">
-          <h3>Filtra per tipo</h3>
-          <div className="filter-buttons">
-            <button 
-              className={activeFilter === 'all' ? 'active' : ''} 
-              onClick={() => setActiveFilter('all')}
-            >
-              Tutti gli impianti
-            </button>
-            <button 
-              className={activeFilter === 'A bacino' ? 'active' : ''} 
-              onClick={() => setActiveFilter('A bacino')}
-            >
-              A bacino
-            </button>
-            <button 
-              className={activeFilter === 'Ad acqua fluente' ? 'active' : ''} 
-              onClick={() => setActiveFilter('Ad acqua fluente')}
-            >
-              Ad acqua fluente
-            </button>
-            <button 
-              className={activeFilter === 'Ad accumulo' ? 'active' : ''} 
-              onClick={() => setActiveFilter('Ad accumulo')}
-            >
-              Ad accumulo
-            </button>
-          </div>
-        </div>
-
-        {/* Legenda delle infrastrutture */}
-        {renderLegend()}
-
-        {/* Grafico radar */}
-        <div className="radar-section">
-          <HydroRadarChart 
-            plants={filteredPlants} 
-            COLORS={filteredPlants.map(plant => CHART_COLORS[plant.type])} 
-          />
-        </div>
-
-        {/* Sezione risultati */}
-        <div className="results-section">
-          <details className="results-dropdown">
-            <summary className="results-summary">
-              <h3>{filteredPlants.length} centrali trovate</h3>
-              <span className="dropdown-arrow">▼</span>
-            </summary>
-            <ul className="plants-list">
-              {filteredPlants.map(plant => (
-                <li key={plant.id} style={{ color: CHART_COLORS[plant.type] }}>
-                  {plant.name} - {plant.type}
-                </li>
-              ))}
-            </ul>
-          </details>
-        </div>
-
-        {/* NUOVA SEZIONE: Controlli centrali europee */}
-        {renderEuropeanControls()}
-
-        <div className="map-style-section">
-          <h3>Stile mappa</h3>
-          <div className="map-style-selector">
-            {Object.entries(mapStyles).map(([key, style]) => (
-              <button
-                key={key}
-                className={`style-button ${currentMapStyle === key ? 'active' : ''}`}
-                onClick={() => setCurrentMapStyle(key)}
-              >
-                {style.name}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* ⭐ SEZIONE 3: Centrali Europee */}
+        {renderEuropeanPlantsSection()}
       </div>
     </div>
   );

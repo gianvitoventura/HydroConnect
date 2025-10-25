@@ -379,11 +379,6 @@ export const EuropeanPlantsControls = ({
               className="country-select"
             >
               <option value="all">Tutti i paesi</option>
-              {availableCountries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.code} ({country.count})
-                </option>
-              ))}
             </select>
           </div>
 

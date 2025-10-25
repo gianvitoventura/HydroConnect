@@ -106,7 +106,7 @@ const BadgeCertificate = ({ badge, moduleId, onContinue }) => {
     if (navigator.share) {
       navigator.share({
         title: `Badge ${badge.name}`,
-        text: `Ho ottenuto il badge ${badge.name} nell'app educativa SIED!`,
+        text: `Ho ottenuto il badge ${badge.name} nell'app educativa!`,
       }).catch(console.error);
     } else {
       alert('La funzionalità di condivisione non è supportata dal tuo browser.');
@@ -158,7 +158,7 @@ const BadgeCertificate = ({ badge, moduleId, onContinue }) => {
           <div className="certificate" ref={certificateRef}>
             <div className="certificate-header">
               <h1 className="certificate-title">Certificato di Merito</h1>
-              <p className="certificate-subtitle">SIED - Educazione sull'Energia Idroelettrica</p>
+              <p className="certificate-subtitle">Educazione sull'Energia Idroelettrica</p>
             </div>
             
             <div className="certificate-badge">
@@ -187,7 +187,7 @@ const BadgeCertificate = ({ badge, moduleId, onContinue }) => {
             </div>
             
             <div className="certificate-footer">
-              SIED - Imparare l'energia idroelettrica divertendosi
+              Imparare l'energia idroelettrica divertendosi
             </div>
           </div>
           

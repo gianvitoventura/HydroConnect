@@ -57,6 +57,98 @@ html, body {
   background: #555;
 }
 
+/* ⭐ NUOVI STILI: Sezioni Espandibili */
+.control-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.control-section:hover {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: #c7d2fe;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  user-select: none;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.section-header:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #fafafa 100%);
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-arrow {
+  font-size: 0.8rem;
+  color: #6b7280;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.section-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.section-content {
+  padding: 20px;
+  animation: slideDown 0.3s ease-out;
+  background-color: #ffffff;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 2000px;
+  }
+}
+
+/* Sottotitoli h4 nelle sezioni */
+.section-content h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin: 15px 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-content h4:first-child {
+  margin-top: 0;
+}
+
 /* Titoli e Testo */
 .map-control-panel h2 {
   color: #4f46e5;
@@ -72,6 +164,10 @@ html, body {
 }
 
 /* Stili mappe */
+.map-style-section {
+  margin-bottom: 15px;
+}
+
 .map-style-selector {
   display: flex;
   flex-direction: column;
@@ -112,6 +208,10 @@ html, body {
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   font-size: 0.9rem;
+}
+
+.filter-section {
+  margin-bottom: 15px;
 }
 
 .filter-buttons {
@@ -492,7 +592,52 @@ html, body {
   font-weight: 500;
 }
 
-/* Stili GPS */
+/* Stili GPS - Sezione separata sempre visibile */
+.gps-control {
+  margin: 1.5rem 0;
+}
+
+.gps-control h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.gps-button {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+}
+
+.gps-button:hover {
+  background-color: #0369a1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(2, 132, 199, 0.3);
+}
+
+.gps-button.active {
+  background-color: #10b981;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.gps-button.active:hover {
+  background-color: #059669;
+}
+
+/* Marker GPS sulla mappa */
 .user-location {
   background: none !important;
   border: none !important;
@@ -532,37 +677,6 @@ html, body {
   }
 }
 
-.gps-control {
-  margin-top: 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid #e5e7eb;
-}
-
-.gps-button {
-  width: 100%;
-  padding: 8px 12px;
-  background-color: #6366f1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  z-index: 1000;
-}
-
-.gps-button:hover {
-  background-color: #4f46e5;
-}
-
-.gps-button.active {
-  background-color: #10b981;
-}
-
 .nearest-plant-info {
   margin-top: 1rem;
   padding: 1rem;
@@ -579,6 +693,11 @@ html, body {
 .nearest-plant-info p:first-child {
   margin-bottom: 0.5rem;
   color: #6b7280;
+}
+
+/* Annotazioni */
+.annotation-control {
+  margin-bottom: 15px;
 }
 
 /* Responsive Design - MIGLIORATO */
@@ -682,7 +801,7 @@ html, body {
   background-color: #f1f3f5;
 }
 
-.results-summary h3 {
+.results-summary h4 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -852,7 +971,6 @@ html, body {
 
 /* ========================================
    STILI PER CENTRALI EUROPEE
-   Aggiungi questo codice al file MapPage.css
    ======================================== */
 
 /* Sezione principale centrali europee */
@@ -1248,4 +1366,11 @@ html, body {
   text-align: right;
   font-weight: 600;
   color: #2c3e50;
+}
+
+/* Grafico radar section */
+.radar-section {
+  margin: 15px 0;
+  padding: 15px 0;
+  border-top: 1px solid #e5e7eb;
 }
