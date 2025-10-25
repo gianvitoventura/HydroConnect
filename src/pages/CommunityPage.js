@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/CommunityPage.css';
 import ProjectsSection from '../components/community/ProjectSection';
 import { useCommunityMetrics } from '../components/hooks/useAnalitics';
+import { auth } from '../firebaseConfig';
+import { saveWorkshopProgress, loadWorkshopProgress, autoSaveWorkshopProgress,resetWorkshopProgress } from '../services/DesignthinkingService';
 
 const CommunityPage = () => {
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     empathize: '',
     define: '',
@@ -11,10 +14,61 @@ const CommunityPage = () => {
     prototype: '',
     test: ''
   });
+  const [summary, setSummary] = useState('');
   const [notification, setNotification] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
   // 📊 METRICHE REALI DA FIREBASE
   const metrics = useCommunityMetrics();
+
+  // Monitora autenticazione
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        loadSavedProgress();
+      } else {
+        // Resetta form se l'utente fa logout
+        setFormData({
+          empathize: '',
+          define: '',
+          ideate: '',
+          prototype: '',
+          test: ''
+        });
+        setSummary('');
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // Carica progressi salvati
+  const loadSavedProgress = async () => {
+    try {
+      setLoading(true);
+      const savedProgress = await loadWorkshopProgress();
+      
+      if (savedProgress) {
+        setFormData({
+          empathize: savedProgress.empathize || '',
+          define: savedProgress.define || '',
+          ideate: savedProgress.ideate || '',
+          prototype: savedProgress.prototype || '',
+          test: savedProgress.test || ''
+        });
+        setSummary(savedProgress.summary || '');
+        setLastSaved(savedProgress.lastUpdated?.toDate?.());
+        
+        showNotification('✅ Progressi caricati!', 'success');
+      }
+    } catch (error) {
+      console.error('Errore caricamento:', error);
+      showNotification('⚠️ Errore nel caricamento', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Dati attività in corso
   const currentActivities = [
@@ -38,27 +92,102 @@ const CommunityPage = () => {
     }
   ];
 
+  // Gestione input con auto-save
   const handleInputChange = (stage, value) => {
-    setFormData(prev => ({
-      ...prev,
+    if (!user) {
+      showNotification('⚠️ Effettua il login per salvare i progressi', 'warning');
+      return;
+    }
+
+    const newFormData = {
+      ...formData,
       [stage]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setNotification('Progress saved successfully!');
-    setTimeout(() => setNotification(''), 3000);
-  };
-
-  // Formatta trend con freccia e colore
-  const formatTrend = (value) => {
-    if (value === 0) return null;
-    const isPositive = value > 0;
-    return {
-      text: `${isPositive ? '↑' : '↓'} ${Math.abs(value)}% questo mese`,
-      className: isPositive ? 'positive' : 'negative'
     };
+    
+    setFormData(newFormData);
+    
+    // Auto-save dopo 2 secondi di inattività
+    autoSaveWorkshopProgress({
+      ...newFormData,
+      summary
+    });
+  };
+
+  // Gestione summary
+  const handleSummaryChange = (value) => {
+    if (!user) {
+      showNotification('⚠️ Effettua il login per salvare i progressi', 'warning');
+      return;
+    }
+
+    setSummary(value);
+    
+    // Auto-save
+    autoSaveWorkshopProgress({
+      ...formData,
+      summary: value
+    });
+  };
+
+  // Salvataggio manuale
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      showNotification('⚠️ Effettua il login per salvare', 'warning');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await saveWorkshopProgress({
+        ...formData,
+        summary
+      });
+      
+      setLastSaved(new Date());
+      showNotification('✅ Progressi salvati con successo!', 'success');
+    } catch (error) {
+      console.error('Errore salvataggio:', error);
+      showNotification('❌ Errore nel salvataggio', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset progressi
+  const handleReset = async () => {
+    if (!window.confirm('Sei sicuro di voler ricominciare da capo? Tutti i progressi verranno eliminati.')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await resetWorkshopProgress();
+      
+      setFormData({
+        empathize: '',
+        define: '',
+        ideate: '',
+        prototype: '',
+        test: ''
+      });
+      setSummary('');
+      setLastSaved(null);
+      
+      showNotification('🔄 Progressi resettati', 'info');
+    } catch (error) {
+      console.error('Errore reset:', error);
+      showNotification('❌ Errore nel reset', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mostra notifica
+  const showNotification = (message, type = 'info') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(''), 3000);
   };
 
   return (
@@ -70,12 +199,14 @@ const CommunityPage = () => {
         </p>
       </div>
 
+      {/* Notifiche */}
       {notification && (
-        <div className="notification">
-          {notification}
+        <div className={`notification notification-${notification.type}`}>
+          {notification.message}
         </div>
       )}
 
+      {/* Dashboard Metriche */}
       <div className="dashboard-section">
         <div className="metrics-grid">
           {/* MEMBRI DELLA COMMUNITY */}
@@ -120,7 +251,7 @@ const CommunityPage = () => {
                 <p className="metric-value">{metrics.totalVotes}</p>
                 <p className="metric-trend positive">
                   {metrics.totalProjects > 0 
-                    ? `Media ${(metrics.totalVotes / metrics.totalProjects).toFixed(1)} voti/progetto`
+                    ? `Media punteggio ${(metrics.totalVotes / metrics.totalProjects).toFixed(1)}`
                     : 'Inizia a votare!'}
                 </p>
               </>
@@ -154,45 +285,79 @@ const CommunityPage = () => {
       {/* 🗃️ SEZIONE PROGETTI */}
       <ProjectsSection />
 
+      {/* Design Thinking Workshop */}
       <div className="activities-section">
         <div className="design-thinking-section">
-          <h2>Design Thinking Workshop</h2>
+          <div className="section-header-with-actions">
+            <div>
+              <h2>Design Thinking Workshop</h2>
+              {/* {user && lastSaved && (
+                <p className="last-saved-info">
+                  💾 Ultimo salvataggio: {lastSaved.toLocaleString('it-IT')}
+                </p>
+              )} */}
+              {!user && (
+                <p className="login-warning">
+                  ⚠️ Effettua il login per salvare i tuoi progressi
+                </p>
+              )}
+            </div>
+            {user && (
+              <button 
+                onClick={handleReset} 
+                className="reset-button"
+                disabled={loading}
+              >
+                🔄 Ricomincia
+              </button>
+            )}
+          </div>
+
           <div className="process-grid">
             {[
               {
                 stage: 'empathize',
                 title: 'Empatizza',
-                description: 'Comprendi i bisogni dell\'intera community'
+                description: 'Comprendi i bisogni dell\'intera community',
+                icon: '🤝'
               },
               {
                 stage: 'define',
                 title: 'Definisci',
-                description: 'Definisci il problema specifico che vuoi risolvere'
+                description: 'Definisci il problema specifico che vuoi risolvere',
+                icon: '🎯'
               },
               {
                 stage: 'ideate',
                 title: 'Immagina',
-                description: 'Esplora e genera un ventaglio di idee e soluzioni innovative'
+                description: 'Esplora e genera un ventaglio di idee e soluzioni innovative',
+                icon: '💡'
               },
               {
                 stage: 'prototype',
                 title: 'Prototipa',
-                description: 'Crea un singolo prototipo della soluzione che ti sembra migliore'
+                description: 'Crea un singolo prototipo della soluzione che ti sembra migliore',
+                icon: '🛠️'
               },
               {
                 stage: 'test',
                 title: 'Test',
-                description: 'Testa la soluzione e raccogli feedback'
+                description: 'Testa la soluzione e raccogli feedback',
+                icon: '🧪'
               }
-            ].map(({ stage, title, description }) => (
+            ].map(({ stage, title, description, icon }) => (
               <div key={stage} className="process-card">
-                <h3>{title}</h3>
+                <div className="process-card-header">
+                  <span className="process-icon">{icon}</span>
+                  <h3>{title}</h3>
+                </div>
                 <p>{description}</p>
                 <textarea
                   value={formData[stage]}
                   onChange={(e) => handleInputChange(stage, e.target.value)}
                   placeholder={`Inserisci le tue note per la fase ${title}...`}
                   className="process-input"
+                  disabled={loading || !user}
                 />
               </div>
             ))}
@@ -200,21 +365,34 @@ const CommunityPage = () => {
         </div>
 
         <div className="submit-section">
-          <h3>Riassumi i tuoi risultati:</h3>
+          <h3>📝 Riassumi i tuoi risultati:</h3>
           <form onSubmit={handleSubmit}>
             <label>
               <textarea
+                value={summary}
+                onChange={(e) => handleSummaryChange(e.target.value)}
                 placeholder="Descrivi i risultati e i prossimi passi..."
                 className="summary-input"
+                disabled={loading || !user}
               />
             </label>
-            <button type="submit" className="submit-button">
-              Salva Progressi
+            <button 
+              type="submit" 
+              className="submit-button"
+              disabled={loading || !user}
+            >
+              {loading ? '⏳ Salvataggio...' : '💾 Salva Progressi'}
             </button>
           </form>
+          {/* {user && (
+            <p className="auto-save-info">
+              ℹ️ I progressi vengono salvati automaticamente dopo pochi secondi di inattività
+            </p>
+          )} */}
         </div>
       </div>
 
+      {/* Attività in corso */}
       <div className="activities-section">
         <h2>Attività in Corso</h2>
         <div className="activities-grid">
@@ -224,9 +402,9 @@ const CommunityPage = () => {
                 <h3>{activity.title}</h3>
                 <span className="activity-status">{activity.status}</span>
               </div>
-              <p className="activity-date">{activity.date}</p>
+              <p className="activity-date">📅 {activity.date}</p>
               <p className="activity-participants">
-                {activity.participants} partecipanti
+                👥 {activity.participants} partecipanti
               </p>
               <button className="join-button">
                 Partecipa

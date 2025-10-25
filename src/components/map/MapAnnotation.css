@@ -1,4 +1,4 @@
-/* src/components/map/MapAnnotations.css */
+/* src/components/map/MapAnnotation.css */
 
 /* ==================== MARKER ANNOTAZIONI ==================== */
 .annotation-icon-wrapper {
@@ -9,270 +9,335 @@
 .annotation-marker {
   width: 32px;
   height: 32px;
-  background: white;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  border: 2px solid #3b82f6;
-  position: relative;
+  border-radius: 50% 50% 50% 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: rotate(-45deg);
   transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid white;
 }
 
 .annotation-marker:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-}
-
-.annotation-marker.annotation-general {
-  border-color: #3b82f6;
-}
-
-.annotation-marker.annotation-photo {
-  border-color: #10b981;
-}
-
-.annotation-marker.annotation-issue {
-  border-color: #ef4444;
-}
-
-.annotation-marker.annotation-suggestion {
-  border-color: #f59e0b;
-}
-
-.annotation-marker::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 10px solid white;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+  transform: rotate(-45deg) scale(1.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .annotation-icon {
   font-size: 18px;
+  transform: rotate(45deg);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Colori per categoria */
+.annotation-general {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.annotation-photo {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.annotation-issue {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.annotation-suggestion {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 /* ==================== POPUP ANNOTAZIONI ==================== */
 .annotation-popup .leaflet-popup-content-wrapper {
   padding: 0;
   border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  max-width: 350px;
 }
 
 .annotation-popup .leaflet-popup-content {
   margin: 0;
-  min-width: 280px;
-  max-width: 350px;
+  width: 100% !important;
+}
+
+.annotation-popup .leaflet-popup-tip {
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.15);
 }
 
 .annotation-content {
-  padding: 16px;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Header Annotazione */
 .annotation-header {
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 12px;
 }
 
 .annotation-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
   flex: 1;
+  line-height: 1.4;
 }
 
 .annotation-category {
-  padding: 4px 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  font-size: 12px;
-  color: #6b7280;
-  text-transform: capitalize;
-  margin-left: 8px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.25);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
 }
 
+/* Colori categorie nel badge */
+.category-general {
+  background: rgba(102, 126, 234, 0.3);
+}
+
+.category-photo {
+  background: rgba(245, 87, 108, 0.3);
+}
+
+.category-issue {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+.category-suggestion {
+  background: rgba(79, 172, 254, 0.3);
+}
+
+/* Immagini */
 .annotation-images {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 8px;
-  margin-bottom: 12px;
+  padding: 12px;
+  background: #f8fafc;
 }
 
 .annotation-image {
   width: 100%;
-  height: 100px;
+  height: 120px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .annotation-image:hover {
   transform: scale(1.05);
 }
 
+/* Descrizione */
 .annotation-description {
-  margin: 12px 0;
+  padding: 12px 16px;
+  margin: 0;
   font-size: 14px;
-  color: #4b5563;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: #334155;
+  background: white;
 }
 
+/* Footer */
 .annotation-footer {
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .annotation-author {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: #6b7280;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.author-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
 }
 
 .annotation-date {
-  font-style: italic;
+  font-size: 11px;
+  color: #64748b;
 }
 
 .annotation-actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
 }
 
 .action-button {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
-  background: #f3f4f6;
+  padding: 6px 10px;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  background: white;
+  color: #64748b;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .action-button:hover {
-  background: #e5e7eb;
-}
-
-.like-button {
-  color: #ef4444;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .like-button:hover {
   background: #fee2e2;
-}
-
-.delete-button {
-  color: #ef4444;
+  color: #dc2626;
 }
 
 .delete-button:hover {
   background: #fee2e2;
+  color: #dc2626;
 }
 
-/* ==================== FORM ANNOTAZIONI ==================== */
+/* ==================== FORM OVERLAY ==================== */
 .annotation-form-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 2000;
   padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .annotation-form {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .form-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-radius: 16px 16px 0 0;
 }
 
 .form-header h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
 }
 
 .close-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 4px;
-  color: #6b7280;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .close-button:hover {
-  color: #1f2937;
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
+/* Form Groups */
 .annotation-form form {
-  padding: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 6px;
   font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: #334155;
 }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
+.form-group select,
+.form-group input[type="text"],
+.form-group textarea {
+  padding: 12px;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
+  background: white;
+  color: #334155;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-group textarea {
@@ -280,110 +345,166 @@
   min-height: 100px;
 }
 
+/* Checkbox */
 .form-group.checkbox {
-  display: flex;
+  flex-direction: row;
   align-items: center;
+  gap: 12px;
 }
 
 .form-group.checkbox label {
-  margin: 0;
   display: flex;
   align-items: center;
+  gap: 8px;
   cursor: pointer;
+  user-select: none;
 }
 
 .form-group.checkbox input[type="checkbox"] {
-  width: auto;
-  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #667eea;
 }
 
+/* File Upload */
 .file-upload {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .upload-button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #3b82f6;
-  color: white;
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
   border-radius: 8px;
-  cursor: pointer;
+  color: #64748b;
   font-size: 14px;
-  transition: background 0.2s;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .upload-button:hover {
-  background: #2563eb;
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  color: #334155;
 }
 
 .file-count {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 13px;
+  color: #64748b;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
 }
 
+/* Coordinate Info */
 .coordinates-info {
   padding: 12px;
-  background: #f3f4f6;
+  background: #f8fafc;
   border-radius: 8px;
-  margin-bottom: 16px;
+  border-left: 3px solid #667eea;
 }
 
 .coordinates-info small {
-  color: #6b7280;
   font-size: 12px;
+  color: #64748b;
+  font-family: 'Courier New', monospace;
 }
 
+/* Form Actions */
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  padding-top: 8px;
 }
 
 .submit-button,
 .cancel-button {
   flex: 1;
-  padding: 12px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .submit-button {
-  background: #3b82f6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .submit-button:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .cancel-button {
-  background: #e5e7eb;
-  color: #374151;
+  background: #f1f5f9;
+  color: #64748b;
 }
 
 .cancel-button:hover {
-  background: #d1d5db;
+  background: #e2e8f0;
+  color: #334155;
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .annotation-form-overlay {
-    padding: 10px;
+    padding: 0;
   }
 
   .annotation-form {
-    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
   }
 
-  .annotation-popup .leaflet-popup-content {
-    min-width: 240px;
+  .form-header {
+    border-radius: 0;
   }
+
+  .annotation-form form {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
+
+/* ==================== SCROLLBAR PERSONALIZZATA ==================== */
+.annotation-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.annotation-form::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.annotation-form::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.annotation-form::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

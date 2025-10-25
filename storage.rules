@@ -1,12 +1,63 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if false;
+    
+    // ==================== IMMAGINI PROGETTI ====================
+    match /projects/{imageId} {
+      // Solo utenti loggati possono caricare
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024  // Max 5MB
+                   && request.resource.contentType.matches('image/.*');
+      
+      // Tutti possono leggere
+      allow read: if true;
+    }
+    
+    // ==================== IMMAGINI ANNOTAZIONI MAPPA ====================
+    match /mapAnnotations/{userId}/{imageId} {
+      // Solo il proprietario può caricare
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024  // Max 5MB
+                   && request.resource.contentType.matches('image/.*');
+      
+      // Tutti possono leggere immagini di annotazioni pubbliche
+      allow read: if true;
+      
+      // Solo il proprietario può eliminare
+      allow delete: if request.auth != null
+                    && request.auth.uid == userId;
+    }
+    
+    // ==================== FILE GPS (eventualmente JSON) ====================
+    match /gpsTrackes/{userId}/{trackId} {
+      // Solo il proprietario può caricare
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 10 * 1024 * 1024; // Max 10MB
+      
+      // Lettura basata su visibilità del tracciato
+      allow read: if true; // Controllo avanzato fatto su Firestore
+      
+      // Solo il proprietario può eliminare
+      allow delete: if request.auth != null
+                    && request.auth.uid == userId;
+    }
+    
+    // ==================== AVATAR UTENTI (futuro) ====================
+    match /avatars/{userId} {
+      // Solo l'utente può caricare il proprio avatar
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 2 * 1024 * 1024  // Max 2MB
+                   && request.resource.contentType.matches('image/.*');
+      
+      // Tutti possono vedere gli avatar
+      allow read: if true;
+      
+      // Solo l'utente può eliminare il proprio avatar
+      allow delete: if request.auth != null
+                    && request.auth.uid == userId;
     }
   }
 }

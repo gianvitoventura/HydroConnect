@@ -2,17 +2,30 @@
 import React, { useState, useEffect } from 'react';
 import { Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MessageSquare, Camera, MapPin, Heart, Trash2, X, Upload } from 'lucide-react';
-import {createAnnotation, getPublicAnnotations, getUserAnnotations, deleteAnnotation, likeAnnotation} from '../../services/MapAnnotationServices';
+import { MessageSquare, Heart, Trash2, X, Upload } from 'lucide-react';
+import {
+  createAnnotation, 
+  getPublicAnnotations, 
+  getUserAnnotations, 
+  deleteAnnotation, 
+  likeAnnotation
+} from '../../services/MapAnnotationService';
 import { auth } from '../../firebaseConfig';
 import './MapAnnotation.css';
 
 /**
  * Componente per gestire le annotazioni sulla mappa
+ * Props:
+ * - showMyAnnotations: mostra solo le annotazioni dell'utente corrente
+ * - isCreating: modalità creazione attiva (click sulla mappa per aggiungere)
+ * - onAnnotationCreated: callback quando viene creata un'annotazione
  */
-const MapAnnotations = ({ showMyAnnotations = false }) => {
+const MapAnnotations = ({ 
+  showMyAnnotations = false, 
+  isCreating = false,
+  onAnnotationCreated 
+}) => {
   const [annotations, setAnnotations] = useState([]);
-  const [isCreating, setIsCreating] = useState(false);
   const [newAnnotation, setNewAnnotation] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [user, setUser] = useState(null);
@@ -115,7 +128,11 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
       });
       setNewAnnotation(null);
       setShowForm(false);
-      setIsCreating(false);
+      
+      // Callback per notificare la creazione
+      if (onAnnotationCreated) {
+        onAnnotationCreated();
+      }
     } catch (error) {
       console.error('Errore creazione annotazione:', error);
       alert('Errore nella creazione dell\'annotazione');
@@ -149,6 +166,21 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
     }
   };
 
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'Data sconosciuta';
+    
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleDateString('it-IT', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return 'Data non valida';
+    }
+  };
+
   return (
     <>
       {/* Markers delle annotazioni */}
@@ -163,7 +195,7 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
               {/* Header */}
               <div className="annotation-header">
                 <h3>{annotation.title || 'Annotazione'}</h3>
-                <span className="annotation-category">
+                <span className={`annotation-category category-${annotation.category}`}>
                   {annotation.category}
                 </span>
               </div>
@@ -192,9 +224,11 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
               {/* Footer */}
               <div className="annotation-footer">
                 <div className="annotation-author">
-                  <span>👤 {annotation.userName}</span>
+                  <span className="author-name">
+                    👤 {annotation.userName}
+                  </span>
                   <span className="annotation-date">
-                    {annotation.createdAt?.toDate?.().toLocaleDateString()}
+                    {formatDate(annotation.createdAt)}
                   </span>
                 </div>
 
@@ -202,6 +236,7 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
                   <button 
                     onClick={() => handleLike(annotation.id)}
                     className="action-button like-button"
+                    title="Mi piace"
                   >
                     <Heart size={16} />
                     <span>{annotation.likes || 0}</span>
@@ -211,6 +246,7 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
                     <button 
                       onClick={() => handleDelete(annotation.id)}
                       className="action-button delete-button"
+                      title="Elimina"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -235,13 +271,17 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
         <div className="annotation-form-overlay">
           <div className="annotation-form">
             <div className="form-header">
-              <h3>Nuova Annotazione</h3>
+              <h3>✨ Nuova Annotazione</h3>
               <button 
                 onClick={() => {
                   setShowForm(false);
                   setNewAnnotation(null);
+                  if (onAnnotationCreated) {
+                    onAnnotationCreated();
+                  }
                 }}
                 className="close-button"
+                aria-label="Chiudi"
               >
                 <X size={20} />
               </button>
@@ -333,17 +373,20 @@ const MapAnnotations = ({ showMyAnnotations = false }) => {
               {/* Bottoni */}
               <div className="form-actions">
                 <button type="submit" className="submit-button">
-                  Salva Annotazione
+                  💾 Salva Annotazione
                 </button>
                 <button 
                   type="button" 
                   onClick={() => {
                     setShowForm(false);
                     setNewAnnotation(null);
+                    if (onAnnotationCreated) {
+                      onAnnotationCreated();
+                    }
                   }}
                   className="cancel-button"
                 >
-                  Annulla
+                  ❌ Annulla
                 </button>
               </div>
             </form>

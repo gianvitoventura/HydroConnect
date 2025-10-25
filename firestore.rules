@@ -1,18 +1,126 @@
-rules_version='2'
-
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2025, 11, 22);
+    
+    // ==================== PROGETTI ====================
+    match /projects/{projectId} {
+      // Tutti possono leggere
+      allow read: if true;
+      
+      // Solo utenti loggati possono creare
+      allow create: if request.auth != null
+                    && request.resource.data.name is string 
+                    && request.resource.data.description is string
+                    && request.resource.data.createdBy == request.auth.uid;
+      
+      // Solo il creatore può modificare/eliminare
+      allow update, delete: if request.auth != null 
+                            && request.auth.uid == resource.data.createdBy;
+    }
+    
+    // ==================== VOTI ====================
+    match /votes/{voteId} {
+      // Tutti possono leggere
+      allow read: if true;
+      
+      // Tutti possono votare (anche senza login per facilitare partecipazione)
+      allow create: if request.resource.data.projectId != null
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5;
+      
+      // I voti non possono essere modificati o eliminati
+      allow update, delete: if false;
+    }
+    
+    // ==================== ANNOTAZIONI MAPPA ====================
+    match /mapAnnotations/{annotationId} {
+      // Tutti possono leggere annotazioni pubbliche
+      allow read: if resource.data.isPublic == true
+                  || request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Solo utenti loggati possono creare annotazioni
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.latitude is number
+                    && request.resource.data.longitude is number;
+      
+      // Solo il creatore può modificare
+      allow update: if request.auth != null 
+                    && request.auth.uid == resource.data.userId;
+      
+      // Solo il creatore può eliminare
+      allow delete: if request.auth != null 
+                    && request.auth.uid == resource.data.userId;
+    }
+    
+    // ==================== CENTRALI PREFERITE ====================
+    match /favoritePlants/{favoriteId} {
+      // Solo l'utente può vedere i propri preferiti
+      allow read: if request.auth != null 
+                  && request.auth.uid == resource.data.userId;
+      
+      // Solo utenti loggati possono aggiungere preferiti
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.plantId is string;
+      
+      // Solo il proprietario può eliminare
+      allow delete: if request.auth != null 
+                    && request.auth.uid == resource.data.userId;
+      
+      // Non si possono modificare i preferiti
+      allow update: if false;
+    }
+    
+    // ==================== PERCORSI GPS ====================
+    match /gpsTrackes/{trackId} {
+      // Lettura: pubblici per tutti, privati solo per il proprietario
+      allow read: if resource.data.isPublic == true
+                  || request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Solo utenti loggati possono salvare percorsi
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.coordinates is list;
+      
+      // Solo il creatore può modificare
+      allow update: if request.auth != null 
+                    && request.auth.uid == resource.data.userId;
+      
+      // Solo il creatore può eliminare
+      allow delete: if request.auth != null 
+                    && request.auth.uid == resource.data.userId;
+    }
+    
+    // ==================== DESIGN THINKING WORKSHOP ====================
+    match /designThinking/{userId} {
+      // Solo l'utente può vedere i propri progressi
+      allow read: if request.auth != null 
+                  && request.auth.uid == userId;
+      
+      // Solo l'utente può salvare/aggiornare i propri progressi
+      allow create, update: if request.auth != null
+                            && request.auth.uid == userId;
+      
+      // Solo l'utente può eliminare i propri progressi
+      allow delete: if request.auth != null 
+                    && request.auth.uid == userId;
+    }
+    
+    // ==================== HYDROKIDS PROGRESS ====================
+    match /hydrokids_progress/{progressId} {
+      // Tutti possono leggere (per statistiche globali)
+      allow read: if true;
+      
+      // TUTTI possono scrivere (anche senza login - area bambini)
+      allow create: if request.resource.data.completedLessons is number
+                    && request.resource.data.totalPoints is number;
+      
+      // Solo chi ha creato può aggiornare (basato su sessionId)
+      allow update: if true;
+      
+      // Non si possono eliminare progressi
+      allow delete: if false;
     }
   }
 }

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Star, Route, Eye, EyeOff, Plus, X } from 'lucide-react';
 import { auth } from '../../firebaseConfig';
-import { getUserFavorites, addFavoritePlant, removeFavoritePlant } from '../../services/MapAnnotationServices';
+import { getUserFavorites, addFavoritePlant, removeFavoritePlant } from '../../services/MapAnnotationService';
 import './AnnotationToolbar.css';
 
 /**

@@ -400,7 +400,7 @@ const AddProjectModal = ({ isOpen, onClose, onSave, user }) => {
   const scoreLabels = {
     technical: ['Affidabilità', 'Complessità', 'Innovazione'],
     economic: ['Investimento', 'Gestione', 'Costi Evitati'],
-    social: ['Occupazione', 'Accessibilità', 'Comunità'],
+    social: ['Occupazione', 'Accessibilità', 'Coinvolgimento'],
     environmental: ['Biodiversità', 'Paesaggio', 'CO2']
   };
 
@@ -418,11 +418,11 @@ const AddProjectModal = ({ isOpen, onClose, onSave, user }) => {
     social: {
       employment: 'Quanti posti di lavoro crea o mantiene?',
       accessibility: 'Quanto migliora l\'accessibilità per la comunità?',
-      community: 'Quanto beneficio porta alla comunità locale?'
+      community: 'Quanto viene coinvolta la comunità locale?'
     },
     environmental: {
-      biodiversity: 'Quanto impatto positivo ha sulla biodiversità?',
-      landscape: 'Quanto valorizza o protegge il paesaggio?',
+      biodiversity: 'Quanto impatta positivamente sulla biodiversità?',
+      landscape: 'Quanto valorizza o protegge il paesaggio circostante?',
       co2: 'Quanto riduce le emissioni di CO2 e l\'impatto ambientale?'
     }
   };
@@ -766,7 +766,7 @@ const ProjectsSection = () => {
     const parameterNames = {
       technical: { reliability: 'Affidabilità', complexity: 'Complessità', innovation: 'Innovazione' },
       economic: { investment: 'Investimento', management: 'Gestione', avoidedCosts: 'Costi Evitati' },
-      social: { employment: 'Occupazione', accessibility: 'Accessibilità', community: 'Comunità' },
+      social: { employment: 'Occupazione', accessibility: 'Accessibilità', community: 'Coinvolgimento' },
       environmental: { biodiversity: 'Biodiversità', landscape: 'Paesaggio', co2: 'CO2' }
     };
     
@@ -813,6 +813,29 @@ const ProjectsSection = () => {
         </p>
       </div>
 
+            <div className="interaction-legend">
+        <div className="legend-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <span>Clicca sull'<strong>immagine</strong> per ingrandirla</span>
+        </div>
+        <div className="legend-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+          <span>Clicca sulla <strong>stellina</strong> per votare</span>
+        </div>
+        <div className="legend-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>Clicca sul <strong>testo</strong> per selezionare il progetto</span>
+        </div>
+      </div>
+
       {/* <div className="weights-control">
         <h3>Regola le tue priorità</h3>
         <div className="weights-grid">
@@ -837,6 +860,25 @@ const ProjectsSection = () => {
           ))}
         </div>
       </div> */}
+
+      
+      <div className="projects-grid">
+        {sortedProjects.map((project, index) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            rank={index + 1}
+            score={calculateScore(project)}
+            averageVote={getAverageVote(project.id)}
+            totalVotes={allVotes.filter(v => v.projectId === project.id).length}
+            vote={votes[project.id]}
+            onVote={(rating) => handleVote(project.id, rating)}
+            isSelected={selectedProjects.includes(project.id)}
+            onSelect={() => toggleProjectSelection(project.id)}
+            onImageClick={() => openImageModal(project.id)}
+          />
+        ))}
+      </div>
 
       <div className="chart-toggle">
         <button 
@@ -886,42 +928,7 @@ const ProjectsSection = () => {
           </ResponsiveContainer>
         </div>
       )}
-
-      <div className="projects-grid">
-        {sortedProjects.map((project, index) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            rank={index + 1}
-            score={calculateScore(project)}
-            averageVote={getAverageVote(project.id)}
-            totalVotes={allVotes.filter(v => v.projectId === project.id).length}
-            vote={votes[project.id]}
-            onVote={(rating) => handleVote(project.id, rating)}
-            isSelected={selectedProjects.includes(project.id)}
-            onSelect={() => toggleProjectSelection(project.id)}
-            onImageClick={() => openImageModal(project.id)}
-          />
-        ))}
-      </div>
-
-      <div className="interaction-legend">
-        <div className="legend-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
-          </svg>
-          <span>Clicca sull'<strong>immagine</strong> per ingrandirla</span>
-        </div>
-        <div className="legend-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <span>Clicca sul <strong>testo</strong> per selezionare il progetto</span>
-        </div>
-      </div>
-
+      
       {/* Modal Autenticazione */}
       {showAuth && (
         <Auth 

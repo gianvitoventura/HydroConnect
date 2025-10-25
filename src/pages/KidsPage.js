@@ -332,49 +332,12 @@ const KidsPage = () => {
       default:
         return (
           <div className="kids-grid-view">
-            {/* 📊 METRICHE PERSONALI (come originale) */}
-            <div className="metrics-grid">
-              {/* LEZIONI COMPLETATE */}
-              <div className="metric-card">
-                <h3>Lezioni Completate</h3>
-                <p className="metric-value">{progress.completedLessons}</p>
-                <p className="metric-trend positive">
-                  {progress.completedLessons > 0 ? `${progress.completedLessons} su ${learningModules.length}` : 'Inizia ad imparare!'}
-                </p>
-              </div>
-
-              {/* QUIZ COMPLETATI */}
-              <div className="metric-card">
-                <h3>Quiz Completati</h3>
-                <p className="metric-value">{progress.completedQuizzes}</p>
-                <p className="metric-trend">
-                  {progress.completedQuizzes > 0 ? `${progress.completedQuizzes} su ${learningModules.length}` : 'Completa le lezioni!'}
-                </p>
-              </div>
-
-              {/* PUNTI TOTALI */}
-              <div className="metric-card">
-                <h3>Punti Totali</h3>
-                <p className="metric-value">{progress.totalPoints}</p>
-                <p className="metric-trend positive">
-                  {progress.totalPoints > 0 ? `+${progress.totalPoints} punti` : 'Guadagna punti!'}
-                </p>
-              </div>
-
-              {/* BADGE OTTENUTI */}
-              <div className="metric-card">
-                <h3>Badge Ottenuti</h3>
-                <p className="metric-value">{progress.badges.length}</p>
-                <p className="metric-trend positive">
-                  {progress.badges.length > 0 ? `${progress.badges.length} su ${Object.keys(badges).length}` : 'Conquista i badge!'}
-                </p>
-              </div>
-            </div>
 
             {/* 🌍 STATISTICHE GLOBALI - Banner separato */}
             {!globalMetrics.loading && !globalMetrics.error && (
               <div className="global-stats-banner" style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                textAlign: 'center',
                 color: 'white',
                 padding: '1.5rem',
                 borderRadius: '12px',
@@ -418,6 +381,45 @@ const KidsPage = () => {
                 ⚠️ Impossibile caricare statistiche globali. Le tue metriche personali sono salvate localmente.
               </div>
             )}
+
+            {/* 📊 METRICHE PERSONALI (come originale) */}
+            <div className="metrics-grid">
+              {/* LEZIONI COMPLETATE */}
+              <div className="metric-card">
+                <h3>Lezioni Completate</h3>
+                <p className="metric-value">{progress.completedLessons}</p>
+                <p className="metric-trend positive">
+                  {progress.completedLessons > 0 ? `${progress.completedLessons} su ${learningModules.length}` : 'Inizia ad imparare!'}
+                </p>
+              </div>
+
+              {/* QUIZ COMPLETATI */}
+              <div className="metric-card">
+                <h3>Quiz Completati</h3>
+                <p className="metric-value">{progress.completedQuizzes}</p>
+                <p className="metric-trend">
+                  {progress.completedQuizzes > 0 ? `${progress.completedQuizzes} su ${learningModules.length}` : 'Completa le lezioni!'}
+                </p>
+              </div>
+
+              {/* PUNTI TOTALI */}
+              <div className="metric-card">
+                <h3>Punti Totali</h3>
+                <p className="metric-value">{progress.totalPoints}</p>
+                <p className="metric-trend positive">
+                  {progress.totalPoints > 0 ? `+${progress.totalPoints} punti` : 'Guadagna punti!'}
+                </p>
+              </div>
+
+              {/* BADGE OTTENUTI */}
+              <div className="metric-card">
+                <h3>Badge Ottenuti</h3>
+                <p className="metric-value">{progress.badges.length}</p>
+                <p className="metric-trend positive">
+                  {progress.badges.length > 0 ? `${progress.badges.length} su ${Object.keys(badges).length}` : 'Conquista i badge!'}
+                </p>
+              </div>
+            </div>
 
             {/* Interactive Activities Section */}
             <div className="activities-section">

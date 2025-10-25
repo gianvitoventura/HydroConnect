@@ -785,7 +785,7 @@ function MapPage({ setCurrentPage }) {
     return (
       <div className="european-plants-section">
         <div className="section-header">
-          <h3>Centrali Europee</h3>
+          <h3>Grandi derivazioni Europee</h3>
           <label className="toggle-switch">
             <input
               type="checkbox"

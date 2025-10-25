@@ -102,7 +102,6 @@
   background: #dbeafe;
   color: #1e40af;
   border-left: 3px solid #3b82f6;
-  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
