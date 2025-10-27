@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "bowser": "^2.11.0",
     "copy-webpack-plugin": "^13.0.1",
+    "env": "^0.0.2",
     "file-loader": "^6.2.0",
     "file-saver": "^2.0.5",
     "firebase": "^12.4.0",

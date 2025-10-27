@@ -709,7 +709,7 @@ function MapPage({ setCurrentPage }) {
 
   const handleProjectsClick = (plantId) => {
     saveMapState(plantId);  // ✅ Salva stato
-    setCurrentPage({ page: 'community', plantId: plantId });
+    setCurrentPage({ page: 'Community-Hub', plantId: plantId });
   };
 
 
@@ -1112,7 +1112,7 @@ function MapPage({ setCurrentPage }) {
       <div className="map-container">
         <MapContainer
           center={centerMap}
-          zoom={8}
+          zoom={4}
           className="leaflet-map"
           zoomControl={true}
         >
@@ -1154,10 +1154,10 @@ function MapPage({ setCurrentPage }) {
                     
                     <div className="popup-actions">
                       <button className="popup-button" onClick={() => handleHistoricalClick(plant.id)}>
-                        Schede
+                        Storia
                       </button>
                       <button className="popup-button" onClick={() => handleTourClick(plant.id)}>
-                        360 Tour
+                        Virtual Tour
                       </button>
                       <button className="popup-button" onClick={() => handleModelClick(plant.id)}>
                         Modello
@@ -1283,14 +1283,15 @@ function MapPage({ setCurrentPage }) {
       <div className="map-control-panel">
         <h2>Parco Idroelettrico</h2>
 
-        {/* ⭐ SEZIONE 1: Strumenti Interattivi */}
-        {renderInteractiveToolsSection()}
+        {/* ⭐ SEZIONE 3: Centrali Europee */}
+        {renderEuropeanPlantsSection()}
 
         {/* ⭐ SEZIONE 2: Centrali Italiane */}
         {renderItalianPlantsSection()}
 
-        {/* ⭐ SEZIONE 3: Centrali Europee */}
-        {renderEuropeanPlantsSection()}
+        {/* ⭐ SEZIONE 1: Strumenti Interattivi */}
+        {renderInteractiveToolsSection()}
+        
       </div>
     </div>
   );

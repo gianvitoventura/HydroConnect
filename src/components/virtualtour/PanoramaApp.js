@@ -490,7 +490,7 @@ const PanoramaApp = () => {
 
       <div id="sceneList" className={isSceneListEnabled ? 'enabled' : ''}>
       <div className="sceneListContent">
-      <h2>Scene</h2>
+      <h2>Foto 360</h2>
         <ul className="scenes">
           {APP_DATA.scenes.map((scene) => (
             <a 

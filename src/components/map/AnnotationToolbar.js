@@ -75,8 +75,6 @@ const AnnotationsToolbar = ({
   return (
     <div className="annotations-toolbar">
       <div className="toolbar-section">
-        <h4 className="toolbar-title">🗺️ Strumenti Mappa</h4>
-        
         {/* Modalità Creazione Annotazione */}
         <button
           className={`toolbar-button ${isAnnotationMode ? 'active' : ''}`}

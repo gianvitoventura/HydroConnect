@@ -25,7 +25,8 @@ yarn-error.log*
 .cache/
 *.cache
 
-# file IFC
+# file types to ignore
+*.env
 *.ifc
 *.mp4
 *.MP4
