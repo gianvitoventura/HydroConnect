@@ -16,7 +16,7 @@ const AnnotationsToolbar = ({
   onToggleMyAnnotations,
   showMyAnnotations,
   activePlant = null,
-  plantData = null
+  plantData = null // <-- activePlantData è ora plantData (già presente)
 }) => {
   const [user, setUser] = useState(null);
   const [favorites, setFavorites] = useState([]);
@@ -79,8 +79,13 @@ const AnnotationsToolbar = ({
         <button
           className={`toolbar-button ${isAnnotationMode ? 'active' : ''}`}
           onClick={onToggleAnnotationMode}
-          disabled={!user}
-          title={user ? "Clicca sulla mappa per aggiungere un'annotazione" : "Login richiesto"}
+          // LOGICA MODIFICATA: Disabilita se NON loggato O se (non è in mod. annulla E non c'è centrale selezionata)
+          disabled={!user || (!isAnnotationMode && !activePlant)} 
+          title={isAnnotationMode 
+            ? 'Annulla Annotazione' 
+            : !user ? 'Login richiesto' 
+            : activePlant ? 'Aggiungi un’annotazione sulla centrale selezionata' 
+            : 'Seleziona una centrale sulla mappa per annotare'} // <-- MESSAGGI GUIDA
         >
           {isAnnotationMode ? <X size={18} /> : <Plus size={18} />}
           <span>{isAnnotationMode ? 'Annulla' : 'Nuova Annotazione'}</span>
@@ -132,19 +137,30 @@ const AnnotationsToolbar = ({
         </button>
       </div>
 
-      {/* Info Stato */}
+      {/* Info Stato - MODIFICATO PER GUIDA ALL'ANNOTAZIONE */}
       <div className="toolbar-info">
         {!user && (
           <p className="info-message warning">
             ⚠️ Effettua il login per salvare annotazioni e preferiti
           </p>
         )}
-        {isAnnotationMode && (
+        
+        {/* Nuovo messaggio se Annotazione attiva ma centrale non selezionata */}
+        {isAnnotationMode && !activePlant && ( 
+            <p className="info-message warning">
+                ⚠️ **Seleziona una centrale** per collegare l'annotazione.
+            </p>
+        )}
+        
+        {/* Messaggio quando la modalità Annotazione è attiva E la centrale è selezionata */}
+        {isAnnotationMode && activePlant && ( 
           <p className="info-message active">
-            📍 Clicca sulla mappa per aggiungere un'annotazione
+            📍 Clicca sulla mappa (vicino alla centrale) per aggiungere un'annotazione
           </p>
         )}
-        {activePlant && plantData && (
+        
+        {/* Messaggio Centrale selezionata (solo se NON siamo in modalità annotazione) */}
+        {activePlant && plantData && !isAnnotationMode && ( 
           <p className="info-message">
             🔌 Centrale selezionata: <strong>{plantData.name}</strong>
           </p>

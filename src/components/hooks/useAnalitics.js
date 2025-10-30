@@ -17,12 +17,14 @@ export const useAnalytics = () => {
     totalProjects: 0,
     totalVotes: 0,
     totalCustomProjects: 0,
+    sumOfRatings: 0, // <-- AGGIUNTO: Somma totale dei punteggi
     activeUsers30Days: 0,
     
     // Kids Metrics
     hydrokidsCompletions: 0,
     hydrokidsStarted: 0,
     averageScore: 0,
+    totalKidsPoints: 0, // <-- AGGIUNTO IL NUOVO CAMPO
     
     // General
     loading: true,
@@ -48,13 +50,25 @@ export const useAnalytics = () => {
           }
         );
 
-        // 2. Conta Voti Totali
+        // 2. Conta Voti Totali e Somma dei Punteggi (MODIFICATO)
         unsubscribeVotes = onSnapshot(
           collection(db, 'votes'),
           (snapshot) => {
+            let sum = 0; // Inizializza la somma
+            
+            // Cicla su tutti i voti per sommare i punteggi
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              // Assumendo che il campo si chiami 'rating' e sia un numero
+              if (typeof data.rating === 'number') {
+                sum += data.rating;
+              }
+            });
+            
             setAnalytics(prev => ({
               ...prev,
-              totalVotes: snapshot.size
+              totalVotes: snapshot.size, // Conteggio totale dei documenti (voti)
+              sumOfRatings: sum // <-- Salviamo la somma di tutti i punteggi (1-5)
             }));
           }
         );
@@ -65,8 +79,9 @@ export const useAnalytics = () => {
             collection(db, 'hydrokids_progress'),
             (snapshot) => {
               let completions = 0;
-              let totalScores = 0;
+              let totalScores = 0; // Per calcolare la media dei completati
               let started = 0;
+              let grandTotalPoints = 0; // Per il totale complessivo
               
               snapshot.forEach(doc => {
                 const data = doc.data();
@@ -81,13 +96,19 @@ export const useAnalytics = () => {
                   completions++;
                   if (data.score) totalScores += data.score;
                 }
+                
+                // Calcola il totale di tutti i punti accumulati (per la metrica globale)
+                if (data.score) {
+                    grandTotalPoints += data.score;
+                }
               });
 
               setAnalytics(prev => ({
                 ...prev,
                 hydrokidsCompletions: completions,
                 hydrokidsStarted: started,
-                averageScore: completions > 0 ? Math.round(totalScores / completions) : 0
+                averageScore: completions > 0 ? Math.round(totalScores / completions) : 0,
+                totalKidsPoints: grandTotalPoints // <-- SALVATO IL TOTALE COMPLESSIVO
               }));
             }
           );
@@ -170,16 +191,18 @@ export const useCommunityMetrics = () => {
     ? Math.round(((analytics.totalProjects - previousMonth.projects) / previousMonth.projects) * 100)
     : 0;
 
-  // Calcola coinvolgimento (voti / progetti)
-  const engagement = analytics.totalProjects > 0
-    ? Math.round((analytics.totalVotes / analytics.totalProjects) * 10)
+  // 🔧 FIX: Calcola coinvolgimento sui progetti TOTALI (inclusi i predefiniti)
+  const totalProjectsWithDefaults = analytics.totalProjects + 8;
+  const engagement = totalProjectsWithDefaults > 0
+    ? Math.round((analytics.totalVotes / totalProjectsWithDefaults) * 10)
     : 0;
 
   return {
     totalUsers: analytics.totalUsers,
-    totalProjects: analytics.totalProjects + 8, // +8 progetti predefiniti
+    totalProjects: totalProjectsWithDefaults, // +8 progetti predefiniti
     customProjects: analytics.totalCustomProjects,
     totalVotes: analytics.totalVotes,
+    sumOfRatings: analytics.sumOfRatings, // <-- ESPONE IL NUOVO CAMPO
     engagement: Math.min(engagement, 100), // Max 100%
     usersTrend,
     projectsTrend,
@@ -202,6 +225,7 @@ export const useKidsMetrics = () => {
     completions: analytics.hydrokidsCompletions,
     completionRate,
     averageScore: analytics.averageScore,
+    totalKidsPoints: analytics.totalKidsPoints,
     loading: analytics.loading,
     error: analytics.error
   };

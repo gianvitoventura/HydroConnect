@@ -251,39 +251,11 @@
     z-index: 100;
 }
 
-.upload-button {
-    background-color: #003d9e;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-}
-
-.upload-button:hover {
-    background-color: #2563eb;
-}
-
 .viewer-controls {
     position: absolute;
     top: 20px;
     left: 20px;
     z-index: 100;
-}
-
-.upload-button {
-    background-color: #003d9e;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-}
-
-.upload-button:hover {
-    background-color: #2563eb;
 }
 
 .model-actions {
@@ -759,12 +731,7 @@
     top: 10px;
     left: 10px;
   }
-  
-  .upload-button {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-  
+
   /* Model actions più compatte */
   .model-actions {
     bottom: 70px;

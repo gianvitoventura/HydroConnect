@@ -234,7 +234,7 @@ const CommunityPage = () => {
             ) : (
               <>
                 <p className="metric-value">{metrics.totalProjects}</p>
-                <p className="metric-trend">
+                <p className="metric-trend positive">
                   {metrics.customProjects} creati dalla community
                 </p>
               </>
@@ -242,7 +242,7 @@ const CommunityPage = () => {
           </div>
 
           {/* VOTI TOTALI */}
-          <div className="metric-card">
+         <div className="metric-card">
             <h3>Voti raccolti</h3>
             {metrics.loading ? (
               <p className="metric-value">...</p>
@@ -250,8 +250,9 @@ const CommunityPage = () => {
               <>
                 <p className="metric-value">{metrics.totalVotes}</p>
                 <p className="metric-trend positive">
-                  {metrics.totalProjects > 0 
-                    ? `Media punteggio ${(metrics.totalVotes / metrics.totalProjects).toFixed(1)}`
+                  {/* Calcola Punteggio Medio: Somma dei punteggi / Numero di voti */}
+                  {metrics.totalVotes > 0
+                    ? `Punteggio medio ${(metrics.sumOfRatings / metrics.totalVotes).toFixed(1)}`
                     : 'Inizia a votare!'}
                 </p>
               </>

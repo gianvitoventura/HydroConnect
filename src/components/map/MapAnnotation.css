@@ -388,6 +388,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  
 }
 
 .upload-button:hover {
@@ -419,10 +420,9 @@
 }
 
 /* Form Actions */
-.form-actions {
+.form-action {
   display: flex;
   gap: 12px;
-  padding-top: 8px;
 }
 
 .submit-button,
@@ -455,11 +455,13 @@
 .cancel-button {
   background: #f1f5f9;
   color: #64748b;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .cancel-button:hover {
   background: #e2e8f0;
   color: #334155;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 /* ==================== RESPONSIVE ==================== */
@@ -481,7 +483,7 @@
     padding: 16px;
   }
 
-  .form-actions {
+  .form-action {
     flex-direction: column;
   }
 
@@ -507,4 +509,107 @@
 
 .annotation-form::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+/* ==================== WARNING CENTRALE NON SELEZIONATA ==================== */
+.plant-warning-overlay {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.plant-warning-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
+  font-weight: 600;
+  font-size: 15px;
+  animation: pulseWarning 2s ease-in-out infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.plant-warning-box svg {
+  flex-shrink: 0;
+}
+
+/* ==================== INFO CENTRALE NEL FORM ==================== */
+.form-plant-info {
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.form-plant-info small {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-plant-info strong {
+  font-weight: 700;
+}
+
+/* ==================== INFO CENTRALE NEL POPUP ==================== */
+.annotation-plant-info {
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  margin: 8px 0;
+  border-left: 3px solid #667eea;
+}
+
+.annotation-plant-info small {
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ==================== LIKE BUTTON ATTIVO ==================== */
+.like-button.liked {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.like-button.liked:hover {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+.like-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.like-button:disabled:hover {
+  transform: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

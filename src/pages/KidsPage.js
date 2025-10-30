@@ -344,7 +344,7 @@ const KidsPage = () => {
                 margin: '1.5rem 0',
                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
               }}>
-                <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   🌍 Statistiche Globali della Community
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
@@ -357,8 +357,8 @@ const KidsPage = () => {
                     <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Hanno Completato Tutto</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.averageScore}</div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Punti Medi</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.totalKidsPoints}</div>
+                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>Punti Totali Ottenuti</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{globalMetrics.completionRate}%</div>
@@ -397,7 +397,7 @@ const KidsPage = () => {
               <div className="metric-card">
                 <h3>Quiz Completati</h3>
                 <p className="metric-value">{progress.completedQuizzes}</p>
-                <p className="metric-trend">
+                <p className="metric-trend positive">
                   {progress.completedQuizzes > 0 ? `${progress.completedQuizzes} su ${learningModules.length}` : 'Completa le lezioni!'}
                 </p>
               </div>
@@ -480,7 +480,7 @@ const KidsPage = () => {
                           <div
                             className="progress-fill"
                             style={{ width: `${progressPercent}%` }}
-                          ></div>
+                          ></div >
                         </div>
                         <span className="progress-text">
                           {isCompleted ? 'Completato!' : (currentProgress > 0 ? `Pagina ${currentProgress}/${totalStoryPages}` : 'Non iniziato')}

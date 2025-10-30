@@ -270,6 +270,7 @@ function MapPage({ setCurrentPage }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMapStyle, setCurrentMapStyle] = useState('satelliteEsri');
   const [activePlant, setActivePlant] = useState(null);
+  const [activePlantData, setActivePlantData] = useState(null); // <-- AGGIUNTO: Dati completi della centrale selezionata
   const [plantVisible, setPlantVisible] = useState(true);
   const [geoJSONLayers, setGeoJSONLayers] = useState({});
   const [layerVisibility, setLayerVisibility] = useState({});
@@ -631,6 +632,7 @@ function MapPage({ setCurrentPage }) {
     const handleEscape = (event) => {
       if (event.key === 'Escape' && mapInstance) {
         setActivePlant(null);
+        setActivePlantData(null); // <-- AGGIUNTO: Reset dei dati centrali
         setGeoJSONLayers({});
         setLayerVisibility({});
         setPlantVisible(true);
@@ -656,6 +658,7 @@ function MapPage({ setCurrentPage }) {
           animate: true,
           duration: 1
         });
+        // Non è necessario impostare activePlantData qui, viene fatto nel click handler
       }
     }
   }, [activePlant, mapInstance]);
@@ -664,6 +667,10 @@ function MapPage({ setCurrentPage }) {
   useEffect(() => {
     if (activePlant) {
       loadPlantLayers(activePlant);
+    } else {
+      setGeoJSONLayers({});
+      setLayerVisibility({});
+      setLayerErrors({});
     }
   }, [activePlant, loadPlantLayers]);
 
@@ -782,7 +789,7 @@ function MapPage({ setCurrentPage }) {
                 onToggleMyAnnotations={() => setShowMyAnnotations(!showMyAnnotations)}
                 showMyAnnotations={showMyAnnotations}
                 activePlant={activePlant}
-                plantData={activePlant ? hydroplants.find(p => p.id === activePlant) : null}
+                plantData={activePlantData} // <-- MODIFICATO: Passa i dati completi
               />
             </div>
           </div>
@@ -1112,7 +1119,7 @@ function MapPage({ setCurrentPage }) {
       <div className="map-container">
         <MapContainer
           center={centerMap}
-          zoom={4}
+          zoom={5}
           className="leaflet-map"
           zoomControl={true}
         >
@@ -1131,9 +1138,12 @@ function MapPage({ setCurrentPage }) {
               key={plant.id} 
               position={plant.coordinates} 
               icon={turbineIcon}
+              interactive={!isAnnotationMode} // ✅ FIX: Disabilita in modalità annotazione
               eventHandlers={{
                 click: () => {
                   setActivePlant(plant.id);
+                  const selectedPlantData = hydroplants.find(p => p.id === plant.id); // <-- AGGIUNTO: Trova i dati completi
+                  setActivePlantData(selectedPlantData); // <-- AGGIUNTO: Salva i dati completi nello stato
                 }
               }}
             >
@@ -1264,7 +1274,13 @@ function MapPage({ setCurrentPage }) {
                     data={layer.data}
                     pointToLayer={(feature, latlng) => pointToLayer(feature, latlng, layer.config)}
                     style={(feature) => createLayerStyle(layer.config, feature)}
-                    onEachFeature={(feature, leafletLayer) => onEachFeature(feature, leafletLayer, layer.config)}
+                    onEachFeature={(feature, leafletLayer) => {
+                      // ✅ FIX: Non aggiungere popup se siamo in modalità annotazione
+                      if (!isAnnotationMode) {
+                        onEachFeature(feature, leafletLayer, layer.config);
+                      }
+                    }}
+                    interactive={!isAnnotationMode} // ✅ FIX: Disabilita interazione in modalità annotazione
                   />
                 );
               })}
@@ -1275,13 +1291,16 @@ function MapPage({ setCurrentPage }) {
               showMyAnnotations={showMyAnnotations}
               isCreating={isAnnotationMode}
               onAnnotationCreated={() => setIsAnnotationMode(false)}
+              activePlant={activePlant}
+              activePlantData={activePlantData}
+              // onDisableMapInteraction non è implementato/necessario qui, ma mantenuto per chiarezza
             />
           )}
         </MapContainer>
       </div>
 
       <div className="map-control-panel">
-        <h2>Parco Idroelettrico</h2>
+        <h2>Parco idroelettrico</h2>
 
         {/* ⭐ SEZIONE 3: Centrali Europee */}
         {renderEuropeanPlantsSection()}

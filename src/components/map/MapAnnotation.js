@@ -2,33 +2,46 @@
 import React, { useState, useEffect } from 'react';
 import { Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MessageSquare, Heart, Trash2, X, Upload } from 'lucide-react';
+import { MessageSquare, Heart, Trash2, X, Upload, AlertCircle } from 'lucide-react';
 import {
   createAnnotation, 
   getPublicAnnotations, 
-  getUserAnnotations, 
+  getUserAnnotations,
+  getPlantAnnotations,
   deleteAnnotation, 
-  likeAnnotation
+  likeAnnotation,
+  hasUserLiked
 } from '../../services/MapAnnotationService';
 import { auth } from '../../firebaseConfig';
 import './MapAnnotation.css';
 
 /**
  * Componente per gestire le annotazioni sulla mappa
- * Props:
+ * ✨ MODIFICHE:
+ * - Annotazioni vincolate a centrale selezionata
+ * - Like limitato ad 1 per utente (array likedBy)
+ * - Disabilitazione layer durante inserimento
+ * * Props:
  * - showMyAnnotations: mostra solo le annotazioni dell'utente corrente
  * - isCreating: modalità creazione attiva (click sulla mappa per aggiungere)
  * - onAnnotationCreated: callback quando viene creata un'annotazione
+ * - activePlant: ID centrale attualmente selezionata (OBBLIGATORIO per creare)
+ * - activePlantData: Dati completi centrale selezionata
+ * - onDisableMapInteraction: callback per disabilitare interazione con layer
  */
 const MapAnnotations = ({ 
   showMyAnnotations = false, 
   isCreating = false,
-  onAnnotationCreated 
+  onAnnotationCreated,
+  activePlant = null,
+  activePlantData = null, // <-- Usato per form e logica
+  onDisableMapInteraction
 }) => {
   const [annotations, setAnnotations] = useState([]);
   const [newAnnotation, setNewAnnotation] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [user, setUser] = useState(null);
+  const [showPlantWarning, setShowPlantWarning] = useState(false);
   
   // Form data
   const [formData, setFormData] = useState({
@@ -52,10 +65,17 @@ const MapAnnotations = ({
     let unsubscribe;
     
     if (showMyAnnotations && user) {
+      // Mostra solo annotazioni utente
       unsubscribe = getUserAnnotations((data) => {
         setAnnotations(data);
       });
+    } else if (activePlant) {
+      // Mostra annotazioni della centrale selezionata
+      unsubscribe = getPlantAnnotations(activePlant, (data) => {
+        setAnnotations(data);
+      });
     } else {
+      // Mostra tutte le annotazioni pubbliche
       unsubscribe = getPublicAnnotations((data) => {
         setAnnotations(data);
       });
@@ -64,18 +84,38 @@ const MapAnnotations = ({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [showMyAnnotations, user]);
+  }, [showMyAnnotations, user, activePlant]);
+
+  // ✨ Notifica parent quando modalità inserimento cambia (per disabilitare layer)
+  useEffect(() => {
+    if (onDisableMapInteraction) {
+      onDisableMapInteraction(isCreating);
+    }
+  }, [isCreating, onDisableMapInteraction]);
 
   // Gestione click sulla mappa per creare annotazione
   useMapEvents({
     click(e) {
-      if (isCreating && user) {
-        setNewAnnotation({
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng
-        });
-        setShowForm(true);
+      if (!isCreating) return;
+      
+      if (!user) {
+        alert('Devi effettuare il login per creare annotazioni');
+        return;
       }
+
+      // ✅ CONTROLLO AGGIORNATO: Centrale deve essere selezionata
+      if (!activePlant || !activePlantData) {
+        setShowPlantWarning(true);
+        setTimeout(() => setShowPlantWarning(false), 3000);
+        return; // BLOCCA la creazione se non c'è una centrale selezionata
+      }
+
+      // ✅ OK: Crea marker temporaneo nella posizione del click
+      setNewAnnotation({
+        latitude: e.latlng.lat,
+        longitude: e.latlng.lng
+      });
+      setShowForm(true);
     }
   });
 
@@ -112,10 +152,20 @@ const MapAnnotations = ({
       return;
     }
 
+    // ✅ Doppio controllo centrale selezionata (dovrebbe sempre essere true qui)
+    if (!activePlant || !activePlantData) {
+      alert('Errore: Centrale non selezionata. Riprova.');
+      return;
+    }
+
     try {
+      // ✅ Passa dati centrale al service
       await createAnnotation({
         ...newAnnotation,
-        ...formData
+        ...formData,
+        plantId: activePlant,
+        plantName: activePlantData.name,
+        plantType: activePlantData.type || 'unknown'
       });
 
       // Reset form
@@ -135,7 +185,7 @@ const MapAnnotations = ({
       }
     } catch (error) {
       console.error('Errore creazione annotazione:', error);
-      alert('Errore nella creazione dell\'annotazione');
+      alert(error.message || 'Errore nella creazione dell\'annotazione');
     }
   };
 
@@ -153,16 +203,22 @@ const MapAnnotations = ({
         await deleteAnnotation(annotationId);
       } catch (error) {
         console.error('Errore eliminazione:', error);
-        alert('Errore nell\'eliminazione dell\'annotazione');
+        alert(error.message || 'Errore nell\'eliminazione dell\'annotazione');
       }
     }
   };
 
   const handleLike = async (annotationId) => {
+    if (!user) {
+      alert('Devi effettuare il login per mettere like');
+      return;
+    }
+
     try {
       await likeAnnotation(annotationId);
     } catch (error) {
       console.error('Errore like:', error);
+      alert(error.message || 'Errore nella gestione del like');
     }
   };
 
@@ -183,80 +239,110 @@ const MapAnnotations = ({
 
   return (
     <>
+      {/* ⚠️ Warning: nessuna centrale selezionata - MODIFICATO PER MAGGIORE VISIBILITÀ */}
+      {showPlantWarning && (
+        <div className="plant-warning-overlay">
+          <div className="plant-warning-box">
+            <AlertCircle size={24} />
+            <p>Seleziona prima una centrale sulla mappa!</p>
+            <small>Clicca su uno dei marker a forma di turbina.</small>
+          </div>
+        </div>
+      )}
+
       {/* Markers delle annotazioni */}
-      {annotations.map((annotation) => (
-        <Marker
-          key={annotation.id}
-          position={[annotation.latitude, annotation.longitude]}
-          icon={getAnnotationIcon(annotation.category)}
-        >
-          <Popup className="annotation-popup">
-            <div className="annotation-content">
-              {/* Header */}
-              <div className="annotation-header">
-                <h3>{annotation.title || 'Annotazione'}</h3>
-                <span className={`annotation-category category-${annotation.category}`}>
-                  {annotation.category}
-                </span>
-              </div>
-
-              {/* Immagini */}
-              {annotation.images && annotation.images.length > 0 && (
-                <div className="annotation-images">
-                  {annotation.images.map((url, index) => (
-                    <img 
-                      key={index}
-                      src={url} 
-                      alt={`Annotazione ${index + 1}`}
-                      className="annotation-image"
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Descrizione */}
-              {annotation.description && (
-                <p className="annotation-description">
-                  {annotation.description}
-                </p>
-              )}
-
-              {/* Footer */}
-              <div className="annotation-footer">
-                <div className="annotation-author">
-                  <span className="author-name">
-                    👤 {annotation.userName}
-                  </span>
-                  <span className="annotation-date">
-                    {formatDate(annotation.createdAt)}
+      {annotations.map((annotation) => {
+        const userHasLiked = hasUserLiked(annotation.likedBy);
+        
+        return (
+          <Marker
+            key={annotation.id}
+            position={[annotation.latitude, annotation.longitude]}
+            icon={getAnnotationIcon(annotation.category)}
+          >
+            <Popup className="annotation-popup">
+              <div className="annotation-content">
+                {/* Header */}
+                <div className="annotation-header">
+                  <h3>{annotation.title || 'Annotazione'}</h3>
+                  <span className={`annotation-category category-${annotation.category}`}>
+                    {annotation.category}
                   </span>
                 </div>
 
-                <div className="annotation-actions">
-                  <button 
-                    onClick={() => handleLike(annotation.id)}
-                    className="action-button like-button"
-                    title="Mi piace"
-                  >
-                    <Heart size={16} />
-                    <span>{annotation.likes || 0}</span>
-                  </button>
+                {/* Info centrale */}
+                {annotation.plantName && (
+                  <div className="annotation-plant-info">
+                    <small>
+                      🏭 <strong>{annotation.plantName}</strong>
+                    </small>
+                  </div>
+                )}
 
-                  {user && user.uid === annotation.userId && (
+                {/* Immagini */}
+                {annotation.images && annotation.images.length > 0 && (
+                  <div className="annotation-images">
+                    {annotation.images.map((url, index) => (
+                      <img 
+                        key={index}
+                        src={url} 
+                        alt={`Annotazione ${index + 1}`}
+                        className="annotation-image"
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Descrizione */}
+                {annotation.description && (
+                  <p className="annotation-description">
+                    {annotation.description}
+                  </p>
+                )}
+
+                {/* Footer */}
+                <div className="annotation-footer">
+                  <div className="annotation-author">
+                    <span className="author-name">
+                      👤 {annotation.userName}
+                    </span>
+                    <span className="annotation-date">
+                      {formatDate(annotation.createdAt)}
+                    </span>
+                  </div>
+
+                  <div className="annotation-actions">
+                    {/* Like button con stato */}
                     <button 
-                      onClick={() => handleDelete(annotation.id)}
-                      className="action-button delete-button"
-                      title="Elimina"
+                      onClick={() => handleLike(annotation.id)}
+                      className={`action-button like-button ${userHasLiked ? 'liked' : ''}`}
+                      title={userHasLiked ? 'Rimuovi like' : 'Mi piace'}
+                      disabled={!user}
                     >
-                      <Trash2 size={16} />
+                      <Heart 
+                        size={16} 
+                        fill={userHasLiked ? 'currentColor' : 'none'}
+                      />
+                      <span>{annotation.likes || 0}</span>
                     </button>
-                  )}
+
+                    {/* Delete button (solo proprietario) */}
+                    {user && user.uid === annotation.userId && (
+                      <button 
+                        onClick={() => handleDelete(annotation.id)}
+                        className="action-button delete-button"
+                        title="Elimina"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+            </Popup>
+          </Marker>
+        );
+      })}
 
       {/* Marker temporaneo per nuova annotazione */}
       {newAnnotation && showForm && (
@@ -271,7 +357,7 @@ const MapAnnotations = ({
         <div className="annotation-form-overlay">
           <div className="annotation-form">
             <div className="form-header">
-              <h3>✨ Nuova Annotazione</h3>
+              <h3>✨ Nuova annotazione per <strong>{activePlantData.name}</strong></h3>
               <button 
                 onClick={() => {
                   setShowForm(false);
@@ -288,6 +374,7 @@ const MapAnnotations = ({
             </div>
 
             <form onSubmit={handleSubmit}>
+
               {/* Categoria */}
               <div className="form-group">
                 <label>Categoria:</label>
@@ -358,7 +445,7 @@ const MapAnnotations = ({
                     checked={formData.isPublic}
                     onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
                   />
-                  <span>Rendi pubblica (visibile a tutti)</span>
+                  <span>Rendi visibile a tutti</span>
                 </label>
               </div>
 
@@ -371,7 +458,7 @@ const MapAnnotations = ({
               </div>
 
               {/* Bottoni */}
-              <div className="form-actions">
+              <div className="form-action">
                 <button type="submit" className="submit-button">
                   💾 Salva Annotazione
                 </button>

@@ -1,238 +1,425 @@
-// src/services/mapAnnotationsService.js
-import { db, auth, storage } from '../firebaseConfig';
+// src/services/MapAnnotationService.js
 import { 
   collection, 
   addDoc, 
   updateDoc,
   deleteDoc,
-  doc,
-  query,
-  where,
-  getDocs,
+  doc, 
+  query, 
+  where, 
+  orderBy, 
   onSnapshot,
+  arrayUnion,
+  arrayRemove,
+  increment,
   Timestamp,
-  serverTimestamp
+  getDoc
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage, auth } from '../firebaseConfig';
+import { getDocs } from 'firebase/firestore';
+
+const ANNOTATIONS_COLLECTION = 'annotations';
+const FAVORITES_COLLECTION = 'favorites';
+
+// ============================================================================
+// ANNOTAZIONI
+// ============================================================================
 
 /**
- * Servizio per gestire le annotazioni sulla mappa
- * Le annotazioni possono essere:
- * - Note testuali su un punto specifico
- * - Foto con coordinate
- * - Percorsi GPS salvati
- * - Centrali preferite
- */
-
-const COLLECTIONS = {
-  ANNOTATIONS: 'mapAnnotations',
-  FAVORITES: 'favoritePlants',
-  GPS_TRACKS: 'gpsTrackes'
-};
-
-// ==================== ANNOTAZIONI ====================
-
-/**
- * Crea una nuova annotazione sulla mappa
+ * Crea una nuova annotazione VINCOLATA A UNA CENTRALE
+ * @param {Object} annotationData - Dati annotazione
+ * @param {string} annotationData.plantId - ID centrale (OBBLIGATORIO)
+ * @param {string} annotationData.plantName - Nome centrale (OBBLIGATORIO)
+ * @param {string} annotationData.plantType - Tipo centrale
+ * @param {number} annotationData.latitude - Latitudine (da click utente)
+ * @param {number} annotationData.longitude - Longitudine (da click utente)
+ * @param {string} annotationData.title - Titolo annotazione
+ * @param {string} annotationData.description - Descrizione
+ * @param {string} annotationData.category - Categoria (general|photo|issue|suggestion)
+ * @param {boolean} annotationData.isPublic - Visibilità pubblica
+ * @param {File[]} annotationData.imageFiles - Array di file immagini (opzionale)
  */
 export const createAnnotation = async (annotationData) => {
   try {
     const user = auth.currentUser;
     if (!user) {
-      throw new Error('Devi effettuare il login per creare annotazioni');
+      throw new Error('Utente non autenticato');
     }
 
-    const annotation = {
-      userId: user.uid,
-      userEmail: user.email,
-      userName: user.displayName || 'Utente Anonimo',
-      latitude: annotationData.latitude,
-      longitude: annotationData.longitude,
-      title: annotationData.title || '',
-      description: annotationData.description || '',
-      category: annotationData.category || 'general', // general, photo, issue, suggestion
-      plantId: annotationData.plantId || null, // Se associata a una centrale
-      isPublic: annotationData.isPublic !== undefined ? annotationData.isPublic : true,
-      images: [], // Array di URL immagini
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      likes: 0,
-      comments: []
-    };
+    // ✅ VALIDAZIONE: Centrale obbligatoria
+    if (!annotationData.plantId || !annotationData.plantName) {
+      throw new Error('Annotazione deve essere associata a una centrale');
+    }
 
     // Upload immagini se presenti
+    const imageUrls = [];
     if (annotationData.imageFiles && annotationData.imageFiles.length > 0) {
-      annotation.images = await uploadAnnotationImages(annotationData.imageFiles, user.uid);
+      for (const file of annotationData.imageFiles) {
+        const imageUrl = await uploadAnnotationImage(file, user.uid);
+        imageUrls.push(imageUrl);
+      }
     }
 
-    const docRef = await addDoc(collection(db, COLLECTIONS.ANNOTATIONS), annotation);
+    // Prepara documento annotazione
+    const annotationDoc = {
+      // Dati centrale (OBBLIGATORI)
+      plantId: annotationData.plantId,
+      plantName: annotationData.plantName,
+      plantType: annotationData.plantType || 'unknown',
+      
+      // Dati annotazione
+      title: annotationData.title,
+      description: annotationData.description || '',
+      category: annotationData.category || 'general',
+      
+      // Posizione (da click utente sulla mappa)
+      latitude: annotationData.latitude,
+      longitude: annotationData.longitude,
+      
+      // Utente
+      userId: user.uid,
+      userName: user.displayName || user.email || 'Utente Anonimo',
+      userEmail: user.email || '',
+      
+      // Interazioni (con array likedBy per limitare a 1 like per user)
+      likes: 0,
+      likedBy: [], // ← NUOVO: array userId che hanno messo like
+      
+      // Visibilità
+      isPublic: annotationData.isPublic !== false, // default true
+      
+      // Media
+      images: imageUrls,
+      
+      // Timestamp
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
+    };
+
+    // Salva in Firestore
+    const docRef = await addDoc(collection(db, ANNOTATIONS_COLLECTION), annotationDoc);
+    
+    console.log('✅ Annotazione creata:', docRef.id, 'per centrale:', annotationData.plantId);
     
     return {
       id: docRef.id,
-      ...annotation
+      ...annotationDoc
     };
+
   } catch (error) {
-    console.error('Errore creazione annotazione:', error);
+    console.error('❌ Errore creazione annotazione:', error);
     throw error;
   }
 };
 
 /**
- * Carica immagini per un'annotazione
+ * Upload immagine annotazione su Firebase Storage
  */
-const uploadAnnotationImages = async (imageFiles, userId) => {
-  const uploadPromises = imageFiles.map(async (file) => {
+const uploadAnnotationImage = async (file, userId) => {
+  try {
     const timestamp = Date.now();
-    const fileName = `${userId}_${timestamp}_${file.name}`;
-    const storageRef = ref(storage, `mapAnnotations/${userId}/${fileName}`);
+    const fileName = `${timestamp}_${file.name}`;
+    const storageRef = ref(storage, `annotations/${userId}/${fileName}`);
     
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
     
     return downloadURL;
-  });
-
-  return await Promise.all(uploadPromises);
-};
-
-/**
- * Ottieni tutte le annotazioni pubbliche
- */
-export const getPublicAnnotations = (callback) => {
-  const q = query(
-    collection(db, COLLECTIONS.ANNOTATIONS),
-    where('isPublic', '==', true)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const annotations = [];
-    snapshot.forEach((doc) => {
-      annotations.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(annotations);
-  });
-};
-
-/**
- * Ottieni annotazioni dell'utente corrente
- */
-export const getUserAnnotations = (callback) => {
-  const user = auth.currentUser;
-  if (!user) return null;
-
-  const q = query(
-    collection(db, COLLECTIONS.ANNOTATIONS),
-    where('userId', '==', user.uid)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const annotations = [];
-    snapshot.forEach((doc) => {
-      annotations.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(annotations);
-  });
-};
-
-/**
- * Ottieni annotazioni per una centrale specifica
- */
-export const getPlantAnnotations = (plantId, callback) => {
-  const q = query(
-    collection(db, COLLECTIONS.ANNOTATIONS),
-    where('plantId', '==', plantId),
-    where('isPublic', '==', true)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const annotations = [];
-    snapshot.forEach((doc) => {
-      annotations.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(annotations);
-  });
-};
-
-/**
- * Aggiorna un'annotazione
- */
-export const updateAnnotation = async (annotationId, updates) => {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      throw new Error('Devi effettuare il login');
-    }
-
-    const annotationRef = doc(db, COLLECTIONS.ANNOTATIONS, annotationId);
-    await updateDoc(annotationRef, {
-      ...updates,
-      updatedAt: serverTimestamp()
-    });
-
-    return true;
   } catch (error) {
-    console.error('Errore aggiornamento annotazione:', error);
+    console.error('❌ Errore upload immagine:', error);
     throw error;
   }
 };
 
 /**
- * Elimina un'annotazione
+ * Recupera annotazioni pubbliche
+ * @param {Function} callback - Callback con array annotazioni
+ * @returns {Function} Unsubscribe function
+ */
+export const getPublicAnnotations = (callback) => {
+  try {
+    const q = query(
+      collection(db, ANNOTATIONS_COLLECTION),
+      where('isPublic', '==', true),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+      const annotations = [];
+      snapshot.forEach((doc) => {
+        annotations.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      callback(annotations);
+    });
+  } catch (error) {
+    console.error('❌ Errore recupero annotazioni pubbliche:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+/**
+ * Recupera annotazioni di uno specifico utente
+ * @param {Function} callback - Callback con array annotazioni
+ * @returns {Function} Unsubscribe function
+ */
+export const getUserAnnotations = (callback) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(
+      collection(db, ANNOTATIONS_COLLECTION),
+      where('userId', '==', user.uid),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+      const annotations = [];
+      snapshot.forEach((doc) => {
+        annotations.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      callback(annotations);
+    });
+  } catch (error) {
+    console.error('❌ Errore recupero annotazioni utente:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+/**
+ * Recupera annotazioni per una specifica centrale
+ * @param {string} plantId - ID della centrale
+ * @param {Function} callback - Callback con array annotazioni
+ * @returns {Function} Unsubscribe function
+ */
+export const getPlantAnnotations = (plantId, callback) => {
+  try {
+    if (!plantId) {
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(
+      collection(db, ANNOTATIONS_COLLECTION),
+      where('plantId', '==', plantId),
+      where('isPublic', '==', true),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+      const annotations = [];
+      snapshot.forEach((doc) => {
+        annotations.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      callback(annotations);
+    });
+  } catch (error) {
+    console.error('❌ Errore recupero annotazioni centrale:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+/**
+ * Toggle like su annotazione (limitato ad 1 like per utente)
+ * @param {string} annotationId - ID annotazione
+ * @returns {Promise<boolean>} true se like aggiunto, false se rimosso
+ */
+export const likeAnnotation = async (annotationId) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('Devi effettuare il login per mettere like');
+    }
+
+    const annotationRef = doc(db, ANNOTATIONS_COLLECTION, annotationId);
+    const annotationSnap = await getDoc(annotationRef);
+
+    if (!annotationSnap.exists()) {
+      throw new Error('Annotazione non trovata');
+    }
+
+    const annotationData = annotationSnap.data();
+    const likedBy = annotationData.likedBy || [];
+    const userHasLiked = likedBy.includes(user.uid);
+
+    if (userHasLiked) {
+      // ❌ Rimuovi like
+      await updateDoc(annotationRef, {
+        likes: increment(-1),
+        likedBy: arrayRemove(user.uid),
+        updatedAt: Timestamp.now()
+      });
+      console.log('👎 Like rimosso da:', annotationId);
+      return false;
+    } else {
+      // ✅ Aggiungi like
+      await updateDoc(annotationRef, {
+        likes: increment(1),
+        likedBy: arrayUnion(user.uid),
+        updatedAt: Timestamp.now()
+      });
+      console.log('👍 Like aggiunto a:', annotationId);
+      return true;
+    }
+  } catch (error) {
+    console.error('❌ Errore gestione like:', error);
+    throw error;
+  }
+};
+
+/**
+ * Verifica se utente corrente ha già messo like
+ * @param {string[]} likedBy - Array di userId che hanno messo like
+ * @returns {boolean} true se utente ha già messo like
+ */
+export const hasUserLiked = (likedBy = []) => {
+  const user = auth.currentUser;
+  if (!user) return false;
+  return likedBy.includes(user.uid);
+};
+
+/**
+ * Elimina annotazione (solo proprietario)
+ * @param {string} annotationId - ID annotazione
  */
 export const deleteAnnotation = async (annotationId) => {
   try {
     const user = auth.currentUser;
     if (!user) {
-      throw new Error('Devi effettuare il login');
+      throw new Error('Devi effettuare il login per eliminare annotazioni');
     }
 
-    const annotationRef = doc(db, COLLECTIONS.ANNOTATIONS, annotationId);
-    await deleteDoc(annotationRef);
+    const annotationRef = doc(db, ANNOTATIONS_COLLECTION, annotationId);
+    const annotationSnap = await getDoc(annotationRef);
 
-    return true;
+    if (!annotationSnap.exists()) {
+      throw new Error('Annotazione non trovata');
+    }
+
+    const annotationData = annotationSnap.data();
+    
+    // Verifica proprietà
+    if (annotationData.userId !== user.uid) {
+      throw new Error('Non hai i permessi per eliminare questa annotazione');
+    }
+
+    // Elimina documento
+    await deleteDoc(annotationRef);
+    
+    // TODO: Eliminare anche immagini da Storage se necessario
+    // for (const imageUrl of annotationData.images || []) {
+    //   await deleteImageFromStorage(imageUrl);
+    // }
+
+    console.log('🗑️ Annotazione eliminata:', annotationId);
   } catch (error) {
-    console.error('Errore eliminazione annotazione:', error);
+    console.error('❌ Errore eliminazione annotazione:', error);
     throw error;
   }
 };
 
 /**
- * Aggiungi like a un'annotazione
+ * Aggiorna annotazione (solo proprietario)
+ * @param {string} annotationId - ID annotazione
+ * @param {Object} updates - Campi da aggiornare
  */
-export const likeAnnotation = async (annotationId) => {
+export const updateAnnotation = async (annotationId, updates) => {
   try {
     const user = auth.currentUser;
-    if (!user) return;
-
-    const annotationRef = doc(db, COLLECTIONS.ANNOTATIONS, annotationId);
-    
-    // Qui dovresti controllare se l'utente ha già messo like
-    // Per semplicità incrementiamo direttamente
-    const annotationDoc = await getDocs(query(collection(db, COLLECTIONS.ANNOTATIONS), where('__name__', '==', annotationId)));
-    if (!annotationDoc.empty) {
-      const currentLikes = annotationDoc.docs[0].data().likes || 0;
-      await updateDoc(annotationRef, {
-        likes: currentLikes + 1
-      });
+    if (!user) {
+      throw new Error('Devi effettuare il login per modificare annotazioni');
     }
 
-    return true;
+    const annotationRef = doc(db, ANNOTATIONS_COLLECTION, annotationId);
+    const annotationSnap = await getDoc(annotationRef);
+
+    if (!annotationSnap.exists()) {
+      throw new Error('Annotazione non trovata');
+    }
+
+    const annotationData = annotationSnap.data();
+    
+    // Verifica proprietà
+    if (annotationData.userId !== user.uid) {
+      throw new Error('Non hai i permessi per modificare questa annotazione');
+    }
+
+    // Aggiorna solo campi permessi
+    const allowedUpdates = {
+      title: updates.title,
+      description: updates.description,
+      category: updates.category,
+      isPublic: updates.isPublic,
+      updatedAt: Timestamp.now()
+    };
+
+    // Rimuovi campi undefined
+    Object.keys(allowedUpdates).forEach(key => 
+      allowedUpdates[key] === undefined && delete allowedUpdates[key]
+    );
+
+    await updateDoc(annotationRef, allowedUpdates);
+    
+    console.log('✏️ Annotazione aggiornata:', annotationId);
   } catch (error) {
-    console.error('Errore like annotazione:', error);
+    console.error('❌ Errore aggiornamento annotazione:', error);
     throw error;
   }
 };
 
-// ==================== CENTRALI PREFERITE ====================
+// ============================================================================
+// PREFERITI (manteniamo la logica esistente)
+// ============================================================================
+
+/**
+ * Recupera preferiti utente
+ */
+export const getUserFavorites = (callback) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(
+      collection(db, FAVORITES_COLLECTION),
+      where('userId', '==', user.uid),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+      const favorites = [];
+      snapshot.forEach((doc) => {
+        favorites.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      callback(favorites);
+    });
+  } catch (error) {
+    console.error('❌ Errore recupero preferiti:', error);
+    callback([]);
+    return () => {};
+  }
+};
 
 /**
  * Aggiungi centrale ai preferiti
@@ -244,19 +431,18 @@ export const addFavoritePlant = async (plantId, plantData) => {
       throw new Error('Devi effettuare il login');
     }
 
-    const favorite = {
+    const favoriteDoc = {
       userId: user.uid,
       plantId: plantId,
       plantName: plantData.name,
-      plantType: plantData.type,
-      coordinates: plantData.coordinates,
-      addedAt: serverTimestamp()
+      plantType: plantData.type || 'unknown',
+      createdAt: Timestamp.now()
     };
 
-    await addDoc(collection(db, COLLECTIONS.FAVORITES), favorite);
-    return true;
+    await addDoc(collection(db, FAVORITES_COLLECTION), favoriteDoc);
+    console.log('⭐ Preferito aggiunto:', plantId);
   } catch (error) {
-    console.error('Errore aggiunta preferito:', error);
+    console.error('❌ Errore aggiunta preferito:', error);
     throw error;
   }
 };
@@ -267,10 +453,12 @@ export const addFavoritePlant = async (plantId, plantData) => {
 export const removeFavoritePlant = async (plantId) => {
   try {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user) {
+      throw new Error('Devi effettuare il login');
+    }
 
     const q = query(
-      collection(db, COLLECTIONS.FAVORITES),
+      collection(db, FAVORITES_COLLECTION),
       where('userId', '==', user.uid),
       where('plantId', '==', plantId)
     );
@@ -279,181 +467,33 @@ export const removeFavoritePlant = async (plantId) => {
     const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
     await Promise.all(deletePromises);
 
-    return true;
+    console.log('🗑️ Preferito rimosso:', plantId);
   } catch (error) {
-    console.error('Errore rimozione preferito:', error);
+    console.error('❌ Errore rimozione preferito:', error);
     throw error;
   }
 };
 
-/**
- * Ottieni centrali preferite dell'utente
- */
-export const getUserFavorites = (callback) => {
-  const user = auth.currentUser;
-  if (!user) return null;
-
-  const q = query(
-    collection(db, COLLECTIONS.FAVORITES),
-    where('userId', '==', user.uid)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const favorites = [];
-    snapshot.forEach((doc) => {
-      favorites.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(favorites);
-  });
-};
+// ============================================================================
+// UTILITY
+// ============================================================================
 
 /**
- * Controlla se una centrale è nei preferiti
+ * Conta annotazioni per centrale
  */
-export const isPlantFavorite = async (plantId) => {
+export const getAnnotationCount = async (plantId) => {
   try {
-    const user = auth.currentUser;
-    if (!user) return false;
-
     const q = query(
-      collection(db, COLLECTIONS.FAVORITES),
-      where('userId', '==', user.uid),
-      where('plantId', '==', plantId)
+      collection(db, ANNOTATIONS_COLLECTION),
+      where('plantId', '==', plantId),
+      where('isPublic', '==', true)
     );
 
     const snapshot = await getDocs(q);
-    return !snapshot.empty;
+    return snapshot.size;
   } catch (error) {
-    console.error('Errore controllo preferito:', error);
-    return false;
+    console.error('❌ Errore conteggio annotazioni:', error);
+    return 0;
   }
 };
 
-// ==================== PERCORSI GPS ====================
-
-/**
- * Salva un percorso GPS
- */
-export const saveGPSTrack = async (trackData) => {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      throw new Error('Devi effettuare il login');
-    }
-
-    const track = {
-      userId: user.uid,
-      userName: user.displayName || 'Utente Anonimo',
-      name: trackData.name || 'Percorso senza nome',
-      description: trackData.description || '',
-      coordinates: trackData.coordinates, // Array di {lat, lng, timestamp}
-      distance: trackData.distance || 0, // in metri
-      duration: trackData.duration || 0, // in secondi
-      startTime: trackData.startTime,
-      endTime: trackData.endTime,
-      isPublic: trackData.isPublic !== undefined ? trackData.isPublic : false,
-      createdAt: serverTimestamp()
-    };
-
-    const docRef = await addDoc(collection(db, COLLECTIONS.GPS_TRACKS), track);
-    
-    return {
-      id: docRef.id,
-      ...track
-    };
-  } catch (error) {
-    console.error('Errore salvataggio percorso GPS:', error);
-    throw error;
-  }
-};
-
-/**
- * Ottieni percorsi GPS dell'utente
- */
-export const getUserGPSTracks = (callback) => {
-  const user = auth.currentUser;
-  if (!user) return null;
-
-  const q = query(
-    collection(db, COLLECTIONS.GPS_TRACKS),
-    where('userId', '==', user.uid)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const tracks = [];
-    snapshot.forEach((doc) => {
-      tracks.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(tracks);
-  });
-};
-
-/**
- * Ottieni percorsi GPS pubblici
- */
-export const getPublicGPSTracks = (callback) => {
-  const q = query(
-    collection(db, COLLECTIONS.GPS_TRACKS),
-    where('isPublic', '==', true)
-  );
-
-  return onSnapshot(q, (snapshot) => {
-    const tracks = [];
-    snapshot.forEach((doc) => {
-      tracks.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    callback(tracks);
-  });
-};
-
-/**
- * Elimina un percorso GPS
- */
-export const deleteGPSTrack = async (trackId) => {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      throw new Error('Devi effettuare il login');
-    }
-
-    const trackRef = doc(db, COLLECTIONS.GPS_TRACKS, trackId);
-    await deleteDoc(trackRef);
-
-    return true;
-  } catch (error) {
-    console.error('Errore eliminazione percorso:', error);
-    throw error;
-  }
-};
-
-export default {
-  // Annotazioni
-  createAnnotation,
-  getPublicAnnotations,
-  getUserAnnotations,
-  getPlantAnnotations,
-  updateAnnotation,
-  deleteAnnotation,
-  likeAnnotation,
-  
-  // Preferiti
-  addFavoritePlant,
-  removeFavoritePlant,
-  getUserFavorites,
-  isPlantFavorite,
-  
-  // GPS
-  saveGPSTrack,
-  getUserGPSTracks,
-  getPublicGPSTracks,
-  deleteGPSTrack
-};
