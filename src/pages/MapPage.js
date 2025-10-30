@@ -318,7 +318,6 @@ function MapPage({ setCurrentPage }) {
     return str.toString().replace(/^"|"$/g, '').trim();
   };
 
-  // AGGIUNGI QUESTO NUOVO useEffect:
   // Ripristina lo stato della mappa quando si torna indietro
   useEffect(() => {
     const savedState = sessionStorage.getItem('mapPageState');
@@ -627,12 +626,57 @@ function MapPage({ setCurrentPage }) {
     }
   }, []);
 
+  // Effect per disabilitare/riabilitare l'interazione della mappa
+  useEffect(() => {
+    if (mapInstance) {
+      if (isAnnotationMode) {
+        // Disabilita tutte le interazioni standard per bloccare la mappa
+        mapInstance.dragging.disable();
+        mapInstance.touchZoom.disable();
+        mapInstance.doubleClickZoom.disable();
+        mapInstance.scrollWheelZoom.disable();
+        mapInstance.boxZoom.disable();
+        mapInstance.keyboard.disable();
+        if (mapInstance.tap) mapInstance.tap.disable(); 
+        
+        // Opzionale: Rendere il cursore più esplicito (es. mirino)
+        L.DomUtil.addClass(mapInstance.getContainer(), 'crosshair-cursor'); 
+      } else {
+        // Riabilita tutte le interazioni
+        mapInstance.dragging.enable();
+        mapInstance.touchZoom.enable();
+        mapInstance.doubleClickZoom.enable();
+        mapInstance.scrollWheelZoom.enable();
+        mapInstance.boxZoom.enable();
+        mapInstance.keyboard.enable();
+        if (mapInstance.tap) mapInstance.tap.enable();
+        
+        // Rimuove il cursore personalizzato
+        L.DomUtil.removeClass(mapInstance.getContainer(), 'crosshair-cursor');
+      }
+    }
+
+    // Cleanup: assicurati che la mappa sia riabilitata quando il componente smonta
+    return () => {
+        if (mapInstance) {
+            mapInstance.dragging.enable();
+            mapInstance.touchZoom.enable();
+            mapInstance.doubleClickZoom.enable();
+            mapInstance.scrollWheelZoom.enable();
+            mapInstance.boxZoom.enable();
+            mapInstance.keyboard.enable();
+            if (mapInstance.tap) mapInstance.tap.enable();
+            L.DomUtil.removeClass(mapInstance.getContainer(), 'crosshair-cursor');
+        }
+    };
+  }, [mapInstance, isAnnotationMode]);
+
   // Gestione degli eventi ESC
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape' && mapInstance) {
         setActivePlant(null);
-        setActivePlantData(null); // <-- AGGIUNTO: Reset dei dati centrali
+        setActivePlantData(null);
         setGeoJSONLayers({});
         setLayerVisibility({});
         setPlantVisible(true);
@@ -854,7 +898,6 @@ function MapPage({ setCurrentPage }) {
                   <div key={categoryName} className="layer-category">
                     <div className="category-header">
                       <h4>{categoryName}</h4>
-                      <span className="category-count">({availableLayers.length})</span>
                     </div>
                     
                     {availableLayers.map(([layerKey, layer]) => {
@@ -1286,14 +1329,13 @@ function MapPage({ setCurrentPage }) {
               })}
           
           {/* Componente Annotazioni */}
-          {showAnnotations && (
+          {showAnnotations && activePlant && (
             <MapAnnotations 
               showMyAnnotations={showMyAnnotations}
               isCreating={isAnnotationMode}
               onAnnotationCreated={() => setIsAnnotationMode(false)}
               activePlant={activePlant}
               activePlantData={activePlantData}
-              // onDisableMapInteraction non è implementato/necessario qui, ma mantenuto per chiarezza
             />
           )}
         </MapContainer>

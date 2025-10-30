@@ -76,9 +76,7 @@ const MapAnnotations = ({
       });
     } else {
       // Mostra tutte le annotazioni pubbliche
-      unsubscribe = getPublicAnnotations((data) => {
-        setAnnotations(data);
-      });
+      setAnnotations([]);
     }
 
     return () => {
@@ -96,7 +94,8 @@ const MapAnnotations = ({
   // Gestione click sulla mappa per creare annotazione
   useMapEvents({
     click(e) {
-      if (!isCreating) return;
+      // ✅ FIX: Non gestire click se non in modalità creazione O se il form è già aperto
+      if (!isCreating || showForm) return;
       
       if (!user) {
         alert('Devi effettuare il login per creare annotazioni');
@@ -304,7 +303,7 @@ const MapAnnotations = ({
                 <div className="annotation-footer">
                   <div className="annotation-author">
                     <span className="author-name">
-                      👤 {annotation.userName}
+                      {annotation.userName}
                     </span>
                     <span className="annotation-date">
                       {formatDate(annotation.createdAt)}

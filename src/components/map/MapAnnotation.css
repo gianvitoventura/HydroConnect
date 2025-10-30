@@ -68,7 +68,7 @@
 }
 
 .annotation-content {
-  padding: 0;
+  margin-bottom: 5px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -144,8 +144,7 @@
 
 /* Descrizione */
 .annotation-description {
-  padding: 12px 16px;
-  margin: 0;
+  margin: 1px;
   font-size: 14px;
   line-height: 1.6;
   color: #334155;
@@ -156,8 +155,7 @@
 .annotation-footer {
   padding: 12px 16px;
   background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  display: flex;
+  border-top: 1px solid #e2e8f0;;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
@@ -168,6 +166,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  margin-bottom: 10px;
 }
 
 .author-name {

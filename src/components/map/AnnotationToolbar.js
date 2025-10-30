@@ -92,14 +92,14 @@ const AnnotationsToolbar = ({
         </button>
 
         {/* Visibilità Annotazioni */}
-        <button
+        {/* <button
           className={`toolbar-button ${showAnnotations ? 'active' : ''}`}
           onClick={onToggleAnnotationsVisibility}
           title="Mostra/Nascondi annotazioni pubbliche"
         >
           {showAnnotations ? <Eye size={18} /> : <EyeOff size={18} />}
           <span>Annotazioni Pubbliche</span>
-        </button>
+        </button> */}
 
         {/* Le Mie Annotazioni */}
         {user && (
@@ -155,7 +155,7 @@ const AnnotationsToolbar = ({
         {/* Messaggio quando la modalità Annotazione è attiva E la centrale è selezionata */}
         {isAnnotationMode && activePlant && ( 
           <p className="info-message active">
-            📍 Clicca sulla mappa (vicino alla centrale) per aggiungere un'annotazione
+            📍 Clicca sulla mappa per aggiungere un'annotazione sulla centrale selezionata.
           </p>
         )}
         

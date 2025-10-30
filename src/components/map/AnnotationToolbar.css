@@ -196,3 +196,335 @@
     font-size: 13px;
   }
 }
+
+/* ================================================================
+   STILI AGGIUNTIVI PER FASE 1 - Filtri e Statistiche Annotazioni
+   Aggiungi questi stili al file AnnotationToolbar.css esistente
+   ================================================================ */
+
+/* ---------------------------------------------------------------
+   🎯 Pannello Filtri Categoria
+   --------------------------------------------------------------- */
+
+.category-filters-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filters-header h5 {
+  margin: 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-all-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-all-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.category-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.category-checkbox:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(2px);
+}
+
+.category-checkbox.selected {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.category-checkbox.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.category-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkbox-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.checkbox-label {
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.checkbox-count {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* ---------------------------------------------------------------
+   📊 Pannello Statistiche Annotazioni
+   --------------------------------------------------------------- */
+
+.annotation-stats-panel {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+.annotation-stats-panel h5 {
+  margin: 0 0 12px 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.annotation-stats-panel strong {
+  color: #fffbcc;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.stats-summary {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+}
+
+.stat-label {
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fffbcc;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.stats-by-category {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.category-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: white;
+}
+
+.category-icon {
+  font-size: 16px;
+}
+
+.category-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.top-liked {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.top-liked h6 {
+  margin: 0 0 8px 0;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.top-liked ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.top-liked li {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.top-liked li:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(3px);
+}
+
+.top-liked li:last-child {
+  margin-bottom: 0;
+}
+
+.like-count {
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+/* ---------------------------------------------------------------
+   🔧 Aggiustamenti Toolbar Esistente
+   --------------------------------------------------------------- */
+
+.toolbar-button {
+  position: relative;
+}
+
+/* Badge contatore filtri */
+.toolbar-button span:after {
+  content: attr(data-count);
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f5576c;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  display: none;
+}
+
+.toolbar-button.active span:after {
+  display: block;
+}
+
+/* ---------------------------------------------------------------
+   📱 Responsive
+   --------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .category-checkboxes {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-by-category {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .toggle-all-button {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------
+   🎨 Animazioni
+   --------------------------------------------------------------- */
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.category-checkbox.selected {
+  animation: pulse 0.3s ease-out;
+}
+
+/* ---------------------------------------------------------------
+   🌙 Dark Mode Support (opzionale)
+   --------------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  .category-filters-panel,
+  .annotation-stats-panel {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .checkbox-label,
+  .stat-label {
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
