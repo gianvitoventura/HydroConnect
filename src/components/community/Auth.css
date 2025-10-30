@@ -1,110 +1,129 @@
-/* Auth.css */
+/* src/Auth.css */
 .auth-modal {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  padding: 1rem;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .auth-container {
   background: white;
+  padding: 40px;
   border-radius: 16px;
-  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-width: 400px;
-  width: 100%;
+  width: 90%;
   position: relative;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .close-btn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 2rem;
-  color: #9ca3af;
+  font-size: 28px;
   cursor: pointer;
+  color: #666;
   line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  padding: 5px 10px;
+  transition: color 0.2s;
 }
 
 .close-btn:hover {
-  color: #374151;
+  color: #333;
 }
 
 .auth-container h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.75rem;
-  color: #111827;
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 28px;
 }
 
 .auth-subtitle {
-  color: #6b7280;
-  margin: 0 0 1.5rem 0;
-  font-size: 0.95rem;
+  color: #666;
+  margin: 0 0 24px 0;
+  font-size: 14px;
 }
 
 .error-message {
-  background: #fee2e2;
-  color: #dc2626;
-  padding: 0.75rem;
+  background: #fee;
+  color: #c33;
+  padding: 12px;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  border-left: 4px solid #dc2626;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #fcc;
 }
 
 .auth-container form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 12px;
 }
 
 .auth-container input {
-  padding: 0.875rem;
-  border: 2px solid #e5e7eb;
+  padding: 14px;
+  border: 2px solid #e1e4e8;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   transition: all 0.2s;
+  outline: none;
 }
 
 .auth-container input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .auth-container input:disabled {
-  background: #f3f4f6;
+  background: #f5f5f5;
   cursor: not-allowed;
 }
 
 .primary-btn {
-  padding: 0.875rem;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .primary-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .primary-btn:disabled {
@@ -113,53 +132,43 @@
 }
 
 .divider {
-  text-align: center;
-  margin: 1.5rem 0;
-  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  color: #999;
+  font-size: 14px;
 }
 
-.divider::before {
+.divider::before,
+.divider::after {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
+  flex: 1;
   height: 1px;
-  background: #e5e7eb;
+  background: #e1e4e8;
 }
 
 .divider span {
-  background: white;
-  padding: 0 1rem;
-  position: relative;
-  color: #9ca3af;
-  font-size: 0.875rem;
+  padding: 0 12px;
 }
 
 .google-btn {
-  width: 100%;
-  padding: 0.875rem;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
 .google-btn:hover:not(:disabled) {
-  border-color: #d1d5db;
-  background: #f9fafb;
-}
-
-.google-btn img {
-  width: 20px;
-  height: 20px;
+  background: #f8f9fa;
+  border-color: #d1d4d8;
 }
 
 .google-btn:disabled {
@@ -167,57 +176,77 @@
   cursor: not-allowed;
 }
 
+.google-btn img {
+  width: 20px;
+  height: 20px;
+}
+
 .toggle-mode {
   text-align: center;
-  margin-top: 1.5rem;
-  color: #6b7280;
-  font-size: 0.9rem;
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
 }
 
 .link-btn {
   background: none;
   border: none;
-  color: #3b82f6;
-  font-weight: 600;
+  color: #667eea;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
   padding: 0;
+  font-size: 14px;
 }
 
 .link-btn:hover {
-  text-decoration: underline;
+  color: #5568d3;
 }
 
-/* User info (quando loggato) */
+/* User Info (quando loggato) */
 .user-info {
   text-align: center;
-  padding: 1rem 0;
 }
 
 .user-info h2 {
-  margin-bottom: 0.5rem;
+  margin-bottom: 16px;
 }
 
 .user-email {
-  color: #6b7280;
-  margin: 1rem 0 1.5rem 0;
-  font-size: 0.95rem;
+  color: #666;
+  margin: 0 0 24px 0;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  word-break: break-word;
 }
 
 .logout-btn {
   width: 100%;
-  padding: 0.875rem;
-  background: #ef4444;
+  padding: 14px;
+  background: #dc3545;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .logout-btn:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 30px 20px;
+  }
+  
+  .auth-container h2 {
+    font-size: 24px;
+  }
 }

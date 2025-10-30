@@ -8,7 +8,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
-import { createUserProfile } from '../../services/UserService';
 import './Auth.css';
 
 const Auth = ({ user, onClose }) => {
@@ -25,19 +24,11 @@ const Auth = ({ user, onClose }) => {
     setLoading(true);
 
     try {
-      let userCredential;
-      
       if (isLogin) {
-        // LOGIN
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password);
       } else {
-        // REGISTRAZIONE
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password);
       }
-      
-      // ✅ NUOVO: Crea/aggiorna profilo in Firestore
-      await createUserProfile(userCredential.user);
-      
       onClose();
     } catch (error) {
       console.error('Errore autenticazione:', error);
@@ -74,11 +65,7 @@ const Auth = ({ user, onClose }) => {
 
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      
-      // ✅ NUOVO: Crea/aggiorna profilo in Firestore
-      await createUserProfile(result.user);
-      
+      await signInWithPopup(auth, provider);
       onClose();
     } catch (error) {
       console.error('Errore Google login:', error);
@@ -123,7 +110,7 @@ const Auth = ({ user, onClose }) => {
       <div className="auth-container">
         <button className="close-btn" onClick={onClose}>×</button>
         
-        <h2>{isLogin ? '🔓 Accedi' : '📝 Registrati'}</h2>
+        <h2>{isLogin ? '🔐 Accedi' : '📝 Registrati'}</h2>
         <p className="auth-subtitle">
           {isLogin 
             ? 'Accedi per aggiungere progetti' 

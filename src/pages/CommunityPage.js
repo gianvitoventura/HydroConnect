@@ -405,7 +405,7 @@ const CommunityPage = () => {
               </div>
               <p className="activity-date">📅 {activity.date}</p>
               <p className="activity-participants">
-                👥 {activity.participants} partecipanti
+                {activity.participants} partecipanti
               </p>
               <button className="join-button">
                 Partecipa

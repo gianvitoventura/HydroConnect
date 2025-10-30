@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from './firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 import MapPage from './pages/MapPage';
 import HistoricalDetailPage from './pages/HistoricalDetailPage';
 import ModelsPage from './pages/ModelsPage';
@@ -6,10 +8,11 @@ import BIMViewerPage from './pages/BIMViewerPage';
 import PanoramaApp from './components/virtualtour/PanoramaApp';
 import CommunityPage from './pages/CommunityPage';
 import KidsPage from './pages/KidsPage';
+import LoginPage from './pages/LoginPage';
 import './styles/App.css';
 import logo from "./styles/logo/HYDROC.png";
 
-function Header({ setCurrentPage, currentPage }) {
+function Header({ setCurrentPage, currentPage, user }) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupText, setPopupText] = useState('');
   const [popupStyle, setPopupStyle] = useState({});
@@ -116,6 +119,16 @@ function Header({ setCurrentPage, currentPage }) {
               Kids
             </button>
           </div>
+          <div className="nav-buttons">
+            <button
+              onClick={() => handleButtonClick('login')}
+              onMouseEnter={(e) => handleMouseEnter(user ? 'Gestisci il tuo account' : 'Accedi o registrati', e)}
+              onMouseLeave={handleMouseLeave}
+              className={user ? 'logged-in' : ''}
+            >
+              {user ? 'Logout' : 'Login'}
+            </button>
+          </div>
         </div>
         
         {showPopup && (
@@ -164,8 +177,35 @@ function App() {
     plantId: null,
     viewMode: null
   });
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Listener per lo stato di autenticazione Firebase
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+
+    // Cleanup della subscription
+    return () => unsubscribe();
+  }, []);
 
   const renderPage = () => {
+    // Mostra un loader mentre controlla l'autenticazione
+    if (authLoading) {
+      return (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: 'calc(100vh - 120px)' 
+        }}>
+          <p>Caricamento...</p>
+        </div>
+      );
+    }
+
     switch(currentPage.page) {
       case 'home':
         return <HomePage setCurrentPage={setCurrentPage} />;
@@ -195,6 +235,8 @@ function App() {
         return <CommunityPage />;
       case 'Kids':
         return <KidsPage />;
+      case 'login':
+        return <LoginPage user={user} setCurrentPage={setCurrentPage} />;
       default:
         return <HomePage setCurrentPage={setCurrentPage} />;        
     }
@@ -202,7 +244,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header setCurrentPage={setCurrentPage} currentPage={currentPage} />
+      <Header setCurrentPage={setCurrentPage} currentPage={currentPage} user={user} />
       <main>
         {renderPage()}
       </main>
