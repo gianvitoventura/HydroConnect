@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MessageSquare, Heart, Trash2, X, Upload, AlertCircle } from 'lucide-react';
+import { Heart, Trash2, X, Upload, AlertCircle } from 'lucide-react';
 import {
   createAnnotation, 
-  getPublicAnnotations, 
   getUserAnnotations,
   getPlantAnnotations,
   deleteAnnotation, 
@@ -383,7 +382,7 @@ const MapAnnotations = ({
                   required
                 >
                   <option value="general">💬 Nota Generale</option>
-                  <option value="photo">📷 Foto</option>
+                  <option value="photo">📷 Punto di Interesse</option>
                   <option value="issue">⚠️ Segnalazione</option>
                   <option value="suggestion">💡 Suggerimento</option>
                 </select>

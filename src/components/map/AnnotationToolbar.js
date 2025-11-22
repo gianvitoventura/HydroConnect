@@ -1,6 +1,6 @@
 // src/components/map/AnnotationsToolbar.jsx
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Star, Route, Eye, EyeOff, Plus, X } from 'lucide-react';
+import { MessageSquare, Star, Route, Plus, X } from 'lucide-react';
 import { auth } from '../../firebaseConfig';
 import { getUserFavorites, addFavoritePlant, removeFavoritePlant } from '../../services/MapAnnotationService';
 import './AnnotationToolbar.css';
@@ -141,7 +141,7 @@ const AnnotationsToolbar = ({
       <div className="toolbar-info">
         {!user && (
           <p className="info-message warning">
-            ⚠️ Effettua il login per salvare annotazioni e preferiti
+            ⚠️ Effettua il login per salvare annotazioni
           </p>
         )}
         

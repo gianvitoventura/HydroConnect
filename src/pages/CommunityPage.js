@@ -292,11 +292,11 @@ const CommunityPage = () => {
           <div className="section-header-with-actions">
             <div>
               <h2>Design Thinking Workshop</h2>
-              {/* {user && lastSaved && (
+              {user && lastSaved && (
                 <p className="last-saved-info">
                   💾 Ultimo salvataggio: {lastSaved.toLocaleString('it-IT')}
                 </p>
-              )} */}
+              )}
               {!user && (
                 <p className="login-warning">
                   ⚠️ Effettua il login per salvare i tuoi progressi
