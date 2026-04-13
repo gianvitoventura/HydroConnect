@@ -59,7 +59,7 @@ export const historicalData = {
                 media: [
                     {
                         type: "image",
-                        url: "/images/historical/calcinere/Foto storica - Cartiera di Verzuolo.PNG",
+                        url: "/images/historical/calcinere/Foto storica - Cartiera di Verzuolo.png",
                     },
                     {
                         type: "image",

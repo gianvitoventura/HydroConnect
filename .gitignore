@@ -31,7 +31,6 @@ yarn-error.log*
 *.mp4
 *.MP4
 public/models/
-public/tiles/
 public/geoData/Catasto.geojson
 public/geoData/Opere puntuali.geojson
 public/geoData/Opere lineari.geojson
