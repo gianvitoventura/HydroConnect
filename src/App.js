@@ -160,7 +160,7 @@ function HomePage({ setCurrentPage }) {
         </video>
       )}
       <div className="home-content-overlay">
-        <h1>Benvenuto</h1>
+        <h1>"Resilience Models""</h1>
         <p>
           <span className="clickable-word" onClick={() => setCurrentPage({ page: 'map' })}>Conosci</span> il territorio,  
           {/* <span className="clickable-word" onClick={() => setCurrentPage({ page: 'models' })}>esplora</span>  */}
