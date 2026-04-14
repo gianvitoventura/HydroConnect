@@ -144,24 +144,19 @@ const calculateCompletion = (data) => {
  * (quanti utenti hanno completato, percentuale media, etc.)
  */
 export const getWorkshopStatistics = async () => {
-  try {
-    // TODO: Implementare con query aggregata
-    // Per ora ritorna dati mock
     return {
       totalUsers: 0,
       averageCompletion: 0,
       completedUsers: 0
-    };
-  } catch (error) {
-    console.error('Errore statistiche workshop:', error);
-    return null;
   }
 };
 
-export default {
+const DesignthinkingService = {
   saveWorkshopProgress,
   loadWorkshopProgress,
   resetWorkshopProgress,
   autoSaveWorkshopProgress,
   getWorkshopStatistics
 };
+
+export default DesignthinkingService;
