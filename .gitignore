@@ -27,7 +27,8 @@ yarn-error.log*
 
 # file types to ignore
 *.env
-*.ifc
+
 *.mp4
 *.MP4
+
 public/models/
