@@ -27,8 +27,7 @@ yarn-error.log*
 
 # file types to ignore
 *.env
-
 *.mp4
 *.MP4
 
-public/models/
+public/models/Nuovacartella
