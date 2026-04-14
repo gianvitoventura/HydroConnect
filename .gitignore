@@ -30,4 +30,5 @@ yarn-error.log*
 *.ifc
 *.mp4
 *.MP4
+
 public/models/
