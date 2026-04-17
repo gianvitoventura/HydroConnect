@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ModelViewer from '../components/viewer/ModelViewer5';
 import { hydroplants } from '../data/HydroData';
-import { ref, getBytes } from 'firebase/storage';
+import { ref, getDownloadURL, getMetadata } from 'firebase/storage';
 import { storage } from '../firebaseConfig';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, PieChart, Pie, Sector } from 'recharts';
 import '../styles/Viewer.css';
@@ -50,6 +50,37 @@ const CATEGORY_COLORS = {
 const getReadableName = (id) => IFC_TYPE_NAMES[id] || id;
 const getCategoryColor = (category) => CATEGORY_COLORS[category] || '#8884d8';
 
+// Scarica un file con progress tracking via XHR
+const downloadWithProgress = (url, onProgress) => {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onprogress = (event) => {
+            if (event.lengthComputable && onProgress) {
+                onProgress(event.loaded, event.total);
+            }
+        };
+
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                resolve(xhr.response);
+            } else {
+                reject(new Error(`HTTP ${xhr.status}`));
+            }
+        };
+
+        xhr.onerror = () => reject(new Error('Errore di rete'));
+        xhr.send();
+    });
+};
+
+const formatBytes = (bytes) => {
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
 const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     const [modelFiles, setModelFiles] = useState(null);
     const [modelData, setModelData] = useState(null);
@@ -64,6 +95,13 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     const [viewSection, setViewSection] = useState('model');
     const [hierarchyType, setHierarchyType] = useState('byType');
     const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+    // Progress tracking
+    const [loadingStage, setLoadingStage] = useState('init'); // init, downloading, processing, done
+    const [downloadProgress, setDownloadProgress] = useState(0); // 0-100
+    const [downloadedBytes, setDownloadedBytes] = useState(0);
+    const [totalBytes, setTotalBytes] = useState(0);
+
     const viewerRef = useRef(null);
     const modelViewerRef = useRef(null);
 
@@ -173,6 +211,10 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
         const loadFromFirebase = async () => {
             setIsLoadingData(true);
             setLoadError(null);
+            setLoadingStage('init');
+            setDownloadProgress(0);
+            setDownloadedBytes(0);
+            setTotalBytes(0);
 
             try {
                 const plant = hydroplants.find(p => p.id === plantId);
@@ -182,18 +224,31 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
                 const fragRef = ref(storage, `models/${modelName}.frag`);
                 const jsonRef = ref(storage, `models/${modelName}.json`);
 
-                // getBytes() usa il token Firebase automaticamente
-                const [fragBytes, jsonBytes] = await Promise.all([
-                    getBytes(fragRef),
-                    getBytes(jsonRef)
+                // Step 1: Ottieni URL e metadata
+                setLoadingStage('init');
+                const [fragUrl, jsonUrl, fragMetadata] = await Promise.all([
+                    getDownloadURL(fragRef),
+                    getDownloadURL(jsonRef),
+                    getMetadata(fragRef)
                 ]);
 
-                const jsonText = new TextDecoder().decode(jsonBytes);
-                const data = JSON.parse(jsonText);
+                setTotalBytes(fragMetadata.size);
 
-                // Passa direttamente i dati binari al viewer
+                // Step 2: Scarica il .frag con progress tracking
+                setLoadingStage('downloading');
+                const fragBuffer = await downloadWithProgress(fragUrl, (loaded, total) => {
+                    setDownloadedBytes(loaded);
+                    setDownloadProgress(Math.round((loaded / total) * 100));
+                });
+
+                // Step 3: Scarica il JSON (piccolo, no progress)
+                setLoadingStage('processing');
+                const jsonResponse = await fetch(jsonUrl);
+                const data = await jsonResponse.json();
+
+                // Step 4: Prepara il viewer
                 setModelFiles({
-                    geometryBuffer: fragBytes,
+                    geometryBuffer: fragBuffer,
                     propertiesData: data
                 });
 
@@ -201,6 +256,8 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
                 setProcessedData(processModelData(data));
                 calculateModelStatistics(data);
                 generateHierarchyData(data);
+
+                setLoadingStage('done');
             } catch (error) {
                 console.error('Errore caricamento modello da Firebase:', error);
                 setLoadError('Modello non disponibile. Assicurati di essere connesso e autenticato.');
@@ -255,6 +312,90 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
                 <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius + 6} startAngle={startAngle} endAngle={endAngle} fill={fill} />
                 <Sector cx={cx} cy={cy} startAngle={startAngle} endAngle={endAngle} innerRadius={outerRadius + 6} outerRadius={outerRadius + 10} fill={fill} />
             </g>
+        );
+    };
+
+    const renderLoadingOverlay = () => {
+        if (!isLoadingData && loadingStage !== 'done') return null;
+        if (loadingStage === 'done') return null;
+
+        const stageText = {
+            init: 'Inizializzazione...',
+            downloading: `Download modello`,
+            processing: 'Elaborazione dati...',
+        }[loadingStage] || 'Caricamento...';
+
+        return (
+            <div style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0, 0, 0, 0.8)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+                color: 'white',
+                fontFamily: 'sans-serif'
+            }}>
+                <div style={{ marginBottom: '20px', fontSize: '18px', fontWeight: '500' }}>
+                    🏗️ {stageText}
+                </div>
+
+                {loadingStage === 'downloading' && totalBytes > 0 && (
+                    <>
+                        <div style={{
+                            width: '400px',
+                            maxWidth: '80vw',
+                            height: '8px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '4px',
+                            overflow: 'hidden',
+                            marginBottom: '12px'
+                        }}>
+                            <div style={{
+                                width: `${downloadProgress}%`,
+                                height: '100%',
+                                background: 'linear-gradient(90deg, #4f46e5, #06b6d4)',
+                                transition: 'width 0.2s ease',
+                                borderRadius: '4px'
+                            }} />
+                        </div>
+
+                        <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                            {downloadProgress}% — {formatBytes(downloadedBytes)} / {formatBytes(totalBytes)}
+                        </div>
+                    </>
+                )}
+
+                {(loadingStage === 'init' || loadingStage === 'processing') && (
+                    <div style={{
+                        width: '400px',
+                        maxWidth: '80vw',
+                        height: '8px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                        position: 'relative'
+                    }}>
+                        <div style={{
+                            width: '40%',
+                            height: '100%',
+                            background: 'linear-gradient(90deg, #4f46e5, #06b6d4)',
+                            borderRadius: '4px',
+                            animation: 'indeterminate 1.5s infinite ease-in-out',
+                            position: 'absolute'
+                        }} />
+                    </div>
+                )}
+
+                <style>{`
+                    @keyframes indeterminate {
+                        0% { left: -40%; }
+                        100% { left: 100%; }
+                    }
+                `}</style>
+            </div>
         );
     };
 
@@ -343,9 +484,8 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     };
 
     const renderControlPanel = () => {
-        if (isLoadingData) return <div className="control-panel"><p>⏳ Caricamento modello da Firebase...</p></div>;
         if (loadError) return <div className="control-panel"><p style={{ color: 'red' }}>⚠️ {loadError}</p></div>;
-        if (!processedData) return <div className="control-panel">🏗️ Modello in arrivo</div>;
+        if (!processedData) return <div className="control-panel">🏗️ Modello in arrivo...</div>;
 
         return (
             <div className="control-panel">
@@ -423,7 +563,7 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     };
 
     return (
-        <div className={`viewer-root ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
+        <div className={`viewer-root ${isDarkTheme ? 'dark-theme' : 'light-theme'}`} style={{ position: 'relative' }}>
             <button className="back-button" onClick={() => setCurrentPage({ page: 'models' })}>
                 ← Torna ai modelli
             </button>
@@ -436,6 +576,7 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
                 />
                 {renderControlPanel()}
             </div>
+            {renderLoadingOverlay()}
         </div>
     );
 };
