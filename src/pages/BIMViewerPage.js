@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ModelViewer from '../components/viewer/ModelViewer5';
 import { hydroplants } from '../data/HydroData';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { ref, getBytes } from 'firebase/storage';
 import { storage } from '../firebaseConfig';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, PieChart, Pie, Sector } from 'recharts';
 import '../styles/Viewer.css';
@@ -66,6 +66,7 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const viewerRef = useRef(null);
     const modelViewerRef = useRef(null);
+    const blobUrlsRef = useRef([]);
 
     const selectedPlant = hydroplants.find(plant => plant.id === plantId);
 
@@ -173,6 +174,11 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
         const loadFromFirebase = async () => {
             setIsLoadingData(true);
             setLoadError(null);
+
+            // Pulisci eventuali blob URL precedenti
+            blobUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+            blobUrlsRef.current = [];
+
             try {
                 const plant = hydroplants.find(p => p.id === plantId);
                 if (!plant) throw new Error('Centrale non trovata');
@@ -181,15 +187,26 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
                 const fragRef = ref(storage, `models/${modelName}.frag`);
                 const jsonRef = ref(storage, `models/${modelName}.json`);
 
-                const [fragUrl, jsonUrl] = await Promise.all([
-                    getDownloadURL(fragRef),
-                    getDownloadURL(jsonRef)
+                // getBytes() usa il token Firebase automaticamente
+                const [fragBytes, jsonBytes] = await Promise.all([
+                    getBytes(fragRef),
+                    getBytes(jsonRef)
                 ]);
+
+                // Crea Blob URL locali per il viewer
+                const fragBlob = new Blob([fragBytes]);
+                const jsonText = new TextDecoder().decode(jsonBytes);
+                const jsonBlob = new Blob([jsonText], { type: 'application/json' });
+
+                const fragUrl = URL.createObjectURL(fragBlob);
+                const jsonUrl = URL.createObjectURL(jsonBlob);
+
+                // Salva i blob URL per pulirli dopo
+                blobUrlsRef.current = [fragUrl, jsonUrl];
 
                 setModelFiles({ geometry: fragUrl, properties: jsonUrl });
 
-                const response = await fetch(jsonUrl);
-                const data = await response.json();
+                const data = JSON.parse(jsonText);
                 setModelData(data);
                 setProcessedData(processModelData(data));
                 calculateModelStatistics(data);
@@ -203,6 +220,12 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
         };
 
         loadFromFirebase();
+
+        // Cleanup: revoca i blob URL quando il componente viene smontato
+        return () => {
+            blobUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+            blobUrlsRef.current = [];
+        };
     }, [plantId, processModelData, calculateModelStatistics, generateHierarchyData]);
 
     const handleElementClick = (elementId) => {
