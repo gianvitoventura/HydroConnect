@@ -491,11 +491,11 @@ const BIMViewerPage = ({ plantId, setCurrentPage }) => {
             <div className="control-panel">
                 <h2>Centrale di {selectedPlant?.name} - Analisi Modello</h2>
 
-                <div className="view-section-tabs">
+                {/* <div className="view-section-tabs">
                     {[['model', 'Modello'], ['hierarchy', 'Gerarchia'], ['properties', 'Proprietà'], ['statistics', 'Statistiche']].map(([section, label]) => (
                         <button key={section} className={viewSection === section ? 'active' : ''} onClick={() => setViewSection(section)}>{label}</button>
                     ))}
-                </div>
+                </div> */}
 
                 {viewSection === 'model' && (
                     <>
